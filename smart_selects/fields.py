@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 from django.conf import settings
 from django.db.models.loading import get_model
 
-JQ_URL = getattr(settings, 'JQUERY_URL', settings.MEDIA_URL + 'js/jquery/jquery-latest.js')
+JQ_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
 
 class ChainedForeignKey(ForeignKey):
     """
