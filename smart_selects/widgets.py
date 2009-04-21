@@ -1,39 +1,9 @@
-from django.db.models.fields.related import ForeignKey
-from django import forms
-from django.forms.models import ModelChoiceField
-from django.forms.fields import ChoiceField
+from django.conf import settings
 from django.forms.widgets import Select
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
-from django.conf import settings
-from django.db.models.loading import get_model
 
-JQ_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
-
-class ChainedForeignKey(ForeignKey):
-    """
-    chains the choices of a previous combo box with this one
-    """
-    def __init__(self, to, chained_field, chained_model_field, *args, **kwargs):
-        self.app_name = to._meta.app_label
-        self.model_name = to._meta.object_name
-        self.chain_field = chained_field
-        self.model_field = chained_model_field
-        ForeignKey.__init__(self, to, *args, **kwargs)
-        
-        
-    def formfield(self, **kwargs):
-        defaults = {
-            'form_class': ChainedModelChoiceField,
-            'queryset': self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to),
-            'to_field_name': self.rel.field_name,
-            'app_name':self.app_name,
-            'model_name':self.model_name,
-            'chain_field':self.chain_field,
-            'model_field':self.model_field,
-        }
-        defaults.update(kwargs)
-        return super(ChainedForeignKey, self).formfield(**defaults)
+JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
         
 class ChainedSelect(Select):
     def __init__(self, app_name, model_name, chain_field, model_field, *args, **kwargs):
@@ -45,7 +15,7 @@ class ChainedSelect(Select):
         
     class Media:
         js = (
-            JQ_URL,
+            JQUERY_URL,
         )
     
     def render(self, name, value, attrs=None, choices=()):
@@ -94,25 +64,3 @@ class ChainedSelect(Select):
         output = super(ChainedSelect, self).render(name, value, attrs, choices=final_choices)
         output += js
         return mark_safe(output)
-
-
-class ChainedModelChoiceField(ModelChoiceField):
-    def __init__(self, app_name, model_name, chain_field, model_field, initial=None, *args, **kwargs):
-        defaults = {'widget':ChainedSelect(app_name,model_name,chain_field,model_field)}
-        defaults.update(kwargs)
-        super(ChainedModelChoiceField, self).__init__(initial=initial, *args, **defaults)
-    
-    #widget = ChainedSelect
-    def _get_choices(self):
-        self.widget.queryset = self.queryset
-        choices = super(ChainedModelChoiceField, self)._get_choices()
-        return choices
-        if hasattr(self, '_choices'):
-            return self._choices
-        
-        final = [("","---------"),]
-        return final
-    choices = property(_get_choices, ChoiceField._set_choices)
-
-
-    
