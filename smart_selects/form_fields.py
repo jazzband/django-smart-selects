@@ -1,10 +1,13 @@
 from smart_selects.widgets import ChainedSelect
 from django.forms.models import ModelChoiceField
+from django.forms import ChoiceField
 
 
-class ChainedModelChoiceField(ModelChoiceFieldield):
+class ChainedModelChoiceField(ModelChoiceField):
     def __init__(self, app_name, model_name, chain_field, model_field, initial=None, *args, **kwargs):
-        defaults = {'widget':ChainedSelectelect(app_name,model_name,chain_field,model_field)}
+        defaults = {
+            'widget': ChainedSelect(app_name, model_name, chain_field, model_field),
+        }
         defaults.update(kwargs)
         super(ChainedModelChoiceField, self).__init__(initial=initial, *args, **defaults)
     
@@ -15,7 +18,7 @@ class ChainedModelChoiceField(ModelChoiceFieldield):
         return choices
         if hasattr(self, '_choices'):
             return self._choices
-        final = [("","---------"),]
+        final = [("", "---------"), ]
         return final
     choices = property(_get_choices, ChoiceField._set_choices)
     

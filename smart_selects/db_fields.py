@@ -1,4 +1,5 @@
 from django.db.models.fields.related import ForeignKey
+import form_fields
 
 class ChainedForeignKey(ForeignKey):
     """
@@ -10,17 +11,16 @@ class ChainedForeignKey(ForeignKey):
         self.chain_field = chained_field
         self.model_field = chained_model_field
         ForeignKey.__init__(self, to, *args, **kwargs)
-        
-        
+
     def formfield(self, **kwargs):
         defaults = {
-            'form_class': ChainedModelChoiceField,
+            'form_class': form_fields.ChainedModelChoiceField,
             'queryset': self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to),
             'to_field_name': self.rel.field_name,
-            'app_name':self.app_name,
-            'model_name':self.model_name,
-            'chain_field':self.chain_field,
-            'model_field':self.model_field,
+            'app_name': self.app_name,
+            'model_name': self.model_name,
+            'chain_field': self.chain_field,
+            'model_field': self.model_field,
         }
         defaults.update(kwargs)
         return super(ChainedForeignKey, self).formfield(**defaults)
@@ -36,12 +36,12 @@ class GroupedForeignKey(ForeignKey):
     
     def formfield(self, **kwargs):
         defaults = {
-            'form_class': GroupedModelSelect,
+            'form_class': form_fields.GroupedModelSelect,
             'queryset': self.rel.to._default_manager.complex_filter(
                                                     self.rel.limit_choices_to),
             'to_field_name': self.rel.field_name,
-            'order_field':self.group_field
+            'order_field': self.group_field,
         }
         defaults.update(kwargs)
         return super(ForeignKey, self).formfield(**defaults)
-    
+
