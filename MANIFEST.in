@@ -1,0 +1,6 @@
+graft *
+prune .hg
+prune .hgignore
+prune .ropeproject
+prune .git
+prune .gitignore
