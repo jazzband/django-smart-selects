@@ -2,6 +2,7 @@ from django.conf import settings
 from django.forms.widgets import Select
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
+from django.db.models import get_model
 
 JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
         
