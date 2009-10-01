@@ -17,6 +17,8 @@ If you have the following model:
 And you want that if you select a continent only the countries are available that are located on this continent and the same for areas
 you can do the following:
 
+    from smart_selects.db_fields import ChainedForeignKey 
+
 	class Location(models.Model)
 		continent = models.ForeignKey(Continent)
 		country = ChainedForeignKey(Country, chained_field="continent", chained_model_field="continent")
@@ -39,6 +41,8 @@ If you have the following model:
 		country = models.ForeignKey(Country)
 		
 And you want that all countries are grouped by the Continent and that <opt> Groups are used in the select change to the following:
+
+    from smart_selects.db_fields import GroupedForeignKey
 	
 	class Location(models.Model)
 		continent = models.ForeignKey(Continent)
