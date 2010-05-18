@@ -1,5 +1,11 @@
 from django.db.models.fields.related import ForeignKey
 import form_fields
+try:
+    from south.modelsinspector import add_introspection_rules
+    has_south = True
+except:    
+    has_south = False
+
 
 class ChainedForeignKey(ForeignKey):
     """
@@ -24,7 +30,8 @@ class ChainedForeignKey(ForeignKey):
         }
         defaults.update(kwargs)
         return super(ChainedForeignKey, self).formfield(**defaults)
-    
+
+
 class GroupedForeignKey(ForeignKey):
     """
     Opt Grouped Field
@@ -44,4 +51,7 @@ class GroupedForeignKey(ForeignKey):
         }
         defaults.update(kwargs)
         return super(ForeignKey, self).formfield(**defaults)
-
+    
+if has_south:
+    add_introspection_rules([], ["^smart_selects\.db_fields\.ChainedForeignKey"])
+    add_introspection_rules([], ["^smart_selects\.db_fields\.GroupedForeignKey"])
