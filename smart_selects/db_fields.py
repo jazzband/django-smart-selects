@@ -11,12 +11,12 @@ class ChainedForeignKey(ForeignKey):
     """
     chains the choices of a previous combo box with this one
     """
-    def __init__(self, to, chained_field, chained_model_field, *args, **kwargs):
+    def __init__(self, to, chained_field=None, chained_model_field=None, **kwargs):
         self.app_name = to._meta.app_label
         self.model_name = to._meta.object_name
         self.chain_field = chained_field
         self.model_field = chained_model_field
-        ForeignKey.__init__(self, to, *args, **kwargs)
+        ForeignKey.__init__(self, to, **kwargs)
 
     def formfield(self, **kwargs):
         defaults = {
@@ -30,16 +30,17 @@ class ChainedForeignKey(ForeignKey):
         }
         defaults.update(kwargs)
         return super(ChainedForeignKey, self).formfield(**defaults)
-
+    
+   
 
 class GroupedForeignKey(ForeignKey):
     """
     Opt Grouped Field
     """
-    def __init__(self, to, group_field, *args, **kwargs):
+    def __init__(self, to, group_field,**kwargs):
         self.group_field = group_field
         self._choices = True
-        ForeignKey.__init__(self, to, *args, **kwargs)
+        ForeignKey.__init__(self, to, **kwargs)
     
     def formfield(self, **kwargs):
         defaults = {
