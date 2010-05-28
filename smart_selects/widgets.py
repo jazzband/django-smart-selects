@@ -39,7 +39,9 @@ class ChainedSelect(Select):
             $("select#id_%(chainfield)s").change(function(){
                 $.getJSON("%(url)s/"+$(this).val()+"/", function(j){
                     var options = '';
-                    options += '<option value="">---------</option>';
+                    if(j.length > 1 || j.length == 0){
+                        options += '<option value="">---------</option>';
+                    }
                     for (var i = 0; i < j.length; i++) {
                         options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
                     }
