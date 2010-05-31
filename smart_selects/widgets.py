@@ -56,8 +56,6 @@ class ChainedSelect(Select):
         final_choices=[]
         if value:
             item = self.queryset.filter(pk=value)[0]
-            print value
-            print item
             try:
                 pk = getattr(item, self.model_field+"_id")
                 filter={self.model_field:pk}
