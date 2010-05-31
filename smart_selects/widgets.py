@@ -56,8 +56,13 @@ class ChainedSelect(Select):
         final_choices=[]
         if value:
             item = self.queryset.filter(pk=value)[0]
-            pk = getattr(item, self.model_field+"_id")
-            filter={self.model_field:pk}
+            print value
+            print item
+            try:
+                pk = getattr(item, self.model_field+"_id")
+                filter={self.model_field:pk}
+            except AttributeError:
+                filter={}
             filtered = get_model( self.app_name, self.model_name).objects.filter(**filter)
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
