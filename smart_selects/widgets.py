@@ -12,7 +12,6 @@ class ChainedSelect(Select):
         self.model_name = model_name
         self.chain_field = chain_field
         self.model_field = model_field
-        print args, kwargs
         super(Select, self).__init__(*args, **kwargs)
         
     class Media:
@@ -21,11 +20,10 @@ class ChainedSelect(Select):
         )
     
     def render(self, name, value, attrs=None, choices=()):
-        print name
-        print attrs
-        print self.model_field
-        print self.chain_field
-        print self.chain_field.join(attrs['id'].split(self.model_field))
+        if len(name.split('-')) > 1: # formset
+            chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
+        else:
+            chain_field = self.chain_field 
         url = "/".join(reverse("chained_filter", kwargs={'app':self.app_name,'model':self.model_name,'field':self.model_field,'value':"1"}).split("/")[:-2])
         js = """
         <script type="text/javascript">
@@ -62,7 +60,7 @@ class ChainedSelect(Select):
         })
         </script>
         
-        """ % {"chainfield":self.chain_field, "url":url, "id":attrs['id']}
+        """ % {"chainfield":chain_field, "url":url, "id":attrs['id']}
         final_choices=[]
         if value:
             item = self.queryset.filter(pk=value)[0]
