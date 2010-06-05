@@ -27,23 +27,13 @@ class ChainedSelect(Select):
         url = "/".join(reverse("chained_filter", kwargs={'app':self.app_name,'model':self.model_name,'field':self.model_field,'value':"1"}).split("/")[:-2])
         js = """
         <script type="text/javascript">
-        $(function(){
-            var start_value = $("select#id_%(chainfield)s")[0].value
-            if($("#%(id)s")[0].value == "" && start_value != ""){
-                $.getJSON("%(url)s/"+start_value+"/", function(j){
-                    var options = '';
-                    options += '<option value="">---------</option>';
-                    for (var i = 0; i < j.length; i++) {
-                        options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
-                    }
+        $(document).ready(function(){
+            function fill_field(val){
+                if (!val || val==''){
+                    options = '<option value="">---------</option>';
                     $("#%(id)s").html(options);
                     $('#%(id)s option:first').attr('selected', 'selected');
-                })
-            }
-            $("select#id_%(chainfield)s").change(function(){
-                var val = $(this).val()
-                if(!val){
-                    val = 0
+                    return;
                 }
                 $.getJSON("%(url)s/"+val+"/", function(j){
                     var options = '';
@@ -55,7 +45,18 @@ class ChainedSelect(Select):
                     }
                     $("#%(id)s").html(options);
                     $('#%(id)s option:first').attr('selected', 'selected');
+                    $("#%(id)s").trigger('change');
                 })
+            }
+            
+            var start_value = $("select#id_%(chainfield)s")[0].value
+            fill_field(start_value);
+            
+            
+            $("select#id_%(chainfield)s").change(function(){
+                var val = $(this).val();
+                fill_field(val);
+                
             })
         })
         </script>
