@@ -3,6 +3,8 @@ from django.forms.widgets import Select
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.db.models import get_model
+import locale
+from smart_selects.utils import unicode_sorter
 
 JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
         
@@ -88,13 +90,15 @@ class ChainedSelect(Select):
                         filter={self.model_field+"__in":pks}
                     except: # give up
                         filter = {}
-            filtered = get_model( self.app_name, self.model_name).objects.filter(**filter).distinct()
+            filtered = list(get_model( self.app_name, self.model_name).objects.filter(**filter).distinct())
+            filtered.sort(cmp=locale.strcoll, key=lambda x:unicode_sorter(unicode(x)))
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
         if len(final_choices)>1:
             final_choices = [("", ("---------"))] + final_choices
         if self.show_all:
             final_choices.append(("", ("---------")))
+            self.choices.sort(cmp=locale.strcoll, key=lambda x:unicode_sorter(x[1]))
             for ch in self.choices:
                 if not ch in final_choices:
                     final_choices.append(ch)
