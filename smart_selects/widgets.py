@@ -98,6 +98,7 @@ class ChainedSelect(Select):
             final_choices = [("", ("---------"))] + final_choices
         if self.show_all:
             final_choices.append(("", ("---------")))
+            self.choices = list(self.choices)
             self.choices.sort(cmp=locale.strcoll, key=lambda x:unicode_sorter(x[1]))
             for ch in self.choices:
                 if not ch in final_choices:
