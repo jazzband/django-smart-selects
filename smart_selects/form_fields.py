@@ -4,9 +4,9 @@ from django.forms import ChoiceField
 
 
 class ChainedModelChoiceField(ModelChoiceField):
-    def __init__(self, app_name, model_name, chain_field, model_field, initial=None, *args, **kwargs):
+    def __init__(self, app_name, model_name, chain_field, model_field, show_all, initial=None, *args, **kwargs):
         defaults = {
-            'widget': ChainedSelect(app_name, model_name, chain_field, model_field),
+            'widget': ChainedSelect(app_name, model_name, chain_field, model_field, show_all,),
         }
         defaults.update(kwargs)
         super(ChainedModelChoiceField, self).__init__(initial=initial, *args, **defaults)
@@ -16,10 +16,6 @@ class ChainedModelChoiceField(ModelChoiceField):
         self.widget.queryset = self.queryset
         choices = super(ChainedModelChoiceField, self)._get_choices()
         return choices
-        if hasattr(self, '_choices'):
-            return self._choices
-        final = [("", "---------"), ]
-        return final
     choices = property(_get_choices, ChoiceField._set_choices)
     
     

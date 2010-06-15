@@ -11,11 +11,12 @@ class ChainedForeignKey(ForeignKey):
     """
     chains the choices of a previous combo box with this one
     """
-    def __init__(self, to, chained_field=None, chained_model_field=None, **kwargs):
+    def __init__(self, to, chained_field=None, chained_model_field=None, show_all=False, **kwargs):
         self.app_name = to._meta.app_label
         self.model_name = to._meta.object_name
         self.chain_field = chained_field
         self.model_field = chained_model_field
+        self.show_all = show_all
         ForeignKey.__init__(self, to, **kwargs)
 
     def formfield(self, **kwargs):
@@ -27,6 +28,7 @@ class ChainedForeignKey(ForeignKey):
             'model_name': self.model_name,
             'chain_field': self.chain_field,
             'model_field': self.model_field,
+            'show_all':self.show_all,
         }
         defaults.update(kwargs)
         return super(ChainedForeignKey, self).formfield(**defaults)
