@@ -40,6 +40,7 @@ class ChainedSelect(Select):
                     options = '<option value="">---------</option>';
                     $("#%(id)s").html(options);
                     $('#%(id)s option:first').attr('selected', 'selected');
+                    $("#%(id)s").trigger('change');
                     return;
                 }
                 $.getJSON("%(url)s/"+val+"/", function(j){
