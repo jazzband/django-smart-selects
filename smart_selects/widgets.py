@@ -9,12 +9,13 @@ from smart_selects.utils import unicode_sorter
 JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
         
 class ChainedSelect(Select):
-    def __init__(self, app_name, model_name, chain_field, model_field, show_all, *args, **kwargs):
+    def __init__(self, app_name, model_name, chain_field, model_field, show_all, auto_choose, *args, **kwargs):
         self.app_name = app_name
         self.model_name = model_name
         self.chain_field = chain_field
         self.model_field = model_field
         self.show_all = show_all
+        self.auto_choose = auto_choose
         super(Select, self).__init__(*args, **kwargs)
         
     class Media:
@@ -32,6 +33,10 @@ class ChainedSelect(Select):
             url = "/".join(reverse("chained_filter_all", kwargs={'app':self.app_name,'model':self.model_name,'field':self.model_field,'value':"1"}).split("/")[:-2])
         else:
             url = "/".join(reverse("chained_filter", kwargs={'app':self.app_name,'model':self.model_name,'field':self.model_field,'value':"1"}).split("/")[:-2])
+        if self.auto_choose:
+            auto_choose = 'true'
+        else:
+            auto_choose = 'false'
         js = """
         <script type="text/javascript">
         $(document).ready(function(){
@@ -44,17 +49,18 @@ class ChainedSelect(Select):
                     return;
                 }
                 $.getJSON("%(url)s/"+val+"/", function(j){
-                    var options = '';
-                    if(j.length > 1 || j.length == 0){
-                        options += '<option value="">---------</option>';
-                    }
+                    var options = '<option value="">---------</option>';
                     for (var i = 0; i < j.length; i++) {
                         options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
                     }
                     $("#%(id)s").html(options);
                     $('#%(id)s option:first').attr('selected', 'selected');
+                    var auto_choose = %(auto_choose)s;
                     if(init_value){
                         $('#%(id)s option[value="'+ init_value +'"]').attr('selected', 'selected');
+                    }
+                    if(auto_choose && j.length == 1){
+                        $('#%(id)s option[value="'+ j[0].value +'"]').attr('selected', 'selected');
                     }
                     $("#%(id)s").trigger('change');
                 })
@@ -74,7 +80,7 @@ class ChainedSelect(Select):
         })
         </script>
         
-        """ % {"chainfield":chain_field, "url":url, "id":attrs['id'], 'value':value, 'all':all}
+        """ % {"chainfield":chain_field, "url":url, "id":attrs['id'], 'value':value, 'auto_choose':auto_choose}
         final_choices=[]
         
         if value:

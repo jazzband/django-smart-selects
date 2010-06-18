@@ -21,7 +21,13 @@ you can do the following:
 
 	class Location(models.Model)
 		continent = models.ForeignKey(Continent)
-		country = ChainedForeignKey(Country, chained_field="continent", chained_model_field="continent", show_all=False)
+		country = ChainedForeignKey(
+			Country, 
+			chained_field="continent",
+			chained_model_field="continent", 
+			show_all=False, 
+			auto_choose=True
+		)
 		area = ChainedForeignKey(Area, chained_field="country", chained_model_field="country")
 		city = models.CharField(max_length=50)
 		street = models.CharField(max_length=100)
@@ -31,6 +37,7 @@ This example asumes that the Country Model has a "continent" field and that the 
 - The chained field is the field on the same model the field should be chained too.
 - The chained model field is the field of the chained model that corresponds to the model linked too by the chained field.
 - show_all indicates if only the filtered results should be shown or if you also want to display the other results further down.
+- auto_choose indicates that if there is only one option if it should be autoselected.
 
 Grouped Selects
 ---------------

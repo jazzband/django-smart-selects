@@ -4,9 +4,9 @@ from django.forms import ChoiceField
 
 
 class ChainedModelChoiceField(ModelChoiceField):
-    def __init__(self, app_name, model_name, chain_field, model_field, show_all, initial=None, *args, **kwargs):
+    def __init__(self, app_name, model_name, chain_field, model_field, show_all, auto_choose, initial=None, *args, **kwargs):
         defaults = {
-            'widget': ChainedSelect(app_name, model_name, chain_field, model_field, show_all,),
+            'widget': ChainedSelect(app_name, model_name, chain_field, model_field, show_all, auto_choose),
         }
         defaults.update(kwargs)
         super(ChainedModelChoiceField, self).__init__(initial=initial, *args, **defaults)
