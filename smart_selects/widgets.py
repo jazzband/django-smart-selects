@@ -52,22 +52,21 @@ class ChainedSelect(Select):
                         options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
                     }
                     $("#%(id)s").html(options);
+                    $('#%(id)s option:first').attr('selected', 'selected');
                     if(init_value){
                         $('#%(id)s option[value="'+ init_value +'"]').attr('selected', 'selected');
-                    }else{
-                        $('#%(id)s option:first').attr('selected', 'selected');
                     }
                     $("#%(id)s").trigger('change');
                 })
             }
             
             if(!$("select#id_%(chainfield)s").hasClass("chained")){
-                var start_value = $("select#id_%(chainfield)s")[0].value
+                var start_value = $("select#%(id)s").val();
                 fill_field(start_value, "%(value)s");
             }
             
             $("select#id_%(chainfield)s").change(function(){
-                var start_value = $("select#id_%(chainfield)s")[0].value
+                var start_value = $("select#%(id)s").val();
                 var val = $(this).val();
                 fill_field(val, start_value);
                 
