@@ -61,13 +61,15 @@ class ChainedSelect(Select):
                 })
             }
             
-            var start_value = $("select#id_%(chainfield)s")[0].value
-            fill_field(start_value, "%(value)s");
-            
+            if(!$("select#id_%(chainfield)s").hasClass("chained")){
+                var start_value = $("select#id_%(chainfield)s")[0].value
+                fill_field(start_value, "%(value)s");
+            }
             
             $("select#id_%(chainfield)s").change(function(){
+                var start_value = $("select#id_%(chainfield)s")[0].value
                 var val = $(this).val();
-                fill_field(val);
+                fill_field(val, start_value);
                 
             })
         })
@@ -105,6 +107,13 @@ class ChainedSelect(Select):
                 if not ch in final_choices:
                     final_choices.append(ch)
         self.choices = ()
+        if attrs:
+            if 'class' in attrs:
+                attrs['class'] += ' chained'
+            else:
+                attrs['class'] = 'chained'
+        else:
+            attrs= {'class':'chained'}
         output = super(ChainedSelect, self).render(name, value, attrs, choices=final_choices)
         output += js
         return mark_safe(output)
