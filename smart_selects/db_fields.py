@@ -12,8 +12,11 @@ class ChainedForeignKey(ForeignKey):
     chains the choices of a previous combo box with this one
     """
     def __init__(self, to, chained_field=None, chained_model_field=None, show_all=False, auto_choose=False, **kwargs):
-        self.app_name = to._meta.app_label
-        self.model_name = to._meta.object_name
+        if isinstance(to, basestring):
+            self.app_name, self.model_name = to.split('.')
+        else:
+            self.app_name = to._meta.app_label
+            self.model_name = to._meta.object_name
         self.chain_field = chained_field
         self.model_field = chained_model_field
         self.show_all = show_all
