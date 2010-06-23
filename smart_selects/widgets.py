@@ -67,8 +67,8 @@ class ChainedSelect(Select):
             }
             
             if(!$("select#id_%(chainfield)s").hasClass("chained")){
-                var start_value = $("select#id_%(chainfield)s").val();
-                fill_field(start_value, "%(value)s");
+                var val = $("select#id_%(chainfield)s").val();
+                fill_field(val, "%(value)s");
             }
             
             $("select#id_%(chainfield)s").change(function(){
