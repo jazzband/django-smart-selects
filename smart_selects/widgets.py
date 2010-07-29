@@ -19,9 +19,10 @@ class ChainedSelect(Select):
         super(Select, self).__init__(*args, **kwargs)
         
     class Media:
-        js = (
-            JQUERY_URL,
-        )
+        if JQUERY_URL:
+            js = (
+                JQUERY_URL,
+            )
     
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1: # formset
