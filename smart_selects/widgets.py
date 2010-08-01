@@ -40,19 +40,20 @@ class ChainedSelect(Select):
             auto_choose = 'false'
         js = """
         <script type="text/javascript">
+        //<![CDATA[
         $(document).ready(function(){
             function fill_field(val, init_value){
                 if (!val || val==''){
-                    options = '<option value="">---------</option>';
+                    options = '<option value="">---------<'+'/option>';
                     $("#%(id)s").html(options);
                     $('#%(id)s option:first').attr('selected', 'selected');
                     $("#%(id)s").trigger('change');
                     return;
                 }
                 $.getJSON("%(url)s/"+val+"/", function(j){
-                    var options = '<option value="">---------</option>';
+                    var options = '<option value="">---------<'+'/option>';
                     for (var i = 0; i < j.length; i++) {
-                        options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
+                        options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
                     }
                     $("#%(id)s").html(options);
                     $('#%(id)s option:first').attr('selected', 'selected');
@@ -79,6 +80,7 @@ class ChainedSelect(Select):
                 
             })
         })
+        //]]>
         </script>
         
         """ % {"chainfield":chain_field, "url":url, "id":attrs['id'], 'value':value, 'auto_choose':auto_choose}
