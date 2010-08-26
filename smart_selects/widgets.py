@@ -115,13 +115,11 @@ class ChainedSelect(Select):
                 if not ch in final_choices:
                     final_choices.append(ch)
         self.choices = ()
-        if attrs:
-            if 'class' in attrs:
-                attrs['class'] += ' chained'
-            else:
-                attrs['class'] = 'chained'
+        final_attrs = self.build_attrs(attrs, name=name)
+        if 'class' in final_attrs:
+            final_attrs['class'] += ' chained'
         else:
-            attrs= {'class':'chained'}
-        output = super(ChainedSelect, self).render(name, value, attrs, choices=final_choices)
+            final_attrs['class'] = 'chained'
+        output = super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
         output += js
         return mark_safe(output)
