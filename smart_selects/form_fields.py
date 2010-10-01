@@ -36,7 +36,7 @@ class GroupedModelSelect(ModelChoiceField):
         # accessed) so that we can ensure the QuerySet has not been consumed. This
         # construct might look complicated but it allows for lazy evaluation of
         # the queryset.
-        final = [("","---------"),]
+        final = [("",self.empty_label or "---------"),]
         group = None
         for item in self.queryset:
             if not group or group[0] != unicode(getattr(item, self.order_field)):

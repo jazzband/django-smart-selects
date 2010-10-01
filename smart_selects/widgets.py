@@ -38,20 +38,21 @@ class ChainedSelect(Select):
             auto_choose = 'true'
         else:
             auto_choose = 'false'
+        empty_label = iter(self.choices).next()[1] # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
         js = """
         <script type="text/javascript">
         //<![CDATA[
         $(document).ready(function(){
             function fill_field(val, init_value){
                 if (!val || val==''){
-                    options = '<option value="">---------<'+'/option>';
+                    options = '<option value="">%(empty_label)s<'+'/option>';
                     $("#%(id)s").html(options);
                     $('#%(id)s option:first').attr('selected', 'selected');
                     $("#%(id)s").trigger('change');
                     return;
                 }
                 $.getJSON("%(url)s/"+val+"/", function(j){
-                    var options = '<option value="">---------<'+'/option>';
+                    var options = '<option value="">%(empty_label)s<'+'/option>';
                     for (var i = 0; i < j.length; i++) {
                         options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
                     }
@@ -83,7 +84,7 @@ class ChainedSelect(Select):
         //]]>
         </script>
         
-        """ % {"chainfield":chain_field, "url":url, "id":attrs['id'], 'value':value, 'auto_choose':auto_choose}
+        """ % {"chainfield":chain_field, "url":url, "id":attrs['id'], 'value':value, 'auto_choose':auto_choose, 'empty_label': empty_label}
         final_choices=[]
         
         if value:
@@ -106,9 +107,9 @@ class ChainedSelect(Select):
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
         if len(final_choices)>1:
-            final_choices = [("", ("---------"))] + final_choices
+            final_choices = [("", (empty_label))] + final_choices
         if self.show_all:
-            final_choices.append(("", ("---------")))
+            final_choices.append(("", (empty_label)))
             self.choices = list(self.choices)
             self.choices.sort(cmp=locale.strcoll, key=lambda x:unicode_sorter(x[1]))
             for ch in self.choices:
