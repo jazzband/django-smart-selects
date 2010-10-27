@@ -42,6 +42,33 @@ class ChainedSelect(Select):
         js = """
         <script type="text/javascript">
         //<![CDATA[
+        
+        function fireEvent(element,event){
+            if (document.createEventObject){
+            // dispatch for IE
+            var evt = document.createEventObject();
+            return element.fireEvent('on'+event,evt)
+            }
+            else{
+            // dispatch for firefox + others
+            var evt = document.createEvent("HTMLEvents");
+            evt.initEvent(event, true, true ); // event type,bubbling,cancelable
+            return !element.dispatchEvent(evt);
+            }
+        }
+        
+        function dismissRelatedLookupPopup(win, chosenId) {
+            var name = windowname_to_id(win.name);
+            var elem = document.getElementById(name);
+            if (elem.className.indexOf('vManyToManyRawIdAdminField') != -1 && elem.value) {
+                elem.value += ',' + chosenId;
+            } else {
+                elem.value = chosenId;
+            }
+            fireEvent(elem, 'change');
+            win.close();
+        }
+        
         $(document).ready(function(){
             function fill_field(val, init_value){
                 if (!val || val==''){
@@ -69,16 +96,15 @@ class ChainedSelect(Select):
                 })
             }
             
-            if(!$("select#id_%(chainfield)s").hasClass("chained")){
-                var val = $("select#id_%(chainfield)s").val();
+            if(!$("#id_%(chainfield)s").hasClass("chained")){
+                var val = $("#id_%(chainfield)s").val();
                 fill_field(val, "%(value)s");
             }
             
-            $("select#id_%(chainfield)s").change(function(){
+            $("#id_%(chainfield)s").change(function(){
                 var start_value = $("select#%(id)s").val();
                 var val = $(this).val();
                 fill_field(val, start_value);
-                
             })
         })
         //]]>
