@@ -65,6 +65,6 @@ Installation
 ------------
 
 1. Add "smart\_selects" to your INSTALLED\_APPS
-2. Bind the smart_selects urls.py into your main urls.py with something like: url(r'^chaining/', include('smart_selects.urls')),
+2. Bind the `smart_selects` urls.py into your main urls.py with something like: `url(r'^chaining/', include('smart_selects.urls')),`
    This is needed for the chained-selects.
 3. Profit
