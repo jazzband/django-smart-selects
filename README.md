@@ -68,3 +68,15 @@ Installation
 2. Bind the `smart_selects` urls.py into your main urls.py with something like: `url(r'^chaining/', include('smart_selects.urls')),`
    This is needed for the chained-selects.
 3. Profit
+
+
+Settings
+--------
+
+`USE_DJANGO_JQUERY`
+:   By default, `smart_selects` will use the bundled jQuery from Django 1.2's
+    admin area. Set `USE_DJANGO_JQUERY = False` to disable this behaviour.
+
+`JQUERY_URL`
+:   By default, jQuery will be loaded from Google's CDN. If you would prefer to
+    use a different version put the full URL here.
