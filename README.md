@@ -54,7 +54,7 @@ And you want that all countries are grouped by the Continent and that <opt> Grou
 	
 	class Location(models.Model)
 		continent = models.ForeignKey(Continent)
-		country = models.GroupedForeignKey(Country, "continent")
+		country = GroupedForeignKey(Country, "continent")
 		
 This example assumes that the Country Model has a foreignKey to Continent named "continent"
 finished.
