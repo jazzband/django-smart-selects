@@ -3,7 +3,7 @@ import form_fields
 try:
     from south.modelsinspector import add_introspection_rules
     has_south = True
-except:    
+except:
     has_south = False
 
 
@@ -37,18 +37,18 @@ class ChainedForeignKey(ForeignKey):
         }
         defaults.update(kwargs)
         return super(ChainedForeignKey, self).formfield(**defaults)
-    
-   
+
+
 
 class GroupedForeignKey(ForeignKey):
     """
     Opt Grouped Field
     """
-    def __init__(self, to, group_field,**kwargs):
+    def __init__(self, to, group_field, **kwargs):
         self.group_field = group_field
         self._choices = True
         ForeignKey.__init__(self, to, **kwargs)
-    
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': form_fields.GroupedModelSelect,
@@ -59,7 +59,16 @@ class GroupedForeignKey(ForeignKey):
         }
         defaults.update(kwargs)
         return super(ForeignKey, self).formfield(**defaults)
-    
+
 if has_south:
+    rules_grouped = [(
+        (GroupedForeignKey,),
+        [],
+        {
+            'to': ['rel.to', {}],
+            'group_field': ['group_field', {}],
+        },
+    )]
+
     add_introspection_rules([], ["^smart_selects\.db_fields\.ChainedForeignKey"])
-    add_introspection_rules([], ["^smart_selects\.db_fields\.GroupedForeignKey"])
+    add_introspection_rules(rules_grouped, ["^smart_selects\.db_fields\.GroupedForeignKey"])
