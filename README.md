@@ -54,7 +54,7 @@ And you want that all countries are grouped by the Continent and that <opt> Grou
 	
 	class Location(models.Model)
 		continent = models.ForeignKey(Continent)
-		country = models.GroupedForeignKey(Country, "continent")
+		country = GroupedForeignKey(Country, "continent")
 		
 This example assumes that the Country Model has a foreignKey to Continent named "continent"
 finished.
@@ -65,6 +65,18 @@ Installation
 ------------
 
 1. Add "smart\_selects" to your INSTALLED\_APPS
-2. Bind the smart_selects urls.py into your main urls.py with something like: url(r'^chaining/', include('smart_selects.urls')),
+2. Bind the `smart_selects` urls.py into your main urls.py with something like: `url(r'^chaining/', include('smart_selects.urls')),`
    This is needed for the chained-selects.
 3. Profit
+
+
+Settings
+--------
+
+`USE_DJANGO_JQUERY`
+:   By default, `smart_selects` will use the bundled jQuery from Django 1.2's
+    admin area. Set `USE_DJANGO_JQUERY = False` to disable this behaviour.
+
+`JQUERY_URL`
+:   By default, jQuery will be loaded from Google's CDN. If you would prefer to
+    use a different version put the full URL here.
