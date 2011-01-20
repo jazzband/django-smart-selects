@@ -43,9 +43,9 @@ class ChainedSelect(Select):
             chain_field = self.chain_field
 
         if self.show_all:
-            url = "/".join(reverse("chained_filter_all", kwargs={'app':self.app_name,'model':self.model_name,'field':self.model_field,'value':"1"}).split("/")[:-2])
+            url = "/".join(reverse("chained_filter_all", kwargs={'app':self.app_name, 'model':self.model_name, 'field':self.model_field, 'value':"1"}).split("/")[:-2])
         else:
-            url = "/".join(reverse("chained_filter", kwargs={'app':self.app_name,'model':self.model_name,'field':self.model_field,'value':"1"}).split("/")[:-2])
+            url = "/".join(reverse("chained_filter", kwargs={'app':self.app_name, 'model':self.model_name, 'field':self.model_field, 'value':"1"}).split("/")[:-2])
         if self.auto_choose:
             auto_choose = 'true'
         else:
@@ -114,7 +114,7 @@ class ChainedSelect(Select):
                 }
 
                 $("#id_%(chainfield)s").change(function(){
-                    var start_value = $("select#%(id)s").val();
+                    var start_value = $("#%(id)s").val();
                     var val = $(this).val();
                     fill_field(val, start_value);
                 })
@@ -124,28 +124,28 @@ class ChainedSelect(Select):
         </script>
 
         """ % {"chainfield":chain_field, "url":url, "id":attrs['id'], 'value':value, 'auto_choose':auto_choose, 'empty_label': empty_label}
-        final_choices=[]
+        final_choices = []
 
         if value:
             item = self.queryset.filter(pk=value)[0]
             try:
-                pk = getattr(item, self.model_field+"_id")
-                filter={self.model_field:pk}
+                pk = getattr(item, self.model_field + "_id")
+                filter = {self.model_field:pk}
             except AttributeError:
                 try: # maybe m2m?
                     pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
-                    filter={self.model_field+"__in":pks}
+                    filter = {self.model_field + "__in":pks}
                 except AttributeError:
                     try: # maybe a set?
-                        pks = getattr(item, self.model_field+"_set").all().values_list('pk', flat=True)
-                        filter={self.model_field+"__in":pks}
+                        pks = getattr(item, self.model_field + "_set").all().values_list('pk', flat=True)
+                        filter = {self.model_field + "__in":pks}
                     except: # give up
                         filter = {}
-            filtered = list(get_model( self.app_name, self.model_name).objects.filter(**filter).distinct())
+            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
             filtered.sort(cmp=locale.strcoll, key=lambda x:unicode_sorter(unicode(x)))
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
-        if len(final_choices)>1:
+        if len(final_choices) > 1:
             final_choices = [("", (empty_label))] + final_choices
         if self.show_all:
             final_choices.append(("", (empty_label)))
