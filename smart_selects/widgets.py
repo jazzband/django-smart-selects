@@ -119,7 +119,7 @@ class ChainedSelect(Select):
                     fill_field(val, start_value);
                 })
             })
-        })(django.jQuery || jQuery);
+        })(jQuery || django.jQuery);
         //]]>
         </script>
 
