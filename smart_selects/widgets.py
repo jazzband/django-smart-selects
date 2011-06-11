@@ -119,6 +119,13 @@ class ChainedSelect(Select):
                     fill_field(val, start_value);
                 })
             })
+            var oldDismissAddAnotherPopup = dismissAddAnotherPopup;
+            dismissAddAnotherPopup = function(win, newId, newRepr) {
+                oldDismissAddAnotherPopup(win, newId, newRepr);
+                if (windowname_to_id(win.name) == "id_%(chainfield)s") {
+                    $("#id_%(chainfield)s").change();
+                }
+            }
         })(jQuery || django.jQuery);
         //]]>
         </script>
