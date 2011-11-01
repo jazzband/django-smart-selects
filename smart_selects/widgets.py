@@ -18,13 +18,14 @@ else:
 
 
 class ChainedSelect(Select):
-    def __init__(self, app_name, model_name, chain_field, model_field, show_all, auto_choose, *args, **kwargs):
+    def __init__(self, app_name, model_name, chain_field, model_field, show_all, auto_choose, manager=None, *args, **kwargs):
         self.app_name = app_name
         self.model_name = model_name
         self.chain_field = chain_field
         self.model_field = model_field
         self.show_all = show_all
         self.auto_choose = auto_choose
+        self.manager = manager
         super(Select, self).__init__(*args, **kwargs)
 
     class Media:
@@ -43,9 +44,13 @@ class ChainedSelect(Select):
             chain_field = self.chain_field
 
         if self.show_all:
-            url = "/".join(reverse("chained_filter_all", kwargs={'app':self.app_name, 'model':self.model_name, 'field':self.model_field, 'value':"1"}).split("/")[:-2])
+            view_name = "chained_filter_all"
         else:
-            url = "/".join(reverse("chained_filter", kwargs={'app':self.app_name, 'model':self.model_name, 'field':self.model_field, 'value':"1"}).split("/")[:-2])
+            view_name = "chained_filter"
+        kwargs = {'app':self.app_name, 'model':self.model_name, 'field':self.model_field, 'value':"1"}
+        if self.manager is not None:
+            kwargs.update({'manager': self.manager})
+        url = "/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2])
         if self.auto_choose:
             auto_choose = 'true'
         else:

@@ -4,13 +4,17 @@ from django.utils import simplejson
 import locale
 from smart_selects.utils import unicode_sorter
 
-def filterchain(request, app, model, field, value):
+def filterchain(request, app, model, field, value, manager=None):
     Model = get_model(app, model)
     if value == '0':
         keywords = {str("%s__isnull" % field):True}
     else:
         keywords = {str(field): str(value)}
-    results = list(Model.objects.filter(**keywords))
+    if manager is not None and hasattr(Model, manager):
+        queryset = getattr(Model, manager).all()
+    else:
+        queryset = Model.objects
+    results = list(queryset.filter(**keywords))
     results.sort(cmp=locale.strcoll, key=lambda x:unicode_sorter(unicode(x)))
     result = []
     for item in results:
