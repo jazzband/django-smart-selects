@@ -16,6 +16,12 @@ else:
     USE_DJANGO_JQUERY = False
     JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
 
+if django.VERSION >= (1, 3, 0):
+    from django.templatetags.static import static
+    ADMIN_MEDIA_PREFIX = static('admin/')
+else:
+    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+
 
 class ChainedSelect(Select):
     def __init__(self, app_name, model_name, chain_field, model_field, show_all, auto_choose, manager=None, *args, **kwargs):
@@ -30,7 +36,7 @@ class ChainedSelect(Select):
 
     class Media:
         if USE_DJANGO_JQUERY:
-            js = ["%s%s" % (settings.ADMIN_MEDIA_PREFIX, i) for i in
+            js = ["%s%s" % (ADMIN_MEDIA_PREFIX, i) for i in
                     ('js/jquery.min.js', 'js/jquery.init.js')]
         elif JQUERY_URL:
             js = (
