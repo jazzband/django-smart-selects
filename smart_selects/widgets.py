@@ -30,8 +30,8 @@ class ChainedSelect(Select):
 
     class Media:
         if USE_DJANGO_JQUERY:
-            js = ["%s%s" % (settings.ADMIN_MEDIA_PREFIX, i) for i in
-                    ('js/jquery.min.js', 'js/jquery.init.js')]
+            js = ["%s%s" % (settings.STATIC_URL, i) for i in
+                    ('admin/js/jquery.min.js', 'admin/js/jquery.init.js')]
         elif JQUERY_URL:
             js = (
                 JQUERY_URL,
