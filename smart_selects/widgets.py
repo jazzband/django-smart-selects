@@ -1,6 +1,7 @@
 import django
 from django.conf import settings
 from django.forms.widgets import Select
+from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.utils.encoding import iri_to_uri
 from django.utils.safestring import mark_safe
@@ -30,8 +31,8 @@ class ChainedSelect(Select):
 
     class Media:
         if USE_DJANGO_JQUERY:
-            js = ["%s%s" % (settings.ADMIN_MEDIA_PREFIX, i) for i in
-                    ('js/jquery.min.js', 'js/jquery.init.js')]
+            js = [static('admin/%s' % i) for i in
+                  ('js/jquery.min.js', 'js/jquery.init.js')]
         elif JQUERY_URL:
             js = (
                 JQUERY_URL,
