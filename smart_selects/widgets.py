@@ -1,9 +1,7 @@
 import django
 from django.conf import settings
 from django.forms.widgets import Select
-from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
-from django.utils.encoding import iri_to_uri
 from django.utils.safestring import mark_safe
 from django.db.models import get_model
 import locale
@@ -13,6 +11,11 @@ from smart_selects.utils import unicode_sorter
 if django.VERSION >= (1, 2, 0) and getattr(settings,
         'USE_DJANGO_JQUERY', True):
     USE_DJANGO_JQUERY = True
+    try:
+        from django.contrib.admin.templatetags.admin_static import static
+    except ImportError:
+        def static(path):
+            return u"%s%s" % (settings.STATIC_URL, path)
 else:
     USE_DJANGO_JQUERY = False
     JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
