@@ -17,6 +17,7 @@ else:
     USE_DJANGO_JQUERY = False
     JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
 
+URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 
 class ChainedSelect(Select):
     def __init__(self, app_name, model_name, chain_field, model_field, show_all, auto_choose, manager=None, *args, **kwargs):
@@ -51,7 +52,7 @@ class ChainedSelect(Select):
         kwargs = {'app':self.app_name, 'model':self.model_name, 'field':self.model_field, 'value':"1"}
         if self.manager is not None:
             kwargs.update({'manager': self.manager})
-        url = "/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2])
+        url = URL_PREFIX+("/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2]))
         if self.auto_choose:
             auto_choose = 'true'
         else:
