@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name="django-smart-selects",
-           version="1.0.5",
+           version="1.0.6",
            description="Django application to handle chained model fields.",
            author="Patrick Lauber",
            packages=find_packages(),
