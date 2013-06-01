@@ -40,16 +40,20 @@ class GroupedModelSelect(ModelChoiceField):
         # accessed) so that we can ensure the QuerySet has not been consumed. This
         # construct might look complicated but it allows for lazy evaluation of
         # the queryset.
-        final = [("", self.empty_label or "---------"), ]
-        group = None
+        group_indexes = {}
+        choices = [("", self.empty_label or "---------")]
+        i = len(choices)
         for item in self.queryset:
-            if not group or group[0] != unicode(getattr(item, self.order_field)):
-                if group:
-                    final.append(group)
-                group = [unicode(getattr(item, self.order_field)), []]
-            group[1].append(self.make_choice(item))
-        return final
-
+            order_field = getattr(item, self.order_field)
+            group_index = order_field.pk
+            if not group_index in group_indexes:
+                group_indexes[group_index] = i
+                choices.append([unicode(order_field), []])
+                i += 1
+            choice_index = group_indexes[group_index]
+            choices[choice_index][1].append(self.make_choice(item))
+        return choices
+    
     def make_choice(self, obj):
         return (obj.pk, "   " + self.label_from_instance(obj))
 
