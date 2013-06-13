@@ -8,7 +8,6 @@ from smart_selects.utils import unicode_sorter
 
 
 def filterchain(request, app, model, field, value, manager=None):
-    import ipdb; ipdb.set_trace()
     model_class = get_model(app, model)
     if value == '0':
         keywords = {str("%s__isnull" % field): True}
@@ -28,7 +27,6 @@ def filterchain(request, app, model, field, value, manager=None):
 
 
 def filterchain_all(request, app, model, field, value):
-    import ipdb; ipdb.set_trace()
     model_class = get_model(app, model)
     if value == '0':
         keywords = {str("%s__isnull" % field): True}
