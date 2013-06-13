@@ -1,13 +1,20 @@
-from smart_selects.widgets import ChainedSelect
+from django.db.models import get_model
 from django.forms.models import ModelChoiceField
 from django.forms import ChoiceField
-from django.db.models import get_model
+
+from smart_selects.widgets import ChainedSelect
 
 
 class ChainedModelChoiceField(ModelChoiceField):
-    def __init__(self, app_name, model_name, chain_field, model_field, show_all, auto_choose, manager=None, initial=None, *args, **kwargs):
+
+    def __init__(self, app_name, model_name,
+                 chain_field, model_field, show_all,
+                 auto_choose, manager=None,
+                 initial=None, view_name=None, *args, **kwargs):
         defaults = {
-            'widget': ChainedSelect(app_name, model_name, chain_field, model_field, show_all, auto_choose, manager),
+            'widget': ChainedSelect(app_name, model_name, chain_field,
+                                    model_field, show_all, auto_choose,
+                                    manager, view_name),
         }
         defaults.update(kwargs)
         if not 'queryset' in kwargs:
@@ -53,11 +60,8 @@ class GroupedModelSelect(ModelChoiceField):
             choice_index = group_indexes[group_index]
             choices[choice_index][1].append(self.make_choice(item))
         return choices
-    
+
     def make_choice(self, obj):
         return (obj.pk, "   " + self.label_from_instance(obj))
 
     choices = property(_get_choices, ChoiceField._set_choices)
-
-
-

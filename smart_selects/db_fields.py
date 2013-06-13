@@ -1,17 +1,21 @@
 from django.db.models.fields.related import ForeignKey
-import form_fields
+
 try:
     from south.modelsinspector import add_introspection_rules
     has_south = True
-except:
+except ImportError:
     has_south = False
+
+
+from smart_selects import form_fields
 
 
 class ChainedForeignKey(ForeignKey):
     """
     chains the choices of a previous combo box with this one
     """
-    def __init__(self, to, chained_field=None, chained_model_field=None, show_all=False, auto_choose=False, **kwargs):
+    def __init__(self, to, chained_field=None, chained_model_field=None,
+                 show_all=False, auto_choose=False, view_name=None, **kwargs):
         if isinstance(to, basestring):
             self.app_name, self.model_name = to.split('.')
         else:
@@ -21,6 +25,7 @@ class ChainedForeignKey(ForeignKey):
         self.model_field = chained_model_field
         self.show_all = show_all
         self.auto_choose = auto_choose
+        self.view_name = view_name
         ForeignKey.__init__(self, to, **kwargs)
 
     def formfield(self, **kwargs):
@@ -32,12 +37,12 @@ class ChainedForeignKey(ForeignKey):
             'model_name': self.model_name,
             'chain_field': self.chain_field,
             'model_field': self.model_field,
-            'show_all':self.show_all,
-            'auto_choose':self.auto_choose,
+            'show_all': self.show_all,
+            'auto_choose': self.auto_choose,
+            'view_name': self.view_name,
         }
         defaults.update(kwargs)
         return super(ChainedForeignKey, self).formfield(**defaults)
-
 
 
 class GroupedForeignKey(ForeignKey):
