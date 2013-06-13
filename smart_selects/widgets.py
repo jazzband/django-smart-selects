@@ -1,11 +1,14 @@
+import locale
+
 import django
+
 from django.conf import settings
-from django.forms.widgets import Select
 from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
-from django.utils.safestring import mark_safe
 from django.db.models import get_model
-import locale
+from django.forms.widgets import Select
+from django.utils.safestring import mark_safe
+
 from smart_selects.utils import unicode_sorter
 
 
