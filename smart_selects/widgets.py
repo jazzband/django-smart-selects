@@ -37,13 +37,15 @@ class ChainedSelect(Select):
         super(Select, self).__init__(*args, **kwargs)
 
     class Media:
+        extra = '' if settings.DEBUG else '.min'
+        js = [
+            'jquery%s.js' % extra,
+            'jquery.init.js'
+        ]
         if USE_DJANGO_JQUERY:
-            js = [static('admin/%s' % i) for i in
-                  ('js/jquery.min.js', 'js/jquery.init.js')]
+            js = [static('admin/js/%s' % url) for url in js]
         elif JQUERY_URL:
-            js = (
-                JQUERY_URL,
-            )
+            js = [JQUERY_URL]
 
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
