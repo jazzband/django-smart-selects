@@ -2,7 +2,10 @@ import locale
 
 from django.db.models import get_model
 from django.http import HttpResponse
-from django.utils import simplejson
+try:
+    from django.utils import simplejson
+except:
+    import json as simplejson
 
 from smart_selects.utils import unicode_sorter
 
