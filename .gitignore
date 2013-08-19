@@ -1,5 +1,6 @@
 .tmp*
 *.pyc
+*.egg*
 *.DS_Store
 .pydevproject
 .project
