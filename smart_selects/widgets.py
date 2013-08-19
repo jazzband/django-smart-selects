@@ -14,7 +14,7 @@ else:
     USE_DJANGO_JQUERY = False
     JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
 
-URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
+URL_PREFIX = getattr(settings, 'SMART_SELECTS_URL_PREFIX', '')
 
 
 class ChainedSelect(Select):
@@ -36,9 +36,10 @@ class ChainedSelect(Select):
             js = [static('admin/%s' % i) for i in
                   ('js/jquery.min.js', 'js/jquery.init.js')]
         elif JQUERY_URL:
-            js = (
-                JQUERY_URL,
-            )
+            js = [JQUERY_URL]
+        else:
+            js = []
+        js.append('/static/js/smart_selects.js')
 
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
@@ -47,126 +48,35 @@ class ChainedSelect(Select):
             chain_field = self.chain_field
         if not self.view_name:
             if self.show_all:
-                view_name = "chained_filter_all"
+                view_name = 'chained_filter_all'
             else:
-                view_name = "chained_filter"
+                view_name = 'chained_filter'
         else:
             view_name = self.view_name
         kwargs = {'app': self.app_name, 'model': self.model_name,
-                  'field': self.model_field, 'value': "1"}
+                  'field': self.model_field, 'value': '1'}
         if self.manager is not None:
             kwargs.update({'manager': self.manager})
-        url = URL_PREFIX + ("/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2]))
-        if self.auto_choose:
-            auto_choose = 'true'
-        else:
-            auto_choose = 'false'
-        empty_label = iter(self.choices).next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
-        js = """
-        <script type="text/javascript">
-        //<![CDATA[
-        (function($) {
-            function fireEvent(element,event){
-                if (document.createEventObject){
-                // dispatch for IE
-                var evt = document.createEventObject();
-                return element.fireEvent('on'+event,evt)
-                }
-                else{
-                // dispatch for firefox + others
-                var evt = document.createEvent("HTMLEvents");
-                evt.initEvent(event, true, true ); // event type,bubbling,cancelable
-                return !element.dispatchEvent(evt);
-                }
-            }
-
-            function dismissRelatedLookupPopup(win, chosenId) {
-                var name = windowname_to_id(win.name);
-                var elem = document.getElementById(name);
-                if (elem.className.indexOf('vManyToManyRawIdAdminField') != -1 && elem.value) {
-                    elem.value += ',' + chosenId;
-                } else {
-                    elem.value = chosenId;
-                }
-                fireEvent(elem, 'change');
-                win.close();
-            }
-
-            function fill_field(val, init_value){
-                if (!val || val==''){
-                    options = '<option value="">%(empty_label)s<'+'/option>';
-                    $("#%(id)s").html(options);
-                    $('#%(id)s option:first').attr('selected', 'selected');
-                    $("#%(id)s").trigger('change');
-                    return;
-                }
-                $.getJSON("%(url)s/"+val+"/", function(j){
-                    var options = '<option value="">%(empty_label)s<'+'/option>';
-                    for (var i = 0; i < j.length; i++) {
-                        options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
-                    }
-                    var width = $("#%(id)s").outerWidth();
-                    $("#%(id)s").html(options);
-                    if (navigator.appVersion.indexOf("MSIE") != -1)
-                        $("#%(id)s").width(width + 'px');
-                    $('#%(id)s option:first').attr('selected', 'selected');
-                    var auto_choose = %(auto_choose)s;
-                    if(init_value){
-                        $('#%(id)s option[value="'+ init_value +'"]').attr('selected', 'selected');
-                    }
-                    if(auto_choose && j.length == 1){
-                        $('#%(id)s option[value="'+ j[0].value +'"]').attr('selected', 'selected');
-                    }
-                    $("#%(id)s").trigger('change');
-                })
-            }
-
-            if(!$("#id_%(chainfield)s").hasClass("chained")){
-                var val = $("#id_%(chainfield)s").val();
-                fill_field(val, "%(value)s");
-            }
-
-            $("#id_%(chainfield)s").change(function(){
-                var start_value = $("#%(id)s").val();
-                var val = $(this).val();
-                fill_field(val, start_value);
-            })
-
-            if (typeof(dismissAddAnotherPopup) !== 'undefined') {
-                var oldDismissAddAnotherPopup = dismissAddAnotherPopup;
-                dismissAddAnotherPopup = function(win, newId, newRepr) {
-                    oldDismissAddAnotherPopup(win, newId, newRepr);
-                    if (windowname_to_id(win.name) == "id_%(chainfield)s") {
-                        $("#id_%(chainfield)s").change();
-                    }
-                }
-            }
-        })(jQuery || django.jQuery);
-        //]]>
-        </script>
-
-        """
-        js = js % {"chainfield": chain_field,
-                   "url": url,
-                   "id": attrs['id'],
-                   'value': value,
-                   'auto_choose': auto_choose,
-                   'empty_label': empty_label}
+        url = URL_PREFIX + ('/'.join(reverse(view_name, kwargs=kwargs).split('/')[:-2]))
+        # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
+        empty_label = iter(self.choices).next()[1]
+        data_div = '<div data-chained-field="%s" data-url="%s" data-value="%s" data-auto-choose="%s" ' \
+                   'data-empty-label="%s" data-id="%s"></div>' \
+                   % (chain_field, url, value, self.auto_choose, empty_label, id)
         final_choices = []
-
         if value:
             item = self.queryset.filter(pk=value)[0]
             try:
-                pk = getattr(item, self.model_field + "_id")
+                pk = getattr(item, self.model_field + '_id')
                 key_filter = {self.model_field: pk}
             except AttributeError:
                 try:  # maybe m2m?
                     pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
-                    key_filter = {self.model_field + "__in": pks}
+                    key_filter = {self.model_field + '__in': pks}
                 except AttributeError:
                     try:  # maybe a set?
-                        pks = getattr(item, self.model_field + "_set").all().values_list('pk', flat=True)
-                        key_filter = {self.model_field + "__in": pks}
+                        pks = getattr(item, self.model_field + '_set').all().values_list('pk', flat=True)
+                        key_filter = {self.model_field + '__in': pks}
                     except Exception:   # give up
                         key_filter = {}
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**key_filter).distinct())
@@ -174,9 +84,9 @@ class ChainedSelect(Select):
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
         if len(final_choices) > 1:
-            final_choices = [("", empty_label)] + final_choices
+            final_choices = [('', empty_label)] + final_choices
         if self.show_all:
-            final_choices.append(("", empty_label))
+            final_choices.append(('', empty_label))
             self.choices = list(self.choices)
             self.choices.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
@@ -189,5 +99,6 @@ class ChainedSelect(Select):
         else:
             final_attrs['class'] = 'chained'
         output = super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
-        output += js
+        output += data_div
+        print 'Are you seeing this?!'
         return mark_safe(output)
