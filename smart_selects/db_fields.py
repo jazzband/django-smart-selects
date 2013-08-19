@@ -1,13 +1,9 @@
 from django.db.models.fields.related import ForeignKey
-
+from smart_selects import form_fields
 try:
     from south.modelsinspector import add_introspection_rules
-    has_south = True
 except ImportError:
-    has_south = False
-
-
-from smart_selects import form_fields
+    add_introspection_rules = None
 
 
 class ChainedForeignKey(ForeignKey):
@@ -26,7 +22,7 @@ class ChainedForeignKey(ForeignKey):
         self.show_all = show_all
         self.auto_choose = auto_choose
         self.view_name = view_name
-        ForeignKey.__init__(self, to, **kwargs)
+        super(ChainedForeignKey, self).__init__(self, to, **kwargs)
 
     def formfield(self, **kwargs):
         defaults = {
@@ -63,9 +59,10 @@ class GroupedForeignKey(ForeignKey):
             'order_field': self.group_field,
         }
         defaults.update(kwargs)
-        return super(ForeignKey, self).formfield(**defaults)
+        return super(GroupedForeignKey, self).formfield(**defaults)
 
-if has_south:
+
+if add_introspection_rules:
     rules_grouped = [(
         (GroupedForeignKey,),
         [],
@@ -74,6 +71,5 @@ if has_south:
             'group_field': ['group_field', {}],
         },
     )]
-
     add_introspection_rules([], ["^smart_selects\.db_fields\.ChainedForeignKey"])
     add_introspection_rules(rules_grouped, ["^smart_selects\.db_fields\.GroupedForeignKey"])

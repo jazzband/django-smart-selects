@@ -1,9 +1,7 @@
-import locale
-
+from json import dumps
+from locale import strcoll
 from django.db.models import get_model
 from django.http import HttpResponse
-from django.utils import simplejson
-
 from smart_selects.utils import unicode_sorter
 
 
@@ -18,12 +16,11 @@ def filterchain(request, app, model, field, value, manager=None):
     else:
         queryset = model_class._default_manager
     results = list(queryset.filter(**keywords))
-    results.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+    results.sort(cmp=strcoll, key=lambda x: unicode_sorter(unicode(x)))
     result = []
     for item in results:
         result.append({'value': item.pk, 'display': unicode(item)})
-    json = simplejson.dumps(result)
-    return HttpResponse(json, mimetype='application/json')
+    return HttpResponse(dumps(result), mimetype='application/json')
 
 
 def filterchain_all(request, app, model, field, value):
@@ -33,15 +30,13 @@ def filterchain_all(request, app, model, field, value):
     else:
         keywords = {str(field): str(value)}
     results = list(model_class._default_manager.filter(**keywords))
-    results.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+    results.sort(cmp=strcoll, key=lambda x: unicode_sorter(unicode(x)))
     final = []
     for item in results:
         final.append({'value': item.pk, 'display': unicode(item)})
     results = list(model_class._default_manager.exclude(**keywords))
-    results.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+    results.sort(cmp=strcoll, key=lambda x: unicode_sorter(unicode(x)))
     final.append({'value': "", 'display': "---------"})
-
     for item in results:
         final.append({'value': item.pk, 'display': unicode(item)})
-    json = simplejson.dumps(final)
-    return HttpResponse(json, mimetype='application/json')
+    return HttpResponse(dumps(final), mimetype='application/json')

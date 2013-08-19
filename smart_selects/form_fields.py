@@ -1,7 +1,6 @@
 from django.db.models import get_model
 from django.forms.models import ModelChoiceField
 from django.forms import ChoiceField
-
 from smart_selects.widgets import ChainedSelect
 
 
@@ -19,7 +18,7 @@ class ChainedModelChoiceField(ModelChoiceField):
         defaults.update(kwargs)
         if not 'queryset' in kwargs:
             queryset = get_model(app_name, model_name).objects.all()
-            super(ChainedModelChoiceField, self).__init__(queryset=queryset, initial=initial, *args, **defaults)
+            super(ChainedModelChoiceField, self).__init__(queryset=queryset, initial=initial, **defaults)
         else:
             super(ChainedModelChoiceField, self).__init__(initial=initial, *args, **defaults)
 
@@ -62,6 +61,6 @@ class GroupedModelSelect(ModelChoiceField):
         return choices
 
     def make_choice(self, obj):
-        return (obj.pk, "   " + self.label_from_instance(obj))
+        return obj.pk, "   " + self.label_from_instance(obj)
 
     choices = property(_get_choices, ChoiceField._set_choices)

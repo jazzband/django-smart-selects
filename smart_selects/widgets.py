@@ -1,19 +1,14 @@
 import locale
-
-import django
-
 from django.conf import settings
 from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.forms.widgets import Select
 from django.utils.safestring import mark_safe
-
 from smart_selects.utils import unicode_sorter
 
 
-if django.VERSION >= (1, 2, 0) and getattr(settings,
-                                           'USE_DJANGO_JQUERY', True):
+if getattr(settings, 'USE_DJANGO_JQUERY', True):
     USE_DJANGO_JQUERY = True
 else:
     USE_DJANGO_JQUERY = False
@@ -163,31 +158,31 @@ class ChainedSelect(Select):
             item = self.queryset.filter(pk=value)[0]
             try:
                 pk = getattr(item, self.model_field + "_id")
-                filter = {self.model_field: pk}
+                key_filter = {self.model_field: pk}
             except AttributeError:
                 try:  # maybe m2m?
                     pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
-                    filter = {self.model_field + "__in": pks}
+                    key_filter = {self.model_field + "__in": pks}
                 except AttributeError:
                     try:  # maybe a set?
                         pks = getattr(item, self.model_field + "_set").all().values_list('pk', flat=True)
-                        filter = {self.model_field + "__in": pks}
-                    except:  # give up
-                        filter = {}
-            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
+                        key_filter = {self.model_field + "__in": pks}
+                    except Exception:   # give up
+                        key_filter = {}
+            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**key_filter).distinct())
             filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
         if len(final_choices) > 1:
-            final_choices = [("", (empty_label))] + final_choices
+            final_choices = [("", empty_label)] + final_choices
         if self.show_all:
-            final_choices.append(("", (empty_label)))
+            final_choices.append(("", empty_label))
             self.choices = list(self.choices)
             self.choices.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
                 if not ch in final_choices:
                     final_choices.append(ch)
-        self.choices = ()
+        self.choices = []
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
