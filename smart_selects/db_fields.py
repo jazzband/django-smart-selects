@@ -22,7 +22,7 @@ class ChainedForeignKey(ForeignKey):
         self.show_all = show_all
         self.auto_choose = auto_choose
         self.view_name = view_name
-        super(ChainedForeignKey, self).__init__(self, to, **kwargs)
+        super(ChainedForeignKey, self).__init__(to, **kwargs)
 
     def formfield(self, **kwargs):
         defaults = {
