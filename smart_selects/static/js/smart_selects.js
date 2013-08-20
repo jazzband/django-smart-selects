@@ -5,19 +5,19 @@
    queries for those inputs, based on the given fields' values, and then deletes the data elements. */
 (function ($) {
     "use strict";
-    $('div.field-smart-select-data').each(function () {
-        var dismissAddAnotherPopup,
-            oldDismissAddAnotherPopup,
-            chained_field = this.getAttribute('data-chained-field'),
-            url = this.getAttribute('data-url'),
-            value = this.getAttribute('data-value'),
-            auto_choose = this.getAttribute('data-auto-choose') === 'True',
-            empty_label = this.getAttribute('data-empty-label'),
-            $chained_field = $('#id_' + chained_field),
-            $select_box = $('#' + this.getAttribute('data-id'));
-        console.log('Are you seeing this?!');
-        $(document).ready(function () {
-            var val;
+    $(function () {
+        $('div.field-smart-select-data').each(function () {
+            var dismissAddAnotherPopup,
+                oldDismissAddAnotherPopup,
+                chained_field = this.getAttribute('data-chained-field'),
+                url = this.getAttribute('data-url'),
+                value = this.getAttribute('data-value'),
+                auto_choose = this.getAttribute('data-auto-choose') === 'True',
+                empty_label = this.getAttribute('data-empty-label'),
+                $chained_field = $('#id_' + chained_field),
+                $select_box = $('#' + this.getAttribute('data-id')),
+                val;
+            $(this).remove();
             function fill_field(val, init_value) {
                 var options;
                 if (!val || val === '') {
@@ -58,15 +58,15 @@
                 val = $(this).val();
                 fill_field(val, start_value);
             });
+            if (dismissAddAnotherPopup !== undefined) {
+                oldDismissAddAnotherPopup = dismissAddAnotherPopup;
+                dismissAddAnotherPopup = function (win, newId, newRepr) {
+                    oldDismissAddAnotherPopup(win, newId, newRepr);
+                    if (windowname_to_id(win.name) === 'id_' + chained_field) {
+                        $chained_field.change();
+                    }
+                };
+            }
         });
-        if (dismissAddAnotherPopup !== undefined) {
-            oldDismissAddAnotherPopup = dismissAddAnotherPopup;
-            dismissAddAnotherPopup = function (win, newId, newRepr) {
-                oldDismissAddAnotherPopup(win, newId, newRepr);
-                if (windowname_to_id(win.name) === 'id_' + chained_field) {
-                    $chained_field.change();
-                }
-            };
-        }
     });
 }(jQuery || django.jQuery));

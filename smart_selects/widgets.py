@@ -60,9 +60,9 @@ class ChainedSelect(Select):
         url = URL_PREFIX + ('/'.join(reverse(view_name, kwargs=kwargs).split('/')[:-2]))
         # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
         empty_label = iter(self.choices).next()[1]
-        data_div = '<div data-chained-field="%s" data-url="%s" data-value="%s" data-auto-choose="%s" ' \
-                   'data-empty-label="%s" data-id="%s"></div>' \
-                   % (chain_field, url, value, self.auto_choose, empty_label, id)
+        data_div = '<div class="field-smart-select-data" style="display: none" data-chained-field="%s" data-url="%s" ' \
+                   'data-value="%s" data-auto-choose="%s" data-empty-label="%s" data-id="%s"></div>' \
+                   % (chain_field, url, value, self.auto_choose, empty_label, attrs['id'])
         final_choices = []
         if value:
             item = self.queryset.filter(pk=value)[0]
@@ -100,5 +100,4 @@ class ChainedSelect(Select):
             final_attrs['class'] = 'chained'
         output = super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
         output += data_div
-        print 'Are you seeing this?!'
         return mark_safe(output)
