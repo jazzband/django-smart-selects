@@ -18,6 +18,10 @@
                 $select_box = $('#' + this.getAttribute('data-id')),
                 val;
             $(this).remove();
+            // Add default selected data if it is not already there
+            if ($select_box.data('defaultSelected') !== undefined) {
+                $select_box.data('defaultSelected', $select_box.val());
+            }
             function fill_field(val, init_value) {
                 var options;
                 if (!val || val === '') {
