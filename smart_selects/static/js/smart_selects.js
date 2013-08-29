@@ -1,5 +1,5 @@
 /*jslint indent: 4, maxlen: 120 */
-/*global $: false, document, jQuery, django, navigator, windowname_to_id */
+/*global $: false, window, document, jQuery, django, navigator */
 
 // TODO: get rid of this hack when Django 1.6
 if ($.fn.jquery === '1.4.2') {
@@ -14,7 +14,6 @@ if ($.fn.jquery === '1.4.2') {
         $('div.field-smart-select-data').each(function () {
             var chained_field = this.getAttribute('data-chained-field'),
                 url = this.getAttribute('data-url'),
-                value = this.getAttribute('data-value'),
                 auto_choose = this.getAttribute('data-auto-choose') === 'True',
                 empty_label = this.getAttribute('data-empty-label'),
                 $el = $(this),
@@ -80,7 +79,7 @@ if ($.fn.jquery === '1.4.2') {
         // Check for new inline chained selects
         window.setTimeout(
             function () {
-                $('#content-main').children('form').get(0).addEventListener("DOMNodeInserted", function(e) {
+                $('#content-main').children('form').get(0).addEventListener("DOMNodeInserted", function (e) {
                     var element = e.target;
                     if (element.tagName.toLowerCase() === 'tr' ||
                         (' ' + element.className + ' ').indexOf(' inline-related ') > -1) {
