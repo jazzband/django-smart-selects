@@ -45,17 +45,12 @@ if ($.fn.jquery === '1.4.2') {
                     return;
                 }
                 $.getJSON(url + '/' + val + '/', function (j) {
-                    var width,
-                        i;
+                    var i;
                     options = '<option value="">' + empty_label + '</option>';
                     for (i = 0; i < j.length; i += 1) {
                         options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
                     }
-                    width = $select_box.outerWidth();
                     $select_box.html(options);
-                    if (navigator.appVersion.indexOf('MSIE') !== -1) {
-                        $select_box.width(width + 'px');
-                    }
                     $select_box.children('option:first').attr('selected', 'selected');
                     if (init_value) {
                         $select_box.children('option[value="' + init_value + '"]').attr('selected', 'selected');
