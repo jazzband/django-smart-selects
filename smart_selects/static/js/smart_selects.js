@@ -44,24 +44,29 @@ if ($.fn.jquery === '1.4.2') {
                     $select_box.trigger('change');
                     return;
                 }
-                $.getJSON(url + '/' + val + '/', function (j) {
-                    var i;
-                    options = '<option value="">' + empty_label + '</option>';
-                    for (i = 0; i < j.length; i += 1) {
-                        options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
+                $.ajax({
+                    dataType: 'json',
+                    cache: false,   // for IE
+                    url: url + '/' + val + '/',
+                    success: function (j) {
+                        var i;
+                        options = '<option value="">' + empty_label + '</option>';
+                        for (i = 0; i < j.length; i += 1) {
+                            options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
+                        }
+                        $select_box.html(options);
+                        if (init_value) {
+                            $select_box.children('option[value="' + init_value + '"]').attr('selected', 'selected');
+                        }
+                        if (auto_choose && j.length === 1) {
+                            $select_box.children('option[value="' + j[0].value + '"]').attr('selected', 'selected');
+                        }
+                        // Add default selected data if it is not already there
+                        if ($select_box.data('defaultSelected') === undefined) {
+                            $select_box.data('defaultSelected', $select_box.val());
+                        }
+                        $select_box.trigger('change');
                     }
-                    $select_box.html(options);
-                    if (init_value) {
-                        $select_box.children('option[value="' + init_value + '"]').attr('selected', 'selected');
-                    }
-                    if (auto_choose && j.length === 1) {
-                        $select_box.children('option[value="' + j[0].value + '"]').attr('selected', 'selected');
-                    }
-                    // Add default selected data if it is not already there
-                    if ($select_box.data('defaultSelected') === undefined) {
-                        $select_box.data('defaultSelected', $select_box.val());
-                    }
-                    $select_box.trigger('change');
                 });
             });
             $chained_field.change();
