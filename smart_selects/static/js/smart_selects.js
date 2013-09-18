@@ -51,7 +51,6 @@ if ($.fn.jquery === '1.4.2') {
                         options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
                     }
                     $select_box.html(options);
-                    $select_box.children('option:first').attr('selected', 'selected');
                     if (init_value) {
                         $select_box.children('option[value="' + init_value + '"]').attr('selected', 'selected');
                     }
