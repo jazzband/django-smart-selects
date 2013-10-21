@@ -48,6 +48,9 @@ if ($.fn.jquery === '1.4.2') {
                     dataType: 'json',
                     cache: false,   // for IE
                     url: url + '/' + val + '/',
+                    data: {
+                        'current_value': $select_box.val()
+                    },
                     success: function (j) {
                         var i;
                         options = '<option value="">' + empty_label + '</option>';

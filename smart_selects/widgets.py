@@ -65,7 +65,8 @@ class ChainedSelect(Select):
                    % (chain_field, url, value, self.auto_choose, empty_label, attrs['id'])
         final_choices = []
         if value:
-            item = self.queryset.filter(pk=value)[0]
+            queryset = get_model(self.app_name, self.model_name).objects.relatable(value=value)
+            item = queryset.filter(pk=value)[0]
             try:
                 pk = getattr(item, self.model_field + '_id')
                 key_filter = {self.model_field: pk}
@@ -79,7 +80,7 @@ class ChainedSelect(Select):
                         key_filter = {self.model_field + '__in': pks}
                     except Exception:   # give up
                         key_filter = {}
-            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**key_filter).distinct())
+            filtered = list(queryset.filter(**key_filter).distinct())
             filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
