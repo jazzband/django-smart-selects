@@ -4,6 +4,18 @@ from django.forms import ChoiceField
 from smart_selects.widgets import ChainedSelect
 
 
+class ChainedChoiceField(ChoiceField):
+
+    def __init__(self, chain_field, show_all, auto_choose,
+                 initial=None, view_name=None, choices=None, *args, **kwargs):
+        defaults = {
+            'widget': ChainedSelect(chain_field=chain_field, show_all=show_all,
+                auto_choose=auto_choose, view_name=view_name, choices=choices),
+        }
+        defaults.update(kwargs)
+        super(ChainedChoiceField, self).__init__(choices=choices, initial=initial, *args, **defaults)
+
+
 class ChainedModelChoiceField(ModelChoiceField):
 
     def __init__(self, app_name, model_name,

@@ -18,9 +18,9 @@ URL_PREFIX = getattr(settings, 'SMART_SELECTS_URL_PREFIX', '')
 
 
 class ChainedSelect(Select):
-    def __init__(self, app_name, model_name, chain_field,
-                 model_field, show_all, auto_choose,
-                 manager=None, view_name=None, *args, **kwargs):
+    def __init__(self, app_name=None, model_name=None, chain_field=None,
+                 model_field=None, show_all=None, auto_choose=None,
+                 manager=None, view_name=None, choices=None, *args, **kwargs):
         self.app_name = app_name
         self.model_name = model_name
         self.chain_field = chain_field
@@ -29,6 +29,7 @@ class ChainedSelect(Select):
         self.auto_choose = auto_choose
         self.manager = manager
         self.view_name = view_name
+        self.choices = choices
         super(Select, self).__init__(*args, **kwargs)
 
     class Media:
@@ -46,50 +47,52 @@ class ChainedSelect(Select):
             chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
         else:
             chain_field = self.chain_field
+
         if not self.view_name:
+            kwargs = {'app': self.app_name, 'model': self.model_name,
+                      'field': self.model_field, 'value': '1'}
             if self.show_all:
                 view_name = 'chained_filter_all'
             else:
                 view_name = 'chained_filter'
         else:
+            kwargs = {'value': '1'}
             view_name = self.view_name
-        kwargs = {'app': self.app_name, 'model': self.model_name,
-                  'field': self.model_field, 'value': '1'}
+
         if self.manager is not None:
             kwargs.update({'manager': self.manager})
+
         url = URL_PREFIX + ('/'.join(reverse(view_name, kwargs=kwargs).split('/')[:-2]))
         # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
         empty_label = iter(self.choices).next()[1]
         data_div = '<div class="field-smart-select-data" style="display: none" data-chained-field="%s" data-url="%s" ' \
                    'data-value="%s" data-auto-choose="%s" data-empty-label="%s" data-id="%s"></div>' \
                    % (chain_field, url, value, self.auto_choose, empty_label, attrs['id'])
-        final_choices = []
-        if value:
-            queryset = get_model(self.app_name, self.model_name).objects.relatable(value=value)
-            item = queryset.filter(pk=value)[0]
-            try:
-                pk = getattr(item, self.model_field + '_id')
-                key_filter = {self.model_field: pk}
-            except AttributeError:
-                try:  # maybe m2m?
-                    pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
-                    key_filter = {self.model_field + '__in': pks}
+        if self.choices:
+            final_choices = self.choices
+        else:
+            final_choices = [('', empty_label)]
+            if value:
+                queryset = get_model(self.app_name, self.model_name).objects.relatable(value=value)
+                item = queryset.filter(pk=value)[0]
+                try:
+                    pk = getattr(item, self.model_field + '_id')
+                    key_filter = {self.model_field: pk}
                 except AttributeError:
-                    try:  # maybe a set?
-                        pks = getattr(item, self.model_field + '_set').all().values_list('pk', flat=True)
+                    try:  # maybe m2m?
+                        pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
                         key_filter = {self.model_field + '__in': pks}
-                    except Exception:   # give up
-                        key_filter = {}
-            filtered = list(queryset.filter(**key_filter).distinct())
-            filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
-            for choice in filtered:
-                final_choices.append((choice.pk, unicode(choice)))
-        if len(final_choices) > 1:
-            final_choices = [('', empty_label)] + final_choices
+                    except AttributeError:
+                        try:  # maybe a set?
+                            pks = getattr(item, self.model_field + '_set').all().values_list('pk', flat=True)
+                            key_filter = {self.model_field + '__in': pks}
+                        except Exception:   # give up
+                            key_filter = {}
+                filtered = list(queryset.filter(**key_filter).distinct())
+                filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+                final_choices += [(choice.pk, unicode(choice)) for choice in filtered]
         if self.show_all:
             final_choices.append(('', empty_label))
-            self.choices = list(self.choices)
-            self.choices.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
                 if not ch in final_choices:
                     final_choices.append(ch)
