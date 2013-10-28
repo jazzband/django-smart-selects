@@ -22,12 +22,6 @@ class ChainedModelChoiceField(ModelChoiceField):
         else:
             super(ChainedModelChoiceField, self).__init__(initial=initial, *args, **defaults)
 
-    def _get_choices(self):
-        self.widget.queryset = self.queryset
-        choices = super(ChainedModelChoiceField, self)._get_choices()
-        return choices
-    choices = property(_get_choices, ChoiceField._set_choices)
-
 
 class GroupedModelSelect(ModelChoiceField):
     def __init__(self, queryset, order_field, *args, **kwargs):

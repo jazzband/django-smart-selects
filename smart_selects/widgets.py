@@ -41,6 +41,9 @@ class ChainedSelect(Select):
             js = []
         js.append('/static/js/smart_selects.js')
 
+    def get_queryset(self, value):
+        return get_model(self.app_name, self.model_name).objects
+
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
             chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
@@ -65,7 +68,7 @@ class ChainedSelect(Select):
                    % (chain_field, url, value, self.auto_choose, empty_label, attrs['id'])
         final_choices = []
         if value:
-            queryset = get_model(self.app_name, self.model_name).objects.relatable(value=value)
+            queryset = self.get_queryset(value)
             item = queryset.filter(pk=value)[0]
             try:
                 pk = getattr(item, self.model_field + '_id')

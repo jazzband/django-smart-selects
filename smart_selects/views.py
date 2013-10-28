@@ -14,7 +14,7 @@ def filterchain(request, app, model, field, value, manager=None):
     if manager is not None and hasattr(model_class, manager):
         queryset = getattr(model_class, manager)
     else:
-        queryset = model_class._default_manager.relatable(value=request.GET.get('current_value'))
+        queryset = model_class._default_manager
     results = list(queryset.filter(**keywords))
     results.sort(cmp=strcoll, key=lambda x: unicode_sorter(unicode(x)))
     result = []
