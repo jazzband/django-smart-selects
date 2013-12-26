@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
-from django.forms.widgets import Select
+from django.forms.widgets import Select, SelectMultiple
 from django.utils.safestring import mark_safe
 from smart_selects.utils import unicode_sorter
 
@@ -30,7 +30,7 @@ class ChainedSelect(Select):
         self.manager = manager
         self.view_name = view_name
         self.choices = choices
-        super(Select, self).__init__(*args, **kwargs)
+        super(ChainedSelect, self).__init__(*args, **kwargs)
 
     class Media:
         if USE_DJANGO_JQUERY:
@@ -41,6 +41,9 @@ class ChainedSelect(Select):
         else:
             js = []
         js.append('/static/js/smart_selects.js')
+
+    def get_queryset(self, value):
+        return get_model(self.app_name, self.model_name).objects
 
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
@@ -63,17 +66,22 @@ class ChainedSelect(Select):
             kwargs.update({'manager': self.manager})
 
         url = URL_PREFIX + ('/'.join(reverse(view_name, kwargs=kwargs).split('/')[:-2]))
-        # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
-        empty_label = iter(self.choices).next()[1]
+        if self.allow_multiple_selected:
+            empty_label = None
+        else:
+            # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
+            empty_label = iter(self.choices).next()[1]
         data_div = '<div class="field-smart-select-data" style="display: none" data-chained-field="%s" data-url="%s" ' \
                    'data-value="%s" data-auto-choose="%s" data-empty-label="%s" data-id="%s"></div>' \
-                   % (chain_field, url, value, self.auto_choose, empty_label, attrs['id'])
-        if self.choices:
-            final_choices = self.choices
-        else:
-            final_choices = [('', empty_label)]
+                   % (chain_field, url, value, self.auto_choose, empty_label or '', attrs['id'])
+        if self.app_name:
+            # if Model field
+            if empty_label:
+                final_choices = [('', empty_label)]
+            else:
+                final_choices = []
             if value:
-                queryset = get_model(self.app_name, self.model_name).objects.relatable(value=value)
+                queryset = self.get_queryset(value)
                 item = queryset.filter(pk=value)[0]
                 try:
                     pk = getattr(item, self.model_field + '_id')
@@ -91,6 +99,9 @@ class ChainedSelect(Select):
                 filtered = list(queryset.filter(**key_filter).distinct())
                 filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
                 final_choices += [(choice.pk, unicode(choice)) for choice in filtered]
+        else:
+            # if non-Model field
+            final_choices = self.choices
         if self.show_all:
             final_choices.append(('', empty_label))
             for ch in self.choices:
@@ -105,3 +116,15 @@ class ChainedSelect(Select):
         output = super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
         output += data_div
         return mark_safe(output)
+
+
+from django.contrib.admin.widgets import FilteredSelectMultiple
+class ChainedSelectMultiple(ChainedSelect, FilteredSelectMultiple):
+    
+    def __init__(self, *args, **kwargs):
+        defaults = {
+            'is_stacked': False,
+        }
+        defaults.update(kwargs)
+        super(ChainedSelectMultiple, self).__init__(*args, **defaults)
+
