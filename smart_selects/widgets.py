@@ -68,7 +68,11 @@ class ChainedSelect(Select):
             auto_choose = 'true'
         else:
             auto_choose = 'false'
-        empty_label = iter(self.choices).next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
+        iterator = iter(self.choices)
+        if hasattr(iterator, '__next__'):
+            empty_label = iterator.__next__()[1]
+        else:
+            empty_label = iterator.next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
         js = """
         <script type="text/javascript">
         //<![CDATA[
@@ -178,7 +182,7 @@ class ChainedSelect(Select):
                     except:  # give up
                         filter = {}
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
-            filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+            filtered.sort(key=lambda x: unicode_sorter(unicode(x)))
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
         if len(final_choices) > 1:
@@ -186,7 +190,7 @@ class ChainedSelect(Select):
         if self.show_all:
             final_choices.append(("", (empty_label)))
             self.choices = list(self.choices)
-            self.choices.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(x[1]))
+            self.choices.sort(key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
                 if not ch in final_choices:
                     final_choices.append(ch)
