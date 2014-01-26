@@ -7,6 +7,7 @@ from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.forms.widgets import Select
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 
 from smart_selects.utils import unicode_sorter
@@ -182,9 +183,9 @@ class ChainedSelect(Select):
                     except:  # give up
                         filter = {}
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
-            filtered.sort(key=lambda x: unicode_sorter(unicode(x)))
+            filtered.sort(key=lambda x: unicode_sorter(force_text(x)))
             for choice in filtered:
-                final_choices.append((choice.pk, unicode(choice)))
+                final_choices.append((choice.pk, force_text(choice)))
         if len(final_choices) > 1:
             final_choices = [("", (empty_label))] + final_choices
         if self.show_all:
