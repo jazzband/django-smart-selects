@@ -21,7 +21,6 @@ class ChainedField(object):
         return queryset.filter(**keywords)
  
     def clean_form(self, field_name, form_cleaned_data):
-        print self.widget.chain_field
         queryset = self._get_queryset_choices(form_cleaned_data[self.widget.chain_field])
         if queryset is None:
             return
@@ -31,7 +30,7 @@ class ChainedField(object):
 
 class ChainedChoiceField(ChainedField, ChoiceField):
 
-    def __init__(self, chain_field, show_all, auto_choose,
+    def __init__(self, chain_field, show_all=False, auto_choose=True,
                  initial=None, view_name=None, choices=None, *args, **kwargs):
         defaults = {
             'widget': ChainedSelect(chain_field=chain_field, show_all=show_all,
@@ -43,7 +42,7 @@ class ChainedChoiceField(ChainedField, ChoiceField):
 
 class ChainedMultipleChoiceField(ChainedField, MultipleChoiceField):
 
-    def __init__(self, chain_field, show_all, auto_choose,
+    def __init__(self, chain_field, show_all=False, auto_choose=True,
                  initial=None, view_name=None, choices=None, *args, **kwargs):
         defaults = {
             'widget': ChainedSelectMultiple(chain_field=chain_field, show_all=show_all,
@@ -56,8 +55,8 @@ class ChainedMultipleChoiceField(ChainedField, MultipleChoiceField):
 class ChainedModelChoiceField(ChainedField, ModelChoiceField):
 
     def __init__(self, app_name, model_name,
-                 chain_field, model_field, show_all,
-                 auto_choose, manager=None,
+                 chain_field, model_field, show_all=False,
+                 auto_choose=True, manager=None,
                  initial=None, view_name=None, *args, **kwargs):
         defaults = {
             'widget': ChainedSelect(app_name, model_name, chain_field,
@@ -75,10 +74,9 @@ class ChainedModelChoiceField(ChainedField, ModelChoiceField):
 class ChainedModelMultipleChoiceField(ChainedField, ModelMultipleChoiceField):
 
     def __init__(self, app_name, model_name,
-                 chain_field, model_field, show_all,
-                 auto_choose, manager=None,
+                 chain_field, model_field, show_all=False,
+                 auto_choose=True, manager=None,
                  initial=None, view_name=None, *args, **kwargs):
-        print args, kwargs
         defaults = {
             'widget': ChainedSelectMultiple(app_name, model_name, chain_field,
                                     model_field, show_all, auto_choose,
