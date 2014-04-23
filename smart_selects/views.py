@@ -2,7 +2,10 @@ import locale
 
 from django.db.models import get_model
 from django.http import HttpResponse
-from django.utils import simplejson
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
 
 from smart_selects.utils import unicode_sorter
 
@@ -22,8 +25,8 @@ def filterchain(request, app, model, field, value, manager=None):
     result = []
     for item in results:
         result.append({'value': item.pk, 'display': unicode(item)})
-    json = simplejson.dumps(result)
-    return HttpResponse(json, mimetype='application/json')
+    json_data = json.dumps(result)
+    return HttpResponse(json_data, mimetype='application/json')
 
 
 def filterchain_all(request, app, model, field, value):
@@ -43,5 +46,5 @@ def filterchain_all(request, app, model, field, value):
 
     for item in results:
         final.append({'value': item.pk, 'display': unicode(item)})
-    json = simplejson.dumps(final)
-    return HttpResponse(json, mimetype='application/json')
+    json_data = json.dumps(final)
+    return HttpResponse(json_data, mimetype='application/json')
