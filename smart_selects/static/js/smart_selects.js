@@ -30,9 +30,17 @@ if ($.fn.jquery === '1.4.2') {
             }
             $el.remove();
             $chained_field.change(function () {
-                var init_value = $select_box.val(),
+                var init_values = $el.data('initValues'),
                     val = $(this).val(),
                     options;
+                if (init_values !== undefined) {
+                    if (typeof init_values === 'number') {
+                        init_values = [init_values];
+                    } else {
+                        init_values = init_values.split(',');
+                    }
+                }
+
                 if (!val || val === '') {
                     options = '<option value="">' + empty_label + '</option>';
                     $select_box.html(options);
@@ -58,8 +66,9 @@ if ($.fn.jquery === '1.4.2') {
                             options += '<option value="' + j[i].value + '">' + j[i].display + '</option>';
                         }
                         $select_box.html(options);
-                        if (init_value) {
-                            $select_box.children('option[value="' + init_value + '"]').attr('selected', 'selected');
+                        if (init_values) {
+                            for (var value_index = 0; value_index < init_values.length; ++value_index)
+                            $select_box.children('option[value="' + init_values[value_index] + '"]').attr('selected', 'selected');
                         }
                         if (auto_choose && j.length === 1) {
                             $select_box.children('option[value="' + j[0].value + '"]').attr('selected', 'selected');
@@ -78,18 +87,5 @@ if ($.fn.jquery === '1.4.2') {
     $(function () {
         // Add all current chained selects
         add_chaining_handlers();
-        // Check for new inline chained selects
-        window.setTimeout(
-            function () {
-                $('#content-main').children('form').get(0).addEventListener("DOMNodeInserted", function (e) {
-                    var element = e.target;
-                    if (element.tagName.toLowerCase() === 'tr' ||
-                        (' ' + element.className + ' ').indexOf(' inline-related ') > -1) {
-                        add_chaining_handlers();
-                    }
-                }, false);
-            },
-            500
-        );
     });
 }(jQuery || django.jQuery));
