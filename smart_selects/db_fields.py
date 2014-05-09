@@ -15,7 +15,7 @@ class ChainedForeignKey(ForeignKey):
     chains the choices of a previous combo box with this one
     """
     def __init__(self, to, chained_field=None, chained_model_field=None,
-                 show_all=False, auto_choose=False, view_name=None, **kwargs):
+                 show_all=False, auto_choose=False, view_name=None, exclude_self=None, **kwargs):
         if isinstance(to, basestring):
             self.app_name, self.model_name = to.split('.')
         else:
@@ -27,11 +27,17 @@ class ChainedForeignKey(ForeignKey):
         self.auto_choose = auto_choose
         self.view_name = view_name
         ForeignKey.__init__(self, to, **kwargs)
+        self.exclude_self = exclude_self
+
+
+        if exclude_self:
+            self.exclude_self = exclude_self
 
     def formfield(self, **kwargs):
+        qs = self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to),
         defaults = {
             'form_class': form_fields.ChainedModelChoiceField,
-            'queryset': self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to),
+            'queryset': qs,
             'to_field_name': self.rel.field_name,
             'app_name': self.app_name,
             'model_name': self.model_name,
@@ -40,6 +46,7 @@ class ChainedForeignKey(ForeignKey):
             'show_all': self.show_all,
             'auto_choose': self.auto_choose,
             'view_name': self.view_name,
+            'exclude_self': self.exclude_self,
         }
         defaults.update(kwargs)
         return super(ChainedForeignKey, self).formfield(**defaults)

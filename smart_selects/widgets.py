@@ -25,7 +25,7 @@ URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 class ChainedSelect(Select):
     def __init__(self, app_name, model_name, chain_field,
                  model_field, show_all, auto_choose,
-                 manager=None, view_name=None, *args, **kwargs):
+                 manager=None, view_name=None, exclude_self=None, *args, **kwargs):
         self.app_name = app_name
         self.model_name = model_name
         self.chain_field = chain_field
@@ -34,6 +34,7 @@ class ChainedSelect(Select):
         self.auto_choose = auto_choose
         self.manager = manager
         self.view_name = view_name
+        self.exclude_self = exclude_self
         super(Select, self).__init__(*args, **kwargs)
 
     class Media:
@@ -99,6 +100,18 @@ class ChainedSelect(Select):
                 win.close();
             }
 
+            // NEW: get exclude_self Regex from python
+            var exclude_self = '%(exclude_self)s';
+
+            // NEW: find my instance ID
+            var urlstr = document.URL;
+            var iid = 0;
+            if (exclude_self) {
+                var matchlist = urlstr.match(%(exclude_self)s);
+                iid = matchlist[1];
+                console.log('iid = '+matchlist[1]);
+            }
+
             $(document).ready(function(){
                 function fill_field(val, init_value){
                     if (!val || val==''){
@@ -111,7 +124,14 @@ class ChainedSelect(Select):
                     $.getJSON("%(url)s/"+val+"/", function(j){
                         var options = '<option value="">%(empty_label)s<'+'/option>';
                         for (var i = 0; i < j.length; i++) {
-                            options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
+                            // NEW: exclude myself
+                            if (exclude_self) {
+                                if (j[i].value!=iid) {
+                                    options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
+                                }
+                            } else {
+                                options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
+                            }
                         }
                         var width = $("#%(id)s").outerWidth();
                         $("#%(id)s").html(options);
@@ -154,12 +174,17 @@ class ChainedSelect(Select):
         </script>
 
         """
+        exclude_self = ""
+        if self.exclude_self:
+            exclude_self = self.exclude_self
+
         js = js % {"chainfield": chain_field,
                    "url": url,
                    "id": attrs['id'],
                    'value': value,
                    'auto_choose': auto_choose,
-                   'empty_label': empty_label}
+                   'empty_label': empty_label,
+                   'exclude_self': exclude_self,}
         final_choices = []
 
         if value:
@@ -167,6 +192,7 @@ class ChainedSelect(Select):
             try:
                 pk = getattr(item, self.model_field + "_id")
                 filter = {self.model_field: pk}
+                print "widgets.py pk = %s" % pk
             except AttributeError:
                 try:  # maybe m2m?
                     pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
