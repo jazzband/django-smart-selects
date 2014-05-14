@@ -1,7 +1,8 @@
 try:
-    from django.conf.urls.defaults import *
-except ImportError:
     from django.conf.urls import *
+except ImportError:
+    print "error importing"
+#    from django.conf.urls.defaults import *
 
 urlpatterns = patterns('smart_selects.views',
     url(r'^all/(?P<app>[\w\-]+)/(?P<model>[\w\-]+)/(?P<field>[\w\-]+)/(?P<value>[\w\-]+)/$', 'filterchain_all', name='chained_filter_all'),

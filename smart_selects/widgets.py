@@ -203,6 +203,8 @@ class ChainedSelect(Select):
                         filter = {self.model_field + "__in": pks}
                     except:  # give up
                         filter = {}
+#            print "kuiyu ---------- value = %s" % value
+#            print "kuiyu ---------- item = %s" % item
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
             filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
             for choice in filtered:

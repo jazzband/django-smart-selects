@@ -52,6 +52,7 @@ class GroupedModelSelect(ModelChoiceField):
         group_indexes = {}
         choices = [("", self.empty_label or "---------")]
         i = len(choices)
+        print "self.queryset = %s" % self.queryset
         for item in self.queryset:
             order_field = getattr(item, self.order_field)
             group_index = order_field.pk
