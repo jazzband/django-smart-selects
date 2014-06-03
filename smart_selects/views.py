@@ -17,8 +17,13 @@ def filterchain(request, app, model, field, value, manager=None):
         queryset = getattr(model_class, manager)
     else:
         queryset = model_class._default_manager
-    results = list(queryset.filter(**keywords))
-    results.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+
+    results = queryset.filter(**keywords)
+
+    if not model_class._meta.ordering:
+        results = list(results)
+        results.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+
     result = []
     for item in results:
         result.append({'value': item.pk, 'display': unicode(item)})
