@@ -20,7 +20,7 @@ def filterchain(request, app, model, field, value, manager=None):
 
     results = queryset.filter(**keywords)
 
-    if not model_class._meta.ordering:
+    if not getattr(model_class._meta, 'ordering', False):
         results = list(results)
         results.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
 
