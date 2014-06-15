@@ -188,11 +188,13 @@ class ChainedSelect(Select):
         final_choices = []
 
         if value:
+            #TODO: fix here instaed of admin.py
+#            print "kuiyu: self.queryset = %s" % self.queryset
             item = self.queryset.filter(pk=value)[0]
             try:
                 pk = getattr(item, self.model_field + "_id")
                 filter = {self.model_field: pk}
-                print "widgets.py pk = %s" % pk
+#                print "widgets.py pk = %s" % pk
             except AttributeError:
                 try:  # maybe m2m?
                     pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
