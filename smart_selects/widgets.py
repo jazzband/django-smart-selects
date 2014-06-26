@@ -108,8 +108,14 @@ class ChainedSelect(Select):
             var iid = 0;
             if (exclude_self) {
                 var matchlist = urlstr.match(%(exclude_self)s);
-                iid = matchlist[1];
-                console.log('iid = '+matchlist[1]);
+                if (matchlist == null) {
+                    iid = -1;
+                    console.log('No match for exclude self (probably adding new object): iid reset to -1');
+                } else {
+                    iid = matchlist[1];
+                    console.log('iid = '+matchlist[1]);
+                }
+
             }
 
             $(document).ready(function(){
