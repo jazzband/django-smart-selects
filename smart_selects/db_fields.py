@@ -39,7 +39,7 @@ class ChainedForeignKey(ForeignKey):
         # the full queryset!!!!
         # print "db_fields.py/formfield: type(qs)=%s" % type(qs)
         # print "db_fields.py/formfield: len(qs)=%s" % len(qs)
-        #print "db_fields.py/formfield: qs=%s" % qs
+        # print "db_fields.py/formfield: qs=%s" % qs
         defaults = {
             'form_class': form_fields.ChainedModelChoiceField,
             'queryset': qs,
