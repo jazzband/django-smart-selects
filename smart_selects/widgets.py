@@ -194,13 +194,17 @@ class ChainedSelect(Select):
         final_choices = []
 
         if value:
-            #TODO: fix here instaed of admin.py
-#            print "kuiyu: self.queryset = %s" % self.queryset
-            item = self.queryset.filter(pk=value)[0]
+            #print "kuiyu: len(self.queryset) = %s" % len(self.queryset)
+            #print "kuiyu: type(self.queryset) = %s" % type(self.queryset)
+            if type(self.queryset) == type((1,2,3)):
+                # complex_filter  in db_fields.py outputs a 1-dim tuple!!!!!!!
+                item = self.queryset[0].filter(pk=value)[0]
+            else:
+                # it is a queryset
+                item = self.queryset.filter(pk=value)[0]
             try:
                 pk = getattr(item, self.model_field + "_id")
                 filter = {self.model_field: pk}
-#                print "widgets.py pk = %s" % pk
             except AttributeError:
                 try:  # maybe m2m?
                     pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
@@ -211,8 +215,6 @@ class ChainedSelect(Select):
                         filter = {self.model_field + "__in": pks}
                     except:  # give up
                         filter = {}
-#            print "kuiyu ---------- value = %s" % value
-#            print "kuiyu ---------- item = %s" % item
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
             filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
             for choice in filtered:

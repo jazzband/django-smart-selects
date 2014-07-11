@@ -19,8 +19,7 @@ class ChainedModelChoiceField(ModelChoiceField):
         defaults.update(kwargs)
         if not 'queryset' in kwargs:
             queryset = get_model(app_name, model_name).objects.all()
-
-            queryset = get_model(app_name, model_name).objects.all()
+            #print ">>>>>>>>>>>>>>>> queryset NOT in kwargs, so type(queryset) = %s" % type(queryset)
             super(ChainedModelChoiceField, self).__init__(queryset=queryset, initial=initial, *args, **defaults)
         else:
             super(ChainedModelChoiceField, self).__init__(initial=initial, *args, **defaults)
@@ -46,13 +45,13 @@ class GroupedModelSelect(ModelChoiceField):
         # choices dynamically. Return a fresh QuerySetIterator that has not been
         # consumed. Note that we're instantiating a new QuerySetIterator *each*
         # time _get_choices() is called (and, thus, each time self.choices is
-        # accessed) so that we can ensure the QuerySet has not been consumed. This
-        # construct might look complicated but it allows for lazy evaluation of
-        # the queryset.
+        # accessed) so that we can ensure the QuerySet has not been consumed.
+        # This # construct might look complicated but it allows for lazy
+        # evaluation of the queryset.
         group_indexes = {}
         choices = [("", self.empty_label or "---------")]
         i = len(choices)
-        print "self.queryset = %s" % self.queryset
+        #print "self.queryset = %s" % self.queryset
         for item in self.queryset:
             order_field = getattr(item, self.order_field)
             group_index = order_field.pk

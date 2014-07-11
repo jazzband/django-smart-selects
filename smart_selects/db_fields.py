@@ -35,6 +35,11 @@ class ChainedForeignKey(ForeignKey):
 
     def formfield(self, **kwargs):
         qs = self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to),
+        # note that qs is a 1-dim tuple, you need to call qs[0] to get
+        # the full queryset!!!!
+        #print "db_fields.py/formfield: type(qs)=%s" % type(qs)
+        #print "db_fields.py/formfield: len(qs)=%s" % len(qs)
+        #print "db_fields.py/formfield: qs=%s" % qs
         defaults = {
             'form_class': form_fields.ChainedModelChoiceField,
             'queryset': qs,
