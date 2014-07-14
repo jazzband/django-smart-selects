@@ -42,7 +42,7 @@ class ChainedForeignKey(ForeignKey):
         # print "db_fields.py/formfield: qs=%s" % qs
         defaults = {
             'form_class': form_fields.ChainedModelChoiceField,
-            'queryset': qs,
+            'queryset': qs[0],
             'to_field_name': self.rel.field_name,
             'app_name': self.app_name,
             'model_name': self.model_name,
@@ -67,10 +67,10 @@ class GroupedForeignKey(ForeignKey):
         ForeignKey.__init__(self, to, **kwargs)
 
     def formfield(self, **kwargs):
+        qs = self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to),
         defaults = {
             'form_class': form_fields.GroupedModelSelect,
-            'queryset': self.rel.to._default_manager.complex_filter(
-                                                    self.rel.limit_choices_to),
+            'queryset': qs[0],
             'to_field_name': self.rel.field_name,
             'order_field': self.group_field,
         }
