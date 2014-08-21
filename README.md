@@ -32,7 +32,8 @@ you can do the following:
 		city = models.CharField(max_length=50)
 		street = models.CharField(max_length=100)
 	
-This example asumes that the Country Model has a "continent" field and that the Area model has "country" field.
+This example asumes that the Country Model has a continent = ForeignKey(Continent) field
+and that the Area model has country = ForeignKey(Country) field.
 
 - The chained field is the field on the same model the field should be chained too.
 - The chained model field is the field of the chained model that corresponds to the model linked too by the chained field.

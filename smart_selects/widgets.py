@@ -1,24 +1,31 @@
-import django
-from django.conf import settings
-from django.forms.widgets import Select
-from django.core.urlresolvers import reverse
-from django.utils.encoding import iri_to_uri
-from django.utils.safestring import mark_safe
-from django.db.models import get_model
 import locale
+
+import django
+
+from django.conf import settings
+from django.contrib.admin.templatetags.admin_static import static
+from django.core.urlresolvers import reverse
+from django.db.models import get_model
+from django.forms.widgets import Select
+from django.utils.safestring import mark_safe
+
 from smart_selects.utils import unicode_sorter
 
 
 if django.VERSION >= (1, 2, 0) and getattr(settings,
-        'USE_DJANGO_JQUERY', True):
+                                           'USE_DJANGO_JQUERY', True):
     USE_DJANGO_JQUERY = True
 else:
     USE_DJANGO_JQUERY = False
     JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
 
+URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
+
 
 class ChainedSelect(Select):
-    def __init__(self, app_name, model_name, chain_field, model_field, show_all, auto_choose, manager=None, *args, **kwargs):
+    def __init__(self, app_name, model_name, chain_field,
+                 model_field, show_all, auto_choose,
+                 manager=None, view_name=None, *args, **kwargs):
         self.app_name = app_name
         self.model_name = model_name
         self.chain_field = chain_field
@@ -26,36 +33,42 @@ class ChainedSelect(Select):
         self.show_all = show_all
         self.auto_choose = auto_choose
         self.manager = manager
+        self.view_name = view_name
         super(Select, self).__init__(*args, **kwargs)
 
     class Media:
+        extra = '' if settings.DEBUG else '.min'
+        js = [
+            'jquery%s.js' % extra,
+            'jquery.init.js'
+        ]
         if USE_DJANGO_JQUERY:
-            js = ["%s%s" % (settings.ADMIN_MEDIA_PREFIX, i) for i in
-                    ('js/jquery.min.js', 'js/jquery.init.js')]
+            js = [static('admin/js/%s' % url) for url in js]
         elif JQUERY_URL:
-            js = (
-                JQUERY_URL,
-            )
+            js = [JQUERY_URL]
 
     def render(self, name, value, attrs=None, choices=()):
-        if len(name.split('-')) > 1: # formset
+        if len(name.split('-')) > 1:  # formset
             chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
         else:
             chain_field = self.chain_field
-
-        if self.show_all:
-            view_name = "chained_filter_all"
+        if not self.view_name:
+            if self.show_all:
+                view_name = "chained_filter_all"
+            else:
+                view_name = "chained_filter"
         else:
-            view_name = "chained_filter"
-        kwargs = {'app':self.app_name, 'model':self.model_name, 'field':self.model_field, 'value':"1"}
+            view_name = self.view_name
+        kwargs = {'app': self.app_name, 'model': self.model_name,
+                  'field': self.model_field, 'value': "1"}
         if self.manager is not None:
             kwargs.update({'manager': self.manager})
-        url = "/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2])
+        url = URL_PREFIX + ("/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2]))
         if self.auto_choose:
             auto_choose = 'true'
         else:
             auto_choose = 'false'
-        empty_label = iter(self.choices).next()[1] # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
+        empty_label = iter(self.choices).next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
         js = """
         <script type="text/javascript">
         //<![CDATA[
@@ -127,37 +140,45 @@ class ChainedSelect(Select):
                     fill_field(val, start_value);
                 })
             })
-            var oldDismissAddAnotherPopup = dismissAddAnotherPopup;
-            dismissAddAnotherPopup = function(win, newId, newRepr) {
-                oldDismissAddAnotherPopup(win, newId, newRepr);
-                if (windowname_to_id(win.name) == "id_%(chainfield)s") {
-                    $("#id_%(chainfield)s").change();
+            if (typeof(dismissAddAnotherPopup) !== 'undefined') {
+                var oldDismissAddAnotherPopup = dismissAddAnotherPopup;
+                dismissAddAnotherPopup = function(win, newId, newRepr) {
+                    oldDismissAddAnotherPopup(win, newId, newRepr);
+                    if (windowname_to_id(win.name) == "id_%(chainfield)s") {
+                        $("#id_%(chainfield)s").change();
+                    }
                 }
             }
         })(jQuery || django.jQuery);
         //]]>
         </script>
 
-        """ % {"chainfield":chain_field, "url":url, "id":attrs['id'], 'value':value, 'auto_choose':auto_choose, 'empty_label': empty_label}
+        """
+        js = js % {"chainfield": chain_field,
+                   "url": url,
+                   "id": attrs['id'],
+                   'value': value,
+                   'auto_choose': auto_choose,
+                   'empty_label': empty_label}
         final_choices = []
 
         if value:
             item = self.queryset.filter(pk=value)[0]
             try:
                 pk = getattr(item, self.model_field + "_id")
-                filter = {self.model_field:pk}
+                filter = {self.model_field: pk}
             except AttributeError:
-                try: # maybe m2m?
+                try:  # maybe m2m?
                     pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
-                    filter = {self.model_field + "__in":pks}
+                    filter = {self.model_field + "__in": pks}
                 except AttributeError:
-                    try: # maybe a set?
+                    try:  # maybe a set?
                         pks = getattr(item, self.model_field + "_set").all().values_list('pk', flat=True)
-                        filter = {self.model_field + "__in":pks}
-                    except: # give up
+                        filter = {self.model_field + "__in": pks}
+                    except:  # give up
                         filter = {}
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
-            filtered.sort(cmp=locale.strcoll, key=lambda x:unicode_sorter(unicode(x)))
+            filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
         if len(final_choices) > 1:
@@ -165,7 +186,7 @@ class ChainedSelect(Select):
         if self.show_all:
             final_choices.append(("", (empty_label)))
             self.choices = list(self.choices)
-            self.choices.sort(cmp=locale.strcoll, key=lambda x:unicode_sorter(x[1]))
+            self.choices.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
                 if not ch in final_choices:
                     final_choices.append(ch)
