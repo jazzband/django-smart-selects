@@ -1,5 +1,3 @@
-import locale
-
 from django.db.models import get_model
 from django.http import HttpResponse
 try:
@@ -7,7 +5,7 @@ try:
 except ImportError:
     from django.utils import simplejson as json
 
-from smart_selects.utils import unicode_sorter
+from smart_selects.utils import get_keywords, sort_results, serialize_results
 
 
 def filterchain(request, app, model, field, value, manager=None):
@@ -21,6 +19,7 @@ def filterchain(request, app, model, field, value, manager=None):
 
     results = queryset.filter(**keywords)
 
+    # Sort results if model doesn't include a default ordering.
     if not getattr(model_class._meta, 'ordering', False):
         results = list(results)
         sort_results(results)
@@ -31,38 +30,25 @@ def filterchain(request, app, model, field, value, manager=None):
 
 
 def filterchain_all(request, app, model, field, value):
+    """Returns filtered results followed by excluded results below."""
+
     model_class = get_model(app, model)
     keywords = get_keywords(field, value)
 
     filtered = list(model_class._default_manager.filter(**keywords))
     sort_results(filtered)
-    final = serialize_results(filtered)
 
     excluded = list(model_class._default_manager.exclude(**keywords))
     sort_results(excluded)
-    final.append({'value': "", 'display': "---------"})
 
-    final.extend(serialize_results(excluded))
-    final_json = json.dumps(final)
-    return HttpResponse(final_json, content_type='application/json')
+    # Empty choice to separate filtered and excluded results.
+    empty_choice = {'value': "", 'display': "---------"}
 
+    serialized_results = (
+        serialize_results(filtered) +
+        [empty_choice] +
+        serialize_results(excluded)
+    )
 
-def serialize_results(results):
-    return [
-        {'value': item.pk, 'display': unicode(item)} for item in results
-    ]
-
-
-def get_keywords(field, value):
-    if value == '0':
-        keywords = {str("%s__isnull" % field): True}
-    else:
-        keywords = {str(field): str(value)}
-
-    return keywords
-
-
-def sort_results(results):
-    """Performs in-place sort of filterchain results."""
-
-    results.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+    results_json = json.dumps(serialized_results)
+    return HttpResponse(results_json, content_type='application/json')
