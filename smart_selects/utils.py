@@ -23,6 +23,14 @@ def unicode_sorter(input):
     return key1
 
 
+def get_queryset(model_class, manager=None):
+    if manager is not None and hasattr(model_class, manager):
+        queryset = getattr(model_class, manager)
+    else:
+        queryset = model_class._default_manager
+    return queryset
+
+
 def serialize_results(results):
     return [
         {'value': item.pk, 'display': unicode(item)} for item in results
