@@ -95,16 +95,15 @@ class GroupedForeignKey(ForeignKey):
         field_name, path, args, kwargs = super(
             GroupedForeignKey, self).deconstruct()
 
-        # Add additinoal positional arg.
-        args.append(self.group_field)
+        # Add positional arg group_field as a kwarg, since the 'to' positional
+        # arg is serialized as a keyword arg by the superclass deconstruct().
+        kwargs.update(group_field=self.group_field)
 
         # Choices handling in Field.deconstruct() should suffice (if choices is
         # not default, serialize it as a kwarg). _choices is set in the
         # GroupedForeignKey constructor, but should be overwritten by the
         # Field constructor's handling of the 'choices' kwarg.
 
-        # args should consist of two elements: 'to' and 'group_field'.
-        assert len(args) == 2
         return field_name, path, args, kwargs
 
     def formfield(self, **kwargs):
