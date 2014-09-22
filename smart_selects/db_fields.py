@@ -28,10 +28,47 @@ class ChainedForeignKey(ForeignKey):
         self.view_name = view_name
         ForeignKey.__init__(self, to, **kwargs)
 
+    def deconstruct(self):
+        field_name, path, args, kwargs = super(
+            ChainedForeignKey, self).deconstruct()
+
+        # Maps attribute names to their default kwarg values.
+        defaults = {
+            'chain_field': None,
+            'model_field': None,
+            'show_all': False,
+            'auto_choose': False,
+            'view_name': None,
+        }
+
+        # Maps attribute names to their __init__ kwarg names.
+        attr_to_kwarg_names = {
+            'chain_field': 'chained_field',
+            'model_field': 'chained_model_field',
+            'show_all': 'show_all',
+            'auto_choose': 'auto_choose',
+            'view_name': 'view_name',
+        }
+
+        for name, default in defaults.items():
+            value = getattr(self, name)
+            kwarg_name = attr_to_kwarg_names[name]
+
+            # None and Boolean defaults should use an 'is' comparison.
+            if value is not default:
+                kwargs[kwarg_name] = value
+            else:
+                # value is default, so don't include it in serialized kwargs.
+                if kwarg_name in kwargs:
+                    del kwargs[kwarg_name]
+
+        return field_name, path, args, kwargs
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': form_fields.ChainedModelChoiceField,
-            'queryset': self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to),
+            'queryset': self.rel.to._default_manager.complex_filter(
+                self.rel.limit_choices_to),
             'to_field_name': self.rel.field_name,
             'app_name': self.app_name,
             'model_name': self.model_name,
@@ -54,11 +91,26 @@ class GroupedForeignKey(ForeignKey):
         self._choices = True
         ForeignKey.__init__(self, to, **kwargs)
 
+    def deconstruct(self):
+        field_name, path, args, kwargs = super(
+            GroupedForeignKey, self).deconstruct()
+
+        # Add positional arg group_field as a kwarg, since the 'to' positional
+        # arg is serialized as a keyword arg by the superclass deconstruct().
+        kwargs.update(group_field=self.group_field)
+
+        # Choices handling in Field.deconstruct() should suffice (if choices is
+        # not default, serialize it as a kwarg). _choices is set in the
+        # GroupedForeignKey constructor, but should be overwritten by the
+        # Field constructor's handling of the 'choices' kwarg.
+
+        return field_name, path, args, kwargs
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': form_fields.GroupedModelSelect,
             'queryset': self.rel.to._default_manager.complex_filter(
-                                                    self.rel.limit_choices_to),
+                self.rel.limit_choices_to),
             'to_field_name': self.rel.field_name,
             'order_field': self.group_field,
         }
@@ -75,5 +127,7 @@ if has_south:
         },
     )]
 
-    add_introspection_rules([], ["^smart_selects\.db_fields\.ChainedForeignKey"])
-    add_introspection_rules(rules_grouped, ["^smart_selects\.db_fields\.GroupedForeignKey"])
+    add_introspection_rules([],
+                            ["^smart_selects\.db_fields\.ChainedForeignKey"])
+    add_introspection_rules(rules_grouped,
+                            ["^smart_selects\.db_fields\.GroupedForeignKey"])
