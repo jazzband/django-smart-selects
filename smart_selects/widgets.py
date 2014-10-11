@@ -215,8 +215,14 @@ class ChainedSelect(Select):
                         filter = {self.model_field + "__in": pks}
                     except:  # give up
                         filter = {}
-            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
-            filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+            themodel = get_model(self.app_name, self.model_name)
+            filtered = []
+            if themodel:
+                try:
+                    filtered = themodel.objects.filter(**filter).distinct()
+                    filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+                except:
+                    pass
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))
         if len(final_choices) > 1:
