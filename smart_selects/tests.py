@@ -11,7 +11,7 @@ def has_new_migrations():
 
 
 class AssertReconstructibleMixin(object):
-    def _assert_reconstructible(self, *field_args, **field_kwargs):
+    def assert_reconstructible(self, *field_args, **field_kwargs):
         field_instance = self.field_class(*field_args, **field_kwargs)
         name, path, args, kwargs = field_instance.deconstruct()
         new_instance = self.field_class(*args, **kwargs)
@@ -33,7 +33,7 @@ class ChainedForeignKeyTests(AssertReconstructibleMixin, unittest.TestCase):
         ]
 
     def test_deconstruct_basic(self):
-        self._assert_reconstructible(
+        self.assert_reconstructible(
             'myapp.MyModel',
             chained_field='a_chained_field',
             chained_model_field='the_chained_model_field',
@@ -41,12 +41,12 @@ class ChainedForeignKeyTests(AssertReconstructibleMixin, unittest.TestCase):
         )
 
     def test_deconstruct_mostly_default(self):
-        self._assert_reconstructible(
+        self.assert_reconstructible(
             'myapp.MyModel'
         )
 
     def test_deconstruct_non_default(self):
-        self._assert_reconstructible(
+        self.assert_reconstructible(
             'myapp.MyModel',
             chained_field='a_chained_field',
             chained_model_field='the_chained_model_field',
@@ -61,4 +61,4 @@ class GroupedForeignKeyTests(AssertReconstructibleMixin, unittest.TestCase):
         self.deconstruct_attrs = ['group_field']
 
     def test_deconstruct_basic(self):
-        self._assert_reconstructible('myapp.MyModel', 'the_group_field')
+        self.assert_reconstructible('myapp.MyModel', 'the_group_field')
