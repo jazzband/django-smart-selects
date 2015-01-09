@@ -6,8 +6,7 @@ from db_fields import ChainedForeignKey, GroupedForeignKey
 
 
 def has_new_migrations():
-    django_version = float('%d.%d' % django.VERSION[:2])
-    return (django_version >= 1.7,
+    return (django.VERSION[:2] >= (1, 7),
             "This test requires Django migrations introduced in Django 1.7.")
 
 
