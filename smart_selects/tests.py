@@ -1,6 +1,14 @@
 import unittest
 
+import django
+
 from db_fields import ChainedForeignKey, GroupedForeignKey
+
+
+def has_new_migrations():
+    django_version = float('%d.%d' % django.VERSION[:2])
+    return (django_version >= 1.7,
+            "This test requires Django migrations introduced in Django 1.7.")
 
 
 class AssertReconstructibleMixin(object):
@@ -16,6 +24,7 @@ class AssertReconstructibleMixin(object):
             )
 
 
+@unittest.skipUnless(*has_new_migrations())
 class ChainedForeignKeyTests(AssertReconstructibleMixin, unittest.TestCase):
     def setUp(self):
         self.field_class = ChainedForeignKey
@@ -46,6 +55,7 @@ class ChainedForeignKeyTests(AssertReconstructibleMixin, unittest.TestCase):
         )
 
 
+@unittest.skipUnless(*has_new_migrations())
 class GroupedForeignKeyTests(AssertReconstructibleMixin, unittest.TestCase):
     def setUp(self):
         self.field_class = GroupedForeignKey
