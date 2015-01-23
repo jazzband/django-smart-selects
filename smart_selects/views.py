@@ -1,5 +1,6 @@
 from django.db.models import get_model
 from django.http import HttpResponse
+from django.db.models.fields.related import ReverseManyRelatedObjectsDescriptor
 try:
     import json
 except ImportError:
@@ -11,7 +12,12 @@ from smart_selects.utils import (get_keywords, sort_results, serialize_results,
 
 def filterchain(request, app, model, field, value, manager=None):
     model_class = get_model(app, model)
-    keywords = get_keywords(field, value)
+
+    m2m = False
+    if isinstance(getattr(model_class, field), ReverseManyRelatedObjectsDescriptor):
+        m2m = True
+
+    keywords = get_keywords(field, value, m2m=m2m)
     queryset = get_queryset(model_class, manager)
 
     results = queryset.filter(**keywords)
@@ -28,7 +34,6 @@ def filterchain(request, app, model, field, value, manager=None):
 
 def filterchain_all(request, app, model, field, value):
     """Returns filtered results followed by excluded results below."""
-
     model_class = get_model(app, model)
     keywords = get_keywords(field, value)
     queryset = get_queryset(model_class)

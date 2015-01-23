@@ -37,9 +37,11 @@ def serialize_results(results):
     ]
 
 
-def get_keywords(field, value):
+def get_keywords(field, value, m2m=False):
     if value == '0':
         keywords = {str("%s__isnull" % field): True}
+    elif m2m:
+        keywords = {str("%s__pk" % field): str(value)}
     else:
         keywords = {str(field): str(value)}
 

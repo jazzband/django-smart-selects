@@ -1,8 +1,9 @@
 from django.db.models import get_model
-from django.forms.models import ModelChoiceField
+from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 from django.forms import ChoiceField
 
-from smart_selects.widgets import ChainedSelect
+from smart_selects.widgets import ChainedSelect, ChainedSelectMultiple
+
 
 
 class ChainedModelChoiceField(ModelChoiceField):
@@ -26,6 +27,35 @@ class ChainedModelChoiceField(ModelChoiceField):
     def _get_choices(self):
         self.widget.queryset = self.queryset
         choices = super(ChainedModelChoiceField, self)._get_choices()
+        return choices
+    choices = property(_get_choices, ChoiceField._set_choices)
+
+
+class ChainedManyToManyField(ModelMultipleChoiceField):
+
+    def __init__(self, app_name, model_name,
+                 chain_field, model_field, show_all,
+                 auto_choose, manager=None,
+                 initial=None, view_name=None, *args, **kwargs):
+
+        defaults = {
+            'widget': ChainedSelectMultiple(app_name, model_name, chain_field,
+                                    model_field, show_all, auto_choose,
+                                    manager, view_name),
+        }
+        defaults.update(kwargs)
+        if not 'queryset' in kwargs:
+            queryset = get_model(app_name, model_name).objects.all()
+            super(ChainedManyToManyField, self).__init__(queryset=queryset, initial=initial, *args, **defaults)
+        else:
+            super(ChainedManyToManyField, self).__init__(initial=initial, *args, **defaults)
+
+    def clean(self, value):
+        return value
+
+    def _get_choices(self):
+        self.widget.queryset = self.queryset
+        choices = super(ChainedManyToManyField, self)._get_choices()
         return choices
     choices = property(_get_choices, ChoiceField._set_choices)
 
