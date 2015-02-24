@@ -7,6 +7,7 @@ from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.forms.widgets import Select
+from django import forms
 from django.utils.safestring import mark_safe
 
 from smart_selects.utils import unicode_sorter
@@ -36,7 +37,9 @@ class ChainedSelect(Select):
         self.view_name = view_name
         super(Select, self).__init__(*args, **kwargs)
 
-    class Media:
+    @property
+    def media(self):
+        """Media defined as a dynamic property instead of an inner class."""
         extra = '' if settings.DEBUG else '.min'
         js = [
             'jquery%s.js' % extra,
@@ -46,6 +49,8 @@ class ChainedSelect(Select):
             js = [static('admin/js/%s' % url) for url in js]
         elif JQUERY_URL:
             js = [JQUERY_URL]
+
+        return forms.Media(js=js)
 
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
