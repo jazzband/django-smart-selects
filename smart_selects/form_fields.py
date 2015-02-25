@@ -3,6 +3,7 @@ from django.forms.models import ModelChoiceField
 from django.forms import ChoiceField
 
 from smart_selects.widgets import ChainedSelect
+import six
 
 
 class ChainedModelChoiceField(ModelChoiceField):
@@ -55,7 +56,10 @@ class GroupedModelSelect(ModelChoiceField):
             group_index = order_field.pk
             if not group_index in group_indexes:
                 group_indexes[group_index] = i
-                choices.append([unicode(order_field), []])
+                if six.PY3:
+                    choices.append([str(order_field), []])
+                else:
+                    choices.append([unicode(order_field), []])
                 i += 1
             choice_index = group_indexes[group_index]
             choices[choice_index][1].append(self.make_choice(item))

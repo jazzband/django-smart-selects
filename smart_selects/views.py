@@ -22,6 +22,7 @@ def filterchain(request, app, model, field, value, manager=None):
         sort_results(results)
 
     serialized_results = serialize_results(results)
+    print(serialized_results)
     results_json = json.dumps(serialized_results)
     return HttpResponse(results_json, content_type='application/json')
 
