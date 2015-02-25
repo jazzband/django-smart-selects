@@ -1,26 +1,16 @@
 # -*- coding: utf-8 -*-
-
+from django.utils.encoding import force_text
 import locale
 import six
+import unicodedata
 
-def unicode_sorter(input):
+
+def unicode_sorter(data):
     """ This function implements sort keys for the german language according to
     DIN 5007."""
 
-    # key1: compare words lowercase and replace umlauts according to DIN 5007
-    key1 = input.lower()
-    key1 = key1.replace(u"ä", u"a")
-    key1 = key1.replace(u"ö", u"o")
-    key1 = key1.replace(u"ü", u"u")
-    key1 = key1.replace(u"ß", u"ss")
-
-    # key2: sort the lowercase word before the uppercase word and sort
-    # the word with umlaut after the word without umlaut
-    #key2=input.swapcase()
-
-    # in case two words are the same according to key1, sort the words
-    # according to key2.
-    return key1
+    return unicodedata.normalize('NFKD', data.lower()).encode(
+        'ascii', 'ignore').decode('ascii')
 
 
 def get_queryset(model_class, manager=None):
@@ -32,14 +22,9 @@ def get_queryset(model_class, manager=None):
 
 
 def serialize_results(results):
-    if six.PY3:
-        return [
-            {'value': item.pk, 'display': str(item)} for item in results
-        ]
-    else:
-        return [
-            {'value': item.pk, 'display': unicode(item)} for item in results
-        ]
+    return [
+        {'value': item.pk, 'display': force_text(item)} for item in results
+    ]
 
 
 def get_keywords(field, value):
@@ -53,9 +38,6 @@ def get_keywords(field, value):
 
 def sort_results(results):
     """Performs in-place sort of filterchain results."""
-    if six.PY3:
-        results.sort(key=lambda x: unicode_sorter(str(x)))
-    else:
-        results.sort(cmp=locale.strcoll,
-                     key=lambda x: unicode_sorter(unicode(x)))
+    results.sort(key=lambda x: unicode_sorter(force_text(x)))
+
 

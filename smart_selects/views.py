@@ -1,9 +1,7 @@
 from django.db.models import get_model
 from django.http import HttpResponse
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
+from django.utils.encoding import force_text
+import json
 
 from smart_selects.utils import (get_keywords, sort_results, serialize_results,
                                  get_queryset)
@@ -22,7 +20,6 @@ def filterchain(request, app, model, field, value, manager=None):
         sort_results(results)
 
     serialized_results = serialize_results(results)
-    print(serialized_results)
     results_json = json.dumps(serialized_results)
     return HttpResponse(results_json, content_type='application/json')
 
