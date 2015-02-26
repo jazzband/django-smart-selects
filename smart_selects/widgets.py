@@ -7,7 +7,7 @@ from django.db.models import get_model
 from django.forms.widgets import Select
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
-import six
+from django.db.utils import six
 
 from smart_selects.utils import unicode_sorter
 

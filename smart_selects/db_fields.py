@@ -1,4 +1,5 @@
 from django.db.models.fields.related import ForeignKey
+from django.db.utils import six
 try:
     from south.modelsinspector import add_introspection_rules
     has_south = True
@@ -7,7 +8,6 @@ except ImportError:
 
 
 from smart_selects import form_fields
-import six
 
 
 class ChainedForeignKey(ForeignKey):

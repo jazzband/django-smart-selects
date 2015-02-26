@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from django.utils.encoding import force_text
-import locale
-import six
 import unicodedata
 
 
