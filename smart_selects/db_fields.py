@@ -197,7 +197,8 @@ if has_south:
             'group_field': ['group_field', {}],
         },
     )]
-
+    add_introspection_rules([],
+                            ["^smart_selects\.db_fields\.ChainedManyToManyField"])
     add_introspection_rules([],
                             ["^smart_selects\.db_fields\.ChainedForeignKey"])
     add_introspection_rules(rules_grouped,
