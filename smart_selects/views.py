@@ -1,10 +1,14 @@
 from django.db.models import get_model
 from django.http import HttpResponse
 from django.utils.encoding import force_text
-import json
 
 from smart_selects.utils import (get_keywords, sort_results, serialize_results,
                                  get_queryset)
+
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
 
 
 def filterchain(request, app, model, field, value, manager=None):
