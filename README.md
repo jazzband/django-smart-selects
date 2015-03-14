@@ -40,6 +40,32 @@ and that the Area model has country = ForeignKey(Country) field.
 - show_all indicates if only the filtered results should be shown or if you also want to display the other results further down.
 - auto_choose indicates that if there is only one option if it should be autoselected.
 
+Chained Selects on Self (added by Kuiyu CHANG 2014)
+-----------------------
+
+Added functionality to allow chaining of self with exclusion regex parameter
+
+    exclude_self=regex
+
+exclude self among choices in the *Admin UI*, e.g.,
+
+# myapp.models
+class Question(Model):
+    ...
+    master_question = ChainedForeignKey("myapp.Question",
+        exclude_self="/.*\/myapp\/question\/(\d+)\/\?*.*/",
+        chained_field="depends_on_answerset",
+        chained_model_field="answerset",
+        show_all = False,
+        auto_choose = True,
+        null=True,
+        blank=True,
+        related_name='slave_questions',
+        help_text = _("Select the Master Question."),
+)
+
+When viewing question id=3 in the admin UI, the choices (of questions) for master_question will exclude question id=3 (itself). Note: This has only be tested in the Admin UI.
+
 Grouped Selects
 ---------------
 
