@@ -115,7 +115,6 @@ class ChainedSelect(Select):
                     iid = matchlist[1];
                     console.log('iid = '+matchlist[1]);
                 }
-
             }
 
             $(document).ready(function(){

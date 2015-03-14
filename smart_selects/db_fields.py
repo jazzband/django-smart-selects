@@ -28,8 +28,7 @@ class ChainedForeignKey(ForeignKey):
         self.view_name = view_name
         ForeignKey.__init__(self, to, **kwargs)
         self.exclude_self = exclude_self
-
-
+        #TODO: clean-up
         if exclude_self:
             self.exclude_self = exclude_self
 
