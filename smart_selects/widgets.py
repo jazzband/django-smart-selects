@@ -40,7 +40,7 @@ class ChainedSelect(Select):
         extra = '' if settings.DEBUG else '.min'
         js = [
             'jquery%s.js' % extra,
-            'jquery.init.js'
+            'jquery.init.js',
         ]
         if USE_DJANGO_JQUERY:
             js = [static('admin/js/%s' % url) for url in js]
@@ -121,7 +121,6 @@ class ChainedSelect(Select):
                         $('#%(id)s option:first').attr('selected', 'selected');
                         var auto_choose = %(auto_choose)s;
                         if(init_value){
-                            console.log(init_value);
                             $('#%(id)s option[value="'+ init_value +'"]').attr('selected', 'selected');
                         }
                         if(auto_choose && j.length == 1){
@@ -222,14 +221,17 @@ class ChainedSelectMultiple(SelectMultiple):
         extra = '' if settings.DEBUG else '.min'
         js = [
             'jquery%s.js' % extra,
-            'jquery.init.js'
+            'jquery.init.js',
         ]
+
         if USE_DJANGO_JQUERY:
             js = [static('admin/js/%s' % url) for url in js]
         elif JQUERY_URL:
             js = [JQUERY_URL]
+        js = js + [static('smart-selects/admin/js/chainedm2m.js')]
 
     def render(self, name, value, attrs=None, choices=()):
+
         if len(name.split('-')) > 1:  # formset
             chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
         else:
@@ -254,92 +256,18 @@ class ChainedSelectMultiple(SelectMultiple):
         empty_label = ''
         js = """
         <script type="text/javascript">
-        //<![CDATA[
         (function($) {
-            function fireEvent(element,event){
-                if (document.createEventObject){
-                // dispatch for IE
-                var evt = document.createEventObject();
-                return element.fireEvent('on'+event,evt)
-                }
-                else{
-                // dispatch for firefox + others
-                var evt = document.createEvent("HTMLEvents");
-                evt.initEvent(event, true, true ); // event type,bubbling,cancelable
-                return !element.dispatchEvent(evt);
-                }
-            }
 
-            function dismissRelatedLookupPopup(win, chosenId) {
-                var name = windowname_to_id(win.name);
-                var elem = document.getElementById(name);
-                if (elem.className.indexOf('vManyToManyRawIdAdminField') != -1 && elem.value) {
-                    elem.value += ',' + chosenId;
-                } else {
-                    elem.value = chosenId;
-                }
-                fireEvent(elem, 'change');
-                win.close();
-            }
+        var chainfield = "#id_%(chainfield)s";
+        var url = "%(url)s";
+        var id = "#%(id)s";
+        var value = %(value)s;
+        var auto_choose = %(auto_choose)s;
 
-            $(document).ready(function(){
-                var initial_parent = $("#id_%(chainfield)s").val();
-                var initial_value = %(value)s;
-                function fill_field(val, init_value){
-        
-                    $.getJSON("%(url)s/"+val+"/", function(j){
-                        var options = '';
-
-                        for (var i = 0; i < j.length; i++) {
-                            options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
-                        }
-                        var width = $("#%(id)s").outerWidth();
-                        $("#%(id)s").html(options);
-                        if (navigator.appVersion.indexOf("MSIE") != -1)
-                            $("#%(id)s").width(width + 'px');
-                        var auto_choose = %(auto_choose)s;
-
-                        if(val == initial_parent){
-                            for (var i = 0; i < initial_value.length; i++) {
-                                $('#%(id)s option[value="'+ initial_value[i] +'"]').attr('selected', 'selected');
-                            }
-                        }
-                        console.log(auto_choose);
-                        console.log(j);
-                        if(auto_choose && j.length == 1){
-                            $('#%(id)s option[value="'+ j[0].value +'"]').attr('selected', 'selected');
-                        }
-
-                        $("#%(id)s").trigger('change');
-
-                        if ($.fn.chosen !== undefined) {
-                            $("#%(id)s").trigger('chosen:updated');
-                        }
-                    })
-                }
-
-                if(!$("#id_%(chainfield)s").hasClass("chained")){
-                    var val = $("#id_%(chainfield)s").val();
-                    fill_field(val, %(value)s);
-                }
-
-                $("#id_%(chainfield)s").change(function(){
-                    var start_value = $("#%(id)s").val();
-                    var val = $(this).val();
-                    fill_field(val, start_value);
-                })
-            })
-            if (typeof(dismissAddAnotherPopup) !== 'undefined') {
-                var oldDismissAddAnotherPopup = dismissAddAnotherPopup;
-                dismissAddAnotherPopup = function(win, newId, newRepr) {
-                    oldDismissAddAnotherPopup(win, newId, newRepr);
-                    if (windowname_to_id(win.name) == "id_%(chainfield)s") {
-                        $("#id_%(chainfield)s").change();
-                    }
-                }
-            }
+        $(document).ready(function() {
+            chainedm2m.init(chainfield, url, id, value, auto_choose);
+        });
         })(jQuery || django.jQuery);
-        //]]>
         </script>
 
         """
@@ -375,6 +303,7 @@ class ChainedSelectMultiple(SelectMultiple):
                 if not ch in final_choices:
                     final_choices.append(ch)
         self.choices = ()
+
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
