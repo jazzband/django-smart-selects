@@ -1,5 +1,3 @@
-import locale
-
 import django
 
 from django.conf import settings
@@ -8,6 +6,8 @@ from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.forms.widgets import Select
 from django.utils.safestring import mark_safe
+from django.utils.encoding import force_text
+from django.db.utils import six
 
 from smart_selects.utils import unicode_sorter
 
@@ -68,7 +68,8 @@ class ChainedSelect(Select):
             auto_choose = 'true'
         else:
             auto_choose = 'false'
-        empty_label = iter(self.choices).next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
+
+        empty_label = six.next(iter(self.choices))[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
         js = """
         <script type="text/javascript">
         //<![CDATA[
@@ -178,15 +179,17 @@ class ChainedSelect(Select):
                     except:  # give up
                         filter = {}
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
-            filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+            filtered.sort(key=lambda x: unicode_sorter(force_text(x)))
+
             for choice in filtered:
-                final_choices.append((choice.pk, unicode(choice)))
+                final_choices.append((choice.pk, force_text(choice)))
         if len(final_choices) > 1:
             final_choices = [("", (empty_label))] + final_choices
         if self.show_all:
             final_choices.append(("", (empty_label)))
             self.choices = list(self.choices)
-            self.choices.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(x[1]))
+            self.choices.sort(key=lambda x: unicode_sorter(x[1]))
+
             for ch in self.choices:
                 if not ch in final_choices:
                     final_choices.append(ch)
