@@ -5,9 +5,14 @@ import django
 from django.conf import settings
 from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
-from django.db.models import get_model
 from django.forms.widgets import Select
 from django.utils.safestring import mark_safe
+
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+except ImportError:
+    from django.db.models.loading import get_model
 
 from smart_selects.utils import unicode_sorter
 
