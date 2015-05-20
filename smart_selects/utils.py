@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import locale
+from django.utils.encoding import force_text
 
 
 def unicode_sorter(input):
