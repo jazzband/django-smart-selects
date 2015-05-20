@@ -7,14 +7,15 @@ from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.forms.widgets import Select
 from django.utils.safestring import mark_safe
+from django.utils.encoding import force_text
+
+from smart_selects.utils import unicode_sorter
 
 try:
     from django.apps import apps
     get_model = apps.get_model
 except ImportError:
     from django.db.models.loading import get_model
-
-from smart_selects.utils import unicode_sorter
 
 
 if django.VERSION >= (1, 2, 0) and getattr(settings,
@@ -73,7 +74,11 @@ class ChainedSelect(Select):
             auto_choose = 'true'
         else:
             auto_choose = 'false'
-        empty_label = iter(self.choices).next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
+        iterator = iter(self.choices)
+        if hasattr(iterator, '__next__'):
+            empty_label = iterator.__next__()[1]
+        else:
+            empty_label = iterator.next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
         js = """
         <script type="text/javascript">
         //<![CDATA[
@@ -183,9 +188,9 @@ class ChainedSelect(Select):
                     except:  # give up
                         filter = {}
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
-            filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
+            filtered.sort(key=lambda x: unicode_sorter(force_text(x)))
             for choice in filtered:
-                final_choices.append((choice.pk, unicode(choice)))
+                final_choices.append((choice.pk, force_text(choice)))
         if len(final_choices) > 1:
             final_choices = [("", (empty_label))] + final_choices
         if self.show_all:
