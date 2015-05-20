@@ -33,7 +33,7 @@ def get_queryset(model_class, manager=None):
 
 def serialize_results(results):
     return [
-        {'value': item.pk, 'display': str(item)} for item in results
+        {'value': item.pk, 'display': force_text(item)} for item in results
     ]
 
 
@@ -49,4 +49,4 @@ def get_keywords(field, value):
 def sort_results(results):
     """Performs in-place sort of filterchain results."""
 
-    results.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(str(x)))
+    results.sort(key=lambda x: unicode_sorter(force_text(x)))
