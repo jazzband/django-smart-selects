@@ -29,9 +29,9 @@ URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 
 
 class ChainedSelect(Select):
-    def __init__(self, app_name, model_name, chain_field,
-                 model_field, show_all, auto_choose,
-                 manager=None, view_name=None, *args, **kwargs):
+    def __init__(self, app_name, model_name, chain_field, model_field,
+                 foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
+                 show_all, auto_choose, manager=None, view_name=None, *args, **kwargs):
         self.app_name = app_name
         self.model_name = model_name
         self.chain_field = chain_field
@@ -40,6 +40,9 @@ class ChainedSelect(Select):
         self.auto_choose = auto_choose
         self.manager = manager
         self.view_name = view_name
+        self.foreign_key_app_name = foreign_key_app_name
+        self.foreign_key_model_name = foreign_key_model_name
+        self.foreign_key_field_name = foreign_key_field_name
         super(Select, self).__init__(*args, **kwargs)
 
     class Media:
@@ -65,8 +68,15 @@ class ChainedSelect(Select):
                 view_name = "chained_filter"
         else:
             view_name = self.view_name
-        kwargs = {'app': self.app_name, 'model': self.model_name,
-                  'field': self.model_field, 'value': "1"}
+        kwargs = {
+            'app': self.app_name,
+            'model': self.model_name,
+            'field': self.model_field,
+            'foreign_key_app_name': self.foreign_key_app_name,
+            'foreign_key_model_name': self.foreign_key_model_name,
+            'foreign_key_field_name': self.foreign_key_field_name,
+            'value': '1'
+            }
         if self.manager is not None:
             kwargs.update({'manager': self.manager})
         url = URL_PREFIX + ("/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2]))
@@ -171,25 +181,9 @@ class ChainedSelect(Select):
                    'auto_choose': auto_choose,
                    'empty_label': empty_label}
         final_choices = []
-
         if value:
-            item = self.queryset.filter(pk=value)[0]
-            try:
-                pk = getattr(item, self.model_field + "_id")
-                filter = {self.model_field: pk}
-            except AttributeError:
-                try:  # maybe m2m?
-                    pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
-                    filter = {self.model_field + "__in": pks}
-                except AttributeError:
-                    try:  # maybe a set?
-                        pks = getattr(item, self.model_field + "_set").all().values_list('pk', flat=True)
-                        filter = {self.model_field + "__in": pks}
-                    except:  # give up
-                        filter = {}
-            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
-            filtered.sort(key=lambda x: unicode_sorter(force_text(x)))
-            for choice in filtered:
+            available_choices = self._get_available_choices(self.queryset, value)
+            for choice in available_choices:
                 final_choices.append((choice.pk, force_text(choice)))
         if len(final_choices) > 1:
             final_choices = [("", (empty_label))] + final_choices
@@ -206,6 +200,34 @@ class ChainedSelect(Select):
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
+
         output = super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
         output += js
         return mark_safe(output)
+
+    def _get_available_choices(self, queryset, value):
+        """
+        get possible choices for selection
+        """
+        item = queryset.filter(pk=value).first()
+        if item:
+            try:
+                pk = getattr(item, self.model_field + "_id")
+                filter = {self.model_field: pk}
+            except AttributeError:
+                try:  # maybe m2m?
+                    pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
+                    filter = {self.model_field + "__in": pks}
+                except AttributeError:
+                    try:  # maybe a set?
+                        pks = getattr(item, self.model_field + "_set").all().values_list('pk', flat=True)
+                        filter = {self.model_field + "__in": pks}
+                    except:  # give up
+                        filter = {}
+            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
+            filtered.sort(key=lambda x: unicode_sorter(force_text(x)))
+        else:
+            # invalid value for queryset
+            filtered = []
+
+        return filtered

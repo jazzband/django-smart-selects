@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from django.utils.encoding import force_text
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+except ImportError:
+    from django.db.models.loading import get_model
 
 
 def unicode_sorter(input):
@@ -22,12 +27,26 @@ def unicode_sorter(input):
     # according to key2.
     return key1
 
+def get_limit_choices_to(app_name, model_name, field_name):
+    try:
+        model = get_model(app_name, model_name)
+        field = model._meta.get_field_by_name(field_name)[0]
+        limit_choices_to = field.rel.limit_choices_to
+    except Exception as e:
+        print e
+        limit_choices_to = None
 
-def get_queryset(model_class, manager=None):
+    return limit_choices_to
+
+
+def get_queryset(model_class, manager=None, limit_choices_to=None):
     if manager is not None and hasattr(model_class, manager):
         queryset = getattr(model_class, manager)
     else:
         queryset = model_class._default_manager
+
+    if limit_choices_to:
+        queryset = queryset.complex_filter(limit_choices_to)
     return queryset
 
 

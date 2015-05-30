@@ -12,13 +12,17 @@ except ImportError:
     from django.utils import simplejson as json
 
 from smart_selects.utils import (get_keywords, sort_results, serialize_results,
-                                 get_queryset)
+                                 get_queryset, get_limit_choices_to)
 
 
-def filterchain(request, app, model, field, value, manager=None):
+def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_model_name,
+                foreign_key_field_name, value, manager=None):
+    
     model_class = get_model(app, model)
     keywords = get_keywords(field, value)
-    queryset = get_queryset(model_class, manager)
+    # filter queryset using limit_choices_to
+    limit_choices_to = get_limit_choices_to(foreign_key_app_name, foreign_key_model_name, foreign_key_field_name)
+    queryset = get_queryset(model_class, manager, limit_choices_to)
 
     results = queryset.filter(**keywords)
 
@@ -32,7 +36,8 @@ def filterchain(request, app, model, field, value, manager=None):
     return HttpResponse(results_json, content_type='application/json')
 
 
-def filterchain_all(request, app, model, field, value):
+def filterchain_all(request, app, model, field, foreign_key_app_name,
+                    foreign_key_model_name, foreign_key_field_name, value):
     """Returns filtered results followed by excluded results below."""
 
     model_class = get_model(app, model)
