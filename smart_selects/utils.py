@@ -33,7 +33,6 @@ def get_limit_choices_to(app_name, model_name, field_name):
         field = model._meta.get_field_by_name(field_name)[0]
         limit_choices_to = field.rel.limit_choices_to
     except Exception as e:
-        print e
         limit_choices_to = None
 
     return limit_choices_to

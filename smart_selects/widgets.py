@@ -9,7 +9,7 @@ from django.forms.widgets import Select
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 
-from smart_selects.utils import unicode_sorter
+from smart_selects.utils import unicode_sorter, sort_results
 
 try:
     from django.apps import apps
@@ -190,7 +190,7 @@ class ChainedSelect(Select):
         if self.show_all:
             final_choices.append(("", (empty_label)))
             self.choices = list(self.choices)
-            self.choices.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(x[1]))
+            self.choices.sort(key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
                 if not ch in final_choices:
                     final_choices.append(ch)
@@ -225,7 +225,7 @@ class ChainedSelect(Select):
                     except:  # give up
                         filter = {}
             filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
-            filtered.sort(key=lambda x: unicode_sorter(force_text(x)))
+            sort_results(filtered)
         else:
             # invalid value for queryset
             filtered = []
