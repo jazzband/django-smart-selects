@@ -42,7 +42,9 @@ def filterchain_all(request, app, model, field, foreign_key_app_name,
 
     model_class = get_model(app, model)
     keywords = get_keywords(field, value)
-    queryset = get_queryset(model_class)
+    # filter queryset using limit_choices_to
+    limit_choices_to = get_limit_choices_to(foreign_key_app_name, foreign_key_model_name, foreign_key_field_name)
+    queryset = get_queryset(model_class, limit_choices_to=limit_choices_to)
 
     filtered = list(queryset.filter(**keywords))
     sort_results(filtered)
