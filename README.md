@@ -13,25 +13,25 @@ If you have the following model:
 		area = models.ForeignKey(Area)
 		city = models.CharField(max_length=50)
 		street = models.CharField(max_length=100)
-		
+
 And you want that if you select a continent only the countries are available that are located on this continent and the same for areas
 you can do the following:
 
-    from smart_selects.db_fields import ChainedForeignKey 
+    from smart_selects.db_fields import ChainedForeignKey
 
 	class Location(models.Model)
 		continent = models.ForeignKey(Continent)
 		country = ChainedForeignKey(
-			Country, 
+			Country,
 			chained_field="continent",
-			chained_model_field="continent", 
-			show_all=False, 
+			chained_model_field="continent",
+			show_all=False,
 			auto_choose=True
 		)
 		area = ChainedForeignKey(Area, chained_field="country", chained_model_field="country")
 		city = models.CharField(max_length=50)
 		street = models.CharField(max_length=100)
-	
+
 This example asumes that the Country Model has a continent = ForeignKey(Continent) field
 and that the Area model has country = ForeignKey(Country) field.
 
@@ -48,18 +48,18 @@ If you have the following model:
 	class Location(models.Model)
 		continent = models.ForeignKey(Continent)
 		country = models.ForeignKey(Country)
-		
+
 And you want that all countries are grouped by the Continent and that <opt> Groups are used in the select change to the following:
 
     from smart_selects.db_fields import GroupedForeignKey
-	
+
 	class Location(models.Model)
 		continent = models.ForeignKey(Continent)
 		country = GroupedForeignKey(Country, "continent")
-		
+
 This example assumes that the Country Model has a foreignKey to Continent named "continent"
 finished.
-	
+
 
 
 Installation
@@ -80,4 +80,5 @@ Settings
 
 `JQUERY_URL`
 :   By default, jQuery will be loaded from Google's CDN. If you would prefer to
-    use a different version put the full URL here.
+    use a different version put the full URL here. If you don't want to load jQuery
+    because you are loading this in another place, put a empty string here.
