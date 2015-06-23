@@ -46,12 +46,12 @@ class ChainedSelect(Select):
         super(Select, self).__init__(*args, **kwargs)
 
     class Media:
-        extra = '' if settings.DEBUG else '.min'
-        js = [
-            'jquery%s.js' % extra,
-            'jquery.init.js'
-        ]
         if USE_DJANGO_JQUERY:
+            extra = '' if settings.DEBUG else '.min'
+            js = [
+                'jquery%s.js' % extra,
+                'jquery.init.js'
+            ]
             js = [static('admin/js/%s' % url) for url in js]
         elif JQUERY_URL:
             js = [JQUERY_URL]
