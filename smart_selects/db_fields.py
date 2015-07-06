@@ -29,7 +29,7 @@ class ChainedManyToManyField(ManyToManyField):
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
-            ChainedManyToMany, self).deconstruct()
+            ChainedManyToManyField, self).deconstruct()
 
         # Maps attribute names to their default kwarg values.
         defaults = {
