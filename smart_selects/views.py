@@ -16,8 +16,24 @@ from smart_selects.utils import (get_keywords, sort_results, serialize_results,
 
 
 def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_model_name,
-                foreign_key_field_name, value, manager=None):
+                foreign_key_field_name, value, chain_field, manager=None):
     
+    chain_field = chain_field.split("__")
+    chain_field.reverse()
+
+    fk_model = get_model(foreign_key_app_name, foreign_key_model_name)
+    f = fk_model._meta.get_field_by_name(chain_field.pop())[0]
+    obj = f.rel.to.objects.get(pk = value)
+    while len(chain_field):
+	obj = getattr(obj, chain_field.pop())
+    value = obj.pk
+    #an alternative is
+    #- traverse relations given in chain_field to get the final model
+    #- reverse chain_field
+    #- filter final model with (reversed_chain_field=value)
+    #- filter queryset below with (field__in = [results from above[)
+    #that would allow other kinds of relations in chain_field - now it's only foreign key traversed forward
+
     model_class = get_model(app, model)
     keywords = get_keywords(field, value)
     # filter queryset using limit_choices_to

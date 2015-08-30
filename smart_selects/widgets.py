@@ -75,6 +75,7 @@ class ChainedSelect(Select):
             'foreign_key_app_name': self.foreign_key_app_name,
             'foreign_key_model_name': self.foreign_key_model_name,
             'foreign_key_field_name': self.foreign_key_field_name,
+            'chain_field': self.chain_field,
             'value': '1'
             }
         if self.manager is not None:
@@ -174,7 +175,7 @@ class ChainedSelect(Select):
         </script>
 
         """
-        js = js % {"chainfield": chain_field,
+        js = js % {"chainfield": chain_field.split("__")[0],
                    "url": url,
                    "id": attrs['id'],
                    'value': value,
