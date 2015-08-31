@@ -121,6 +121,7 @@ class ChainedSelect(Select):
             }
 
             $(document).ready(function(){
+                var el = $("#%(id)s");
                 function fill_field(val, init_value){
                     if (!val || val==''){
                         options = '<option value="">%(empty_label)s<'+'/option>';
@@ -131,7 +132,6 @@ class ChainedSelect(Select):
                     }
                     $.getJSON("%(url)s/"+val+"/", function(j){
                         var options = '<option value="">%(empty_label)s<'+'/option>';
-                        var el = $("#%(id)s");
                         var prev_value = el.children("option[selected='selected']").val();
                         for (var i = 0; i < j.length; i++) {
                             options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
