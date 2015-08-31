@@ -16,14 +16,18 @@ from smart_selects.utils import (get_keywords, sort_results, serialize_results,
 
 
 def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_model_name,
-                foreign_key_field_name, value, chain_field, manager=None):
+                foreign_key_field_name, value, chain_field, manager=None, pk=None):
     
     chain_field = chain_field.split("__")
     chain_field.reverse()
 
     fk_model = get_model(foreign_key_app_name, foreign_key_model_name)
-    f = fk_model._meta.get_field_by_name(chain_field.pop())[0]
-    obj = f.rel.to.objects.get(pk = value)
+    if pk:
+	obj = fk_model.objects.get(pk = pk)
+	obj = getattr(obj, chain_field.pop())
+    else:
+        f = fk_model._meta.get_field_by_name(chain_field.pop())[0]
+        obj = f.rel.to.objects.get(pk = value)
     while len(chain_field):
 	obj = getattr(obj, chain_field.pop())
     value = obj.pk
