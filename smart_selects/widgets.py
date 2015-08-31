@@ -75,6 +75,7 @@ class ChainedSelect(Select):
             'foreign_key_app_name': self.foreign_key_app_name,
             'foreign_key_model_name': self.foreign_key_model_name,
             'foreign_key_field_name': self.foreign_key_field_name,
+            'chain_field': self.chain_field,
             'value': '1'
             }
         if self.manager is not None:
@@ -120,23 +121,31 @@ class ChainedSelect(Select):
             }
 
             $(document).ready(function(){
-                function fill_field(val, init_value){
-                    if (!val || val==''){
+                var el = $("#%(id)s");
+                function fill_field(val, init_value, pk){
+                    if ((!val || val=='') && !pk){
                         options = '<option value="">%(empty_label)s<'+'/option>';
                         $("#%(id)s").html(options);
                         $('#%(id)s option:first').attr('selected', 'selected');
                         $("#%(id)s").trigger('change');
                         return;
                     }
-                    $.getJSON("%(url)s/"+val+"/", function(j){
+                    if (init_value == "None") init_value = undefined;
+                    var url = "%(url)s/";
+                    if (!val && pk)
+                        url += "0/pk/"+pk;
+                    else
+                        url += val;
+                    $.getJSON(url+"/", function(j){
                         var options = '<option value="">%(empty_label)s<'+'/option>';
+                        var prev_value = el.children("option[selected='selected']").val();
                         for (var i = 0; i < j.length; i++) {
                             options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
                         }
-                        var width = $("#%(id)s").outerWidth();
-                        $("#%(id)s").html(options);
+                        var width = el.outerWidth();
+                        el.html(options);
                         if (navigator.appVersion.indexOf("MSIE") != -1)
-                            $("#%(id)s").width(width + 'px');
+                            el.width(width + 'px');
                         $('#%(id)s option:first').attr('selected', 'selected');
                         var auto_choose = %(auto_choose)s;
                         if(init_value){
@@ -145,17 +154,32 @@ class ChainedSelect(Select):
                         if(auto_choose && j.length == 1){
                             $('#%(id)s option[value="'+ j[0].value +'"]').attr('selected', 'selected');
                         }
-                        $("#%(id)s").trigger('change');
+                        if (init_value != prev_value)
+                            el.trigger('change');
                     })
                 }
 
-                if(!$("#id_%(chainfield)s").hasClass("chained")){
-                    var val = $("#id_%(chainfield)s").val();
-                    fill_field(val, "%(value)s");
+                var chainfield = $("#id_%(chainfield)s");
+
+                if(!chainfield.hasClass("chained") || !el.children().length){
+                    var pk;
+                    var val = chainfield.val();
+                    if (!chainfield.length) {
+                        var a;
+                        a = el.parents("tr").first().children("td.action-checkbox").children("input.action-select");
+                        if (a.length)
+                            pk = a.val();
+                        else {
+                            a = el.parents("div.inline-group");
+                            if (a.length)
+                                val = document.location.pathname.match(/\d+[/]?$/)[0].replace("/","");
+                        }
+                    }
+                    fill_field(val, "%(value)s", pk);
                 }
 
-                $("#id_%(chainfield)s").change(function(){
-                    var start_value = $("#%(id)s").val();
+                chainfield.change(function(){
+                    var start_value = el.val();
                     var val = $(this).val();
                     fill_field(val, start_value);
                 })
@@ -174,7 +198,7 @@ class ChainedSelect(Select):
         </script>
 
         """
-        js = js % {"chainfield": chain_field,
+        js = js % {"chainfield": chain_field.split("__")[0],
                    "url": url,
                    "id": attrs['id'],
                    'value': value,
