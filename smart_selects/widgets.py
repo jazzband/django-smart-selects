@@ -153,13 +153,14 @@ class ChainedSelect(Select):
                     })
                 }
 
-                if(!$("#id_%(chainfield)s").hasClass("chained")){
-                    var val = $("#id_%(chainfield)s").val();
-                    fill_field(val, "%(value)s");
+                var chainfield = $("#id_%(chainfield)s");
+
+                if(!chainfield.hasClass("chained")){
+                    fill_field(chainfield.val(), "%(value)s");
                 }
 
-                $("#id_%(chainfield)s").change(function(){
-                    var start_value = $("#%(id)s").val();
+                chainfield.change(function(){
+                    var start_value = el.val();
                     var val = $(this).val();
                     fill_field(val, start_value);
                 })
