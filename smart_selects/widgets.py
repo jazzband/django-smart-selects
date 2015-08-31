@@ -137,14 +137,16 @@ class ChainedSelect(Select):
                         $("#%(id)s").html(options);
                         if (navigator.appVersion.indexOf("MSIE") != -1)
                             $("#%(id)s").width(width + 'px');
-                        $('#%(id)s option:first').attr('selected', 'selected');
                         var auto_choose = %(auto_choose)s;
                         if(init_value){
                             $('#%(id)s option[value="'+ init_value +'"]').attr('selected', 'selected');
                         }
                         if(auto_choose && j.length == 1){
                             $('#%(id)s option[value="'+ j[0].value +'"]').attr('selected', 'selected');
+                        } else if ( $('#%(id)s option[selected=selected]').length === 0 ) {
+                            $('#%(id)s option:first').attr('selected', 'selected');
                         }
+
                         $("#%(id)s").trigger('change');
                     })
                 }
