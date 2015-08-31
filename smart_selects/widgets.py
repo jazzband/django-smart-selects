@@ -160,7 +160,7 @@ class ChainedSelect(Select):
 
                 var chainfield = $("#id_%(chainfield)s");
 
-                if(!chainfield.hasClass("chained")){
+                if(!chainfield.hasClass("chained") || !el.children().length){
                     var pk;
                     var val = chainfield.val();
                     if (!chainfield.length) {
