@@ -131,14 +131,15 @@ class ChainedSelect(Select):
                     }
                     $.getJSON("%(url)s/"+val+"/", function(j){
                         var options = '<option value="">%(empty_label)s<'+'/option>';
-                        var prev_value = $("#%(id)s").children("option[selected='selected']").val();
+                        var el = $("#%(id)s");
+                        var prev_value = el.children("option[selected='selected']").val();
                         for (var i = 0; i < j.length; i++) {
                             options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
                         }
-                        var width = $("#%(id)s").outerWidth();
-                        $("#%(id)s").html(options);
+                        var width = el.outerWidth();
+                        el.html(options);
                         if (navigator.appVersion.indexOf("MSIE") != -1)
-                            $("#%(id)s").width(width + 'px');
+                            el.width(width + 'px');
                         $('#%(id)s option:first').attr('selected', 'selected');
                         var auto_choose = %(auto_choose)s;
                         if(init_value){
@@ -148,7 +149,7 @@ class ChainedSelect(Select):
                             $('#%(id)s option[value="'+ j[0].value +'"]').attr('selected', 'selected');
                         }
                         if (init_value != prev_value)
-                            $("#%(id)s").trigger('change');
+                            el.trigger('change');
                     })
                 }
 
