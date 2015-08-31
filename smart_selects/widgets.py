@@ -130,6 +130,7 @@ class ChainedSelect(Select):
                         $("#%(id)s").trigger('change');
                         return;
                     }
+                    if (init_value == "None") init_value = undefined;
                     var url = "%(url)s/";
                     if (!val && pk)
                         url += "0/pk/"+pk;
