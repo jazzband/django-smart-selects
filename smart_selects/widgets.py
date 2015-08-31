@@ -58,6 +58,7 @@ class ChainedSelect(Select):
         elif JQUERY_URL:
             js = [JQUERY_URL]
         js = js + [static('smart-selects/admin/js/chainedfk.js')]
+        js = js + [static('smart_selects/js/chained.js')]
 
         return forms.Media(js=js)
 
@@ -94,32 +95,7 @@ class ChainedSelect(Select):
         if hasattr(iterator, '__next__'):
             empty_label = iterator.__next__()[1]
         else:
-            # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
-            empty_label = iterator.next()[1]
-
-        js = """
-        <script type="text/javascript">
-        (function($) {
-            var chainfield = "#id_%(chainfield)s";
-            var url = "%(url)s";
-            var id = "#%(id)s";
-            var value = %(value)s;
-            var auto_choose = %(auto_choose)s;
-            var empty_label = "%(empty_label)s";
-
-            $(document).ready(function() {
-                chainedfk.init(chainfield, url, id, value, empty_label, auto_choose);
-            });
-        })(jQuery || django.jQuery);
-        </script>
-
-        """
-        js = js % {"chainfield": chained_field,
-                   "url": url,
-                   "id": attrs['id'],
-                   'value': 'undefined' if value is None or value == '' else value,
-                   'auto_choose': auto_choose,
-                   'empty_label': escape(empty_label)}
+            empty_label = iterator.next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
         final_choices = []
         if value:
             available_choices = self._get_available_choices(self.queryset, value)
@@ -140,10 +116,14 @@ class ChainedSelect(Select):
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-        
-        output = js
-        output += super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
-        
+
+        final_attrs['data-ss-url'] = url
+        final_attrs['data-ss-id'] = u'id_' + chain_field
+        final_attrs['data-ss-value'] = value
+        final_attrs['data-ss-auto_choose'] = auto_choose
+        final_attrs['data-ss-empty_label'] = empty_label
+
+        output = super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
         return mark_safe(output)
 
     def _get_available_choices(self, queryset, value):
