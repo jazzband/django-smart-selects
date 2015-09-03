@@ -62,9 +62,27 @@
 
         $("#content-main").on('change', 'select', function(){
             var relatedTo = $(this);
-            var relatedSelect = $('select.chained[data-ss-id="'+relatedTo.attr('id')+'"]');
+            // If a new inline was added, replace the prefix correctly
+            var chainedSelect = $('select.chained:visible');
+            chainedSelect.not('.chained-prefixed').each(function() {
+                var $this = $(this);
+                if ($this.data('ss-id').indexOf('__prefix__') !== -1) {
+                    var row = $this.attr('id').match(/-[0-9]+-/);
+                    var new_ss_id = $this.data('ss-id').replace('-__prefix__-', row[0]);
+                    $this.attr('data-ss-id', new_ss_id);
+                }
+                $this.addClass('chained-prefixed');
+            });
+            var relatedSelect = chainedSelect.filter('[data-ss-id="'+relatedTo.attr('id')+'"]');
             if ( relatedSelect.length == 0 ) return;
             fill_field(relatedTo, relatedSelect);
+        });
+        // Load available options from related select when no value is set
+        $('select[data-ss-id]').each(function() {
+            var $this = $(this);
+            var value = $this.val();
+            if (!value)
+                $('#'+$this.attr('data-ss-id')).change();
         });
     });
     if (typeof(dismissAddAnotherPopup) !== 'undefined') {

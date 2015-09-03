@@ -101,8 +101,7 @@ class ChainedSelect(Select):
             available_choices = self._get_available_choices(self.queryset, value)
             for choice in available_choices:
                 final_choices.append((choice.pk, force_text(choice)))
-        if len(final_choices) > 1:
-            final_choices = [("", (empty_label))] + final_choices
+        final_choices = [("", (empty_label))] + final_choices
         if self.show_all:
             final_choices.append(("", (empty_label)))
             self.choices = list(self.choices)
