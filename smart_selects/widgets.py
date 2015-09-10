@@ -159,7 +159,7 @@ class ChainedSelect(Select):
                     var val = $(this).val();
                     fill_field(val, start_value);
                 })
-            })
+            });
             if (typeof(dismissAddAnotherPopup) !== 'undefined') {
                 var oldDismissAddAnotherPopup = dismissAddAnotherPopup;
                 dismissAddAnotherPopup = function(win, newId, newRepr) {
