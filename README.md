@@ -64,6 +64,7 @@ This example assumes that the Country Model has `continent = ForeignKey(Continen
 Installation
 ------------
 
+0. Install this package by `pip install django-smart-selects`
 1. Add `"smart_selects"` to your `INSTALLED_APPS` in `settings.py`
 2. Bind the `smart_selects` urls.py into your main `urls.py` with something like: `url(r'^chaining/', include('smart_selects.urls')),`
    This is needed for the chained-selects.
