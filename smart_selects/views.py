@@ -1,11 +1,11 @@
 from django.http import HttpResponse
-
 try:
     from django.apps import apps
     get_model = apps.get_model
 except ImportError:
     from django.db.models.loading import get_model
     
+from django.db.models.fields.related import ReverseManyRelatedObjectsDescriptor
 try:
     import json
 except ImportError:
@@ -19,7 +19,11 @@ def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_mo
                 foreign_key_field_name, value, manager=None):
     
     model_class = get_model(app, model)
-    keywords = get_keywords(field, value)
+    m2m = False
+    if isinstance(getattr(model_class, field), ReverseManyRelatedObjectsDescriptor):
+        m2m = True
+
+    keywords = get_keywords(field, value, m2m=m2m)
     # filter queryset using limit_choices_to
     limit_choices_to = get_limit_choices_to(foreign_key_app_name, foreign_key_model_name, foreign_key_field_name)
     queryset = get_queryset(model_class, manager, limit_choices_to)
@@ -39,7 +43,6 @@ def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_mo
 def filterchain_all(request, app, model, field, foreign_key_app_name,
                     foreign_key_model_name, foreign_key_field_name, value):
     """Returns filtered results followed by excluded results below."""
-
     model_class = get_model(app, model)
     keywords = get_keywords(field, value)
     # filter queryset using limit_choices_to
