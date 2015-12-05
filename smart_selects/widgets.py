@@ -234,9 +234,9 @@ class ChainedSelect(Select):
         return filtered
 
 class ChainedSelectMultiple(SelectMultiple):
-    def __init__(self, app_name, model_name, chain_field,
-                 model_field, show_all, auto_choose,
-                 manager=None, view_name=None, *args, **kwargs):
+    def __init__(self, app_name, model_name, chain_field, model_field,
+                 foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
+                 show_all, auto_choose, manager=None, view_name=None, *args, **kwargs):
         self.app_name = app_name
         self.model_name = model_name
         self.chain_field = chain_field
@@ -245,6 +245,9 @@ class ChainedSelectMultiple(SelectMultiple):
         self.auto_choose = auto_choose
         self.manager = manager
         self.view_name = view_name
+        self.foreign_key_app_name = foreign_key_app_name
+        self.foreign_key_model_name = foreign_key_model_name
+        self.foreign_key_field_name = foreign_key_field_name
 
         super(SelectMultiple, self).__init__(*args, **kwargs)
 
@@ -275,8 +278,16 @@ class ChainedSelectMultiple(SelectMultiple):
                 view_name = "chained_filter"
         else:
             view_name = self.view_name
-        kwargs = {'app': self.app_name, 'model': self.model_name,
-                  'field': self.model_field, 'value': "1"}
+
+        kwargs = {
+            'app': self.app_name,
+            'model': self.model_name,
+            'field': self.model_field,
+            'foreign_key_app_name': self.foreign_key_app_name,
+            'foreign_key_model_name': self.foreign_key_model_name,
+            'foreign_key_field_name': self.foreign_key_field_name,
+            'value': '1'
+            }
         if self.manager is not None:
             kwargs.update({'manager': self.manager})
         url = URL_PREFIX + ("/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2]))

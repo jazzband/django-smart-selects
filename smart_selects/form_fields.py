@@ -34,15 +34,14 @@ class ChainedModelChoiceField(ModelChoiceField):
 
 class ChainedManyToManyField(ModelMultipleChoiceField):
 
-    def __init__(self, app_name, model_name,
-                 chain_field, model_field, show_all,
-                 auto_choose, manager=None,
-                 initial=None, view_name=None, *args, **kwargs):
+    def __init__(self, app_name, model_name, chain_field, model_field,
+                 foreign_key_app_name, foreign_key_model_name, foreign_key_field_name, show_all, auto_choose,
+                 manager=None, initial=None, view_name=None, *args, **kwargs):
 
         defaults = {
-            'widget': ChainedSelectMultiple(app_name, model_name, chain_field,
-                                    model_field, show_all, auto_choose,
-                                    manager, view_name),
+            'widget': ChainedSelectMultiple(app_name, model_name, chain_field, model_field,
+                                    foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
+                                    show_all, auto_choose, manager, view_name),
         }
         defaults.update(kwargs)
         if not 'queryset' in kwargs:
