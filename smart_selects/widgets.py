@@ -29,13 +29,13 @@ else:
 URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 
 class ChainedSelect(Select):
-    def __init__(self, app_name, model_name, chain_field, model_field,
+    def __init__(self, to_app_name, to_model_name, chained_field, chained_model_field,
                  foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
                  show_all, auto_choose, manager=None, view_name=None, *args, **kwargs):
-        self.app_name = app_name
-        self.model_name = model_name
-        self.chain_field = chain_field
-        self.model_field = model_field
+        self.to_app_name = to_app_name
+        self.to_model_name = to_model_name
+        self.chained_field = chained_field
+        self.chained_model_field = chained_model_field
         self.show_all = show_all
         self.auto_choose = auto_choose
         self.manager = manager
@@ -61,9 +61,9 @@ class ChainedSelect(Select):
         # raise Exception
 
         if len(name.split('-')) > 1:  # formset
-            chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
+            chained_field = '-'.join(name.split('-')[:-1] + [self.chained_field])
         else:
-            chain_field = self.chain_field
+            chained_field = self.chained_field
 
         if not self.view_name:
             if self.show_all:
@@ -73,9 +73,9 @@ class ChainedSelect(Select):
         else:
             view_name = self.view_name
         kwargs = {
-            'app': self.app_name,
-            'model': self.model_name,
-            'field': self.model_field,
+            'app': self.to_app_name,
+            'model': self.to_model_name,
+            'field': self.chained_model_field,
             'foreign_key_app_name': self.foreign_key_app_name,
             'foreign_key_model_name': self.foreign_key_model_name,
             'foreign_key_field_name': self.foreign_key_field_name,
@@ -92,7 +92,8 @@ class ChainedSelect(Select):
         if hasattr(iterator, '__next__'):
             empty_label = iterator.__next__()[1]
         else:
-            empty_label = iterator.next()[1]  # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
+            # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
+            empty_label = iterator.next()[1]
 
         js = """
         <script type="text/javascript">
@@ -111,7 +112,7 @@ class ChainedSelect(Select):
         </script>
 
         """
-        js = js % {"chainfield": chain_field,
+        js = js % {"chainfield": chained_field,
                    "url": url,
                    "id": attrs['id'],
                    'value': 'undefined' if value is None else value,
@@ -149,19 +150,19 @@ class ChainedSelect(Select):
         item = queryset.filter(pk=value).first()
         if item:
             try:
-                pk = getattr(item, self.model_field + "_id")
-                filter = {self.model_field: pk}
+                pk = getattr(item, self.chained_model_field + "_id")
+                filter = {self.chained_model_field: pk}
             except AttributeError:
                 try:  # maybe m2m?
-                    pks = getattr(item, self.model_field).all().values_list('pk', flat=True)
-                    filter = {self.model_field + "__in": pks}
+                    pks = getattr(item, self.chained_model_field).all().values_list('pk', flat=True)
+                    filter = {self.chained_model_field + "__in": pks}
                 except AttributeError:
                     try:  # maybe a set?
-                        pks = getattr(item, self.model_field + "_set").all().values_list('pk', flat=True)
-                        filter = {self.model_field + "__in": pks}
+                        pks = getattr(item, self.chained_model_field + "_set").all().values_list('pk', flat=True)
+                        filter = {self.chained_model_field + "__in": pks}
                     except:  # give up
                         filter = {}
-            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
+            filtered = list(get_model(self.to_app_name, self.to_model_name).objects.filter(**filter).distinct())
             sort_results(filtered)
         else:
             # invalid value for queryset
