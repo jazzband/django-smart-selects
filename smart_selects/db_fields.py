@@ -108,7 +108,7 @@ class ChainedForeignKey(ForeignKey):
                 Country, 
                 chained_field="continent",
                 chained_model_field="continent", 
-                # show_all=True, 
+                show_all=True, 
                 auto_choose=True,
                 # limit_choices_to={'name':'test'}
             )
@@ -123,7 +123,7 @@ class ChainedForeignKey(ForeignKey):
         ``auto_choose`` controls whether auto select the choice when there is only one available choice.
 
         ``view_name`` controls which view to use, 'chained_filter' or 'chained_filter_all'.
-        
+
         """
         if isinstance(to, six.string_types):
             self.to_app_name, self.to_model_name = to.split('.')

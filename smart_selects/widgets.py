@@ -58,8 +58,6 @@ class ChainedSelect(Select):
         js = js + [static('smart-selects/admin/js/chainedfk.js')]
 
     def render(self, name, value, attrs=None, choices=()):
-        # raise Exception
-
         if len(name.split('-')) > 1:  # formset
             chained_field = '-'.join(name.split('-')[:-1] + [self.chained_field])
         else:
