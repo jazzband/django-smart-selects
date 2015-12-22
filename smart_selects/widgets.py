@@ -170,13 +170,13 @@ class ChainedSelect(Select):
 
 
 class ChainedSelectMultiple(SelectMultiple):
-    def __init__(self, app_name, model_name, chain_field, model_field,
+    def __init__(self, to_app_name, to_model_name, chain_field, chained_model_field,
                  foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
                  show_all, auto_choose, manager=None, view_name=None, *args, **kwargs):
-        self.app_name = app_name
-        self.model_name = model_name
+        self.to_app_name = to_app_name
+        self.to_model_name = to_model_name
         self.chain_field = chain_field
-        self.model_field = model_field
+        self.chained_model_field = chained_model_field
         self.show_all = show_all
         self.auto_choose = auto_choose
         self.manager = manager
@@ -216,9 +216,9 @@ class ChainedSelectMultiple(SelectMultiple):
             view_name = self.view_name
 
         kwargs = {
-            'app': self.app_name,
-            'model': self.model_name,
-            'field': self.model_field,
+            'app': self.to_app_name,
+            'model': self.to_model_name,
+            'field': self.chained_model_field,
             'foreign_key_app_name': self.foreign_key_app_name,
             'foreign_key_model_name': self.foreign_key_model_name,
             'foreign_key_field_name': self.foreign_key_field_name,
@@ -259,15 +259,15 @@ class ChainedSelectMultiple(SelectMultiple):
         if value:
             items = self.queryset.filter(pk__in=value)
             try:  # maybe m2m?
-                pks = getattr(items, self.model_field).all().values_list('pk', flat=True)
-                filter = {self.model_field + "__in": pks}
+                pks = getattr(items, self.chained_model_field).all().values_list('pk', flat=True)
+                filter = {self.chained_model_field + "__in": pks}
             except AttributeError:
                 try:  # maybe a set?
-                    pks = getattr(items, self.model_field + "_set").all().values_list('pk', flat=True)
-                    filter = {self.model_field + "__in": pks}
+                    pks = getattr(items, self.chained_model_field + "_set").all().values_list('pk', flat=True)
+                    filter = {self.chained_model_field + "__in": pks}
                 except:  # give up
                     filter = {}
-            filtered = list(get_model(self.app_name, self.model_name).objects.filter(**filter).distinct())
+            filtered = list(get_model(self.to_app_name, self.to_model_name).objects.filter(**filter).distinct())
             filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
             for choice in filtered:
                 final_choices.append((choice.pk, unicode(choice)))

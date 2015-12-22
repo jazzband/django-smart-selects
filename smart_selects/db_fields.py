@@ -17,12 +17,12 @@ class ChainedManyToManyField(ManyToManyField):
     def __init__(self, to, chained_field=None, chained_model_field=None,
                  show_all=False, auto_choose=False, view_name=None, **kwargs):
         if isinstance(to, basestring):
-            self.app_name, self.model_name = to.split('.')
+            self.to_app_name, self.to_model_name = to.split('.')
         else:
-            self.app_name = to._meta.app_label
-            self.model_name = to._meta.object_name
+            self.to_app_name = to._meta.app_label
+            self.to_model_name = to._meta.object_name
         self.chain_field = chained_field
-        self.model_field = chained_model_field
+        self.chained_model_field = chained_model_field
         self.show_all = show_all
         self.auto_choose = auto_choose
         self.view_name = view_name
@@ -35,7 +35,7 @@ class ChainedManyToManyField(ManyToManyField):
         # Maps attribute names to their default kwarg values.
         defaults = {
             'chain_field': None,
-            'model_field': None,
+            'chained_model_field': None,
             'show_all': False,
             'auto_choose': False,
             'view_name': None,
@@ -44,7 +44,7 @@ class ChainedManyToManyField(ManyToManyField):
         # Maps attribute names to their __init__ kwarg names.
         attr_to_kwarg_names = {
             'chain_field': 'chained_field',
-            'model_field': 'chained_model_field',
+            'chained_model_field': 'chained_model_field',
             'show_all': 'show_all',
             'auto_choose': 'auto_choose',
             'view_name': 'view_name',
@@ -72,10 +72,10 @@ class ChainedManyToManyField(ManyToManyField):
             'form_class': form_fields.ChainedManyToManyField,
             'queryset': self.rel.to._default_manager.complex_filter(
                 self.rel.limit_choices_to),
-            'app_name': self.app_name,
-            'model_name': self.model_name,
+            'to_app_name': self.to_app_name,
+            'to_model_name': self.to_model_name,
             'chain_field': self.chain_field,
-            'model_field': self.model_field,
+            'chained_model_field': self.chained_model_field,
             'show_all': self.show_all,
             'auto_choose': self.auto_choose,
             'view_name': self.view_name,
