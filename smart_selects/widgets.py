@@ -201,19 +201,12 @@ class ChainedSelectMultiple(SelectMultiple):
         js = js + [static('smart-selects/admin/js/chainedm2m.js')]
 
     def render(self, name, value, attrs=None, choices=()):
-
         if len(name.split('-')) > 1:  # formset
             chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
         else:
             chain_field = self.chain_field
 
-        if not self.view_name:
-            if self.show_all:
-                view_name = "chained_filter_all"
-            else:
-                view_name = "chained_filter"
-        else:
-            view_name = self.view_name
+        view_name = 'chained_filter'
 
         kwargs = {
             'app': self.to_app_name,
@@ -231,7 +224,6 @@ class ChainedSelectMultiple(SelectMultiple):
             auto_choose = 'true'
         else:
             auto_choose = 'false'
-        empty_label = ''
         js = """
         <script type="text/javascript">
         (function($) {
@@ -254,34 +246,12 @@ class ChainedSelectMultiple(SelectMultiple):
                    "id": attrs['id'],
                    'value': json.dumps(value),
                    'auto_choose': auto_choose}
+
+        # since we cannot deduce the value of the chained_field
+        # so we just render empty choices here and let the js
+        # fetch related choices later
         final_choices = []
-
-        if value:
-            items = self.queryset.filter(pk__in=value)
-            try:  # maybe m2m?
-                pks = getattr(items, self.chained_model_field).all().values_list('pk', flat=True)
-                filter = {self.chained_model_field + "__in": pks}
-            except AttributeError:
-                try:  # maybe a set?
-                    pks = getattr(items, self.chained_model_field + "_set").all().values_list('pk', flat=True)
-                    filter = {self.chained_model_field + "__in": pks}
-                except:  # give up
-                    filter = {}
-            filtered = list(get_model(self.to_app_name, self.to_model_name).objects.filter(**filter).distinct())
-            filtered.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(unicode(x)))
-            for choice in filtered:
-                final_choices.append((choice.pk, unicode(choice)))
-        if len(final_choices) > 1:
-            final_choices = [("", (empty_label))] + final_choices
-        if self.show_all:
-            final_choices.append(("", (empty_label)))
-            self.choices = list(self.choices)
-            self.choices.sort(cmp=locale.strcoll, key=lambda x: unicode_sorter(x[1]))
-            for ch in self.choices:
-                if not ch in final_choices:
-                    final_choices.append(ch)
-        self.choices = ()
-
+        self.choices = () # need to set explicitly because the Select widget will use it in render
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
