@@ -172,15 +172,13 @@ class ChainedSelect(Select):
 class ChainedSelectMultiple(SelectMultiple):
     def __init__(self, to_app_name, to_model_name, chain_field, chained_model_field,
                  foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
-                 show_all, auto_choose, manager=None, view_name=None, *args, **kwargs):
+                 auto_choose, manager=None, *args, **kwargs):
         self.to_app_name = to_app_name
         self.to_model_name = to_model_name
         self.chain_field = chain_field
         self.chained_model_field = chained_model_field
-        self.show_all = show_all
         self.auto_choose = auto_choose
         self.manager = manager
-        self.view_name = view_name
         self.foreign_key_app_name = foreign_key_app_name
         self.foreign_key_model_name = foreign_key_model_name
         self.foreign_key_field_name = foreign_key_field_name

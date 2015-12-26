@@ -44,7 +44,6 @@
                     $(elem_id).html(options);
                     if (navigator.appVersion.indexOf("MSIE") != -1)
                         $(elem_id).width(width + 'px');
-                    var auto_choose = auto_choose;
 
                     if(val == initial_parent){
                         for (var i = 0; i < initial_value.length; i++) {

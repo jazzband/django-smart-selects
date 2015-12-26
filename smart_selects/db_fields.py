@@ -15,7 +15,35 @@ class ChainedManyToManyField(ManyToManyField):
     chains the choices of a previous combo box with this ManyToMany
     """
     def __init__(self, to, chained_field=None, chained_model_field=None,
-                 show_all=False, auto_choose=False, view_name=None, **kwargs):
+                 auto_choose=False, **kwargs):
+        """
+        examples:
+
+        class Publication(models.Model):
+            name = models.CharField(max_length=255)
+
+        class Writer(models.Model):
+            name = models.CharField(max_length=255)
+            publications = models.ManyToManyField('Publication', blank=True, null=True)
+
+        class Book(models.Model):
+            publication = models.ForeignKey(Publication)
+            writer = ChainedManyToManyField(
+                Writer,
+                chained_field="publication",
+                chained_model_field="publications",
+                )
+            name = models.CharField(max_length=255)
+
+        ``chained_field`` is the name of the ForeignKey field referenced by ChainedManyToManyField of the same Model.
+        in the examples, chained_field is the name of field publication in Model Book.
+
+        ``chained_model_field`` is the name of the ManyToMany field referenced in the 'to' Model.
+        in the examples, chained_model_field is the name of field publications in Model Writer.
+
+        ``auto_choose`` controls whether auto select the choice when there is only one available choice.
+
+        """
         if isinstance(to, basestring):
             self.to_app_name, self.to_model_name = to.split('.')
         else:
@@ -23,9 +51,7 @@ class ChainedManyToManyField(ManyToManyField):
             self.to_model_name = to._meta.object_name
         self.chain_field = chained_field
         self.chained_model_field = chained_model_field
-        self.show_all = show_all
         self.auto_choose = auto_choose
-        self.view_name = view_name
         ManyToManyField.__init__(self, to, **kwargs)
 
     def deconstruct(self):
@@ -36,18 +62,14 @@ class ChainedManyToManyField(ManyToManyField):
         defaults = {
             'chain_field': None,
             'chained_model_field': None,
-            'show_all': False,
-            'auto_choose': False,
-            'view_name': None,
+            'auto_choose': False
         }
 
         # Maps attribute names to their __init__ kwarg names.
         attr_to_kwarg_names = {
             'chain_field': 'chained_field',
             'chained_model_field': 'chained_model_field',
-            'show_all': 'show_all',
-            'auto_choose': 'auto_choose',
-            'view_name': 'view_name',
+            'auto_choose': 'auto_choose'
         }
 
         for name, default in defaults.items():
@@ -76,9 +98,7 @@ class ChainedManyToManyField(ManyToManyField):
             'to_model_name': self.to_model_name,
             'chain_field': self.chain_field,
             'chained_model_field': self.chained_model_field,
-            'show_all': self.show_all,
             'auto_choose': self.auto_choose,
-            'view_name': self.view_name,
             'foreign_key_app_name': foreign_key_app_name,
             'foreign_key_model_name': foreign_key_model_name,
             'foreign_key_field_name': foreign_key_field_name,

@@ -40,13 +40,12 @@ class ChainedManyToManyField(ModelMultipleChoiceField):
 
     def __init__(self, to_app_name, to_model_name, chain_field, chained_model_field,
                  foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
-                 show_all, auto_choose, manager=None, initial=None, view_name=None,
-                 *args, **kwargs):
+                 auto_choose, manager=None, initial=None, *args, **kwargs):
 
         defaults = {
             'widget': ChainedSelectMultiple(to_app_name, to_model_name, chain_field, chained_model_field,
                                             foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
-                                            show_all, auto_choose, manager, view_name),
+                                            auto_choose, manager),
         }
         defaults.update(kwargs)
         if not 'queryset' in kwargs:
@@ -57,12 +56,6 @@ class ChainedManyToManyField(ModelMultipleChoiceField):
 
     def clean(self, value):
         return value
-
-    def _get_choices(self):
-        self.widget.queryset = self.queryset
-        choices = super(ChainedManyToManyField, self)._get_choices()
-        return choices
-    choices = property(_get_choices, ChoiceField._set_choices)
 
 
 class GroupedModelSelect(ModelChoiceField):
