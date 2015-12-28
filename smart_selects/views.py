@@ -5,7 +5,6 @@ try:
 except ImportError:
     from django.db.models.loading import get_model
     
-from django.db.models.fields.related import ReverseManyRelatedObjectsDescriptor
 try:
     import json
 except ImportError:
@@ -15,14 +14,29 @@ from smart_selects.utils import (get_keywords, sort_results, serialize_results,
                                  get_queryset, get_limit_choices_to)
 
 
+def is_m2m(model_class, field):
+    try:
+        from django.db.models.fields.related import ReverseManyRelatedObjectsDescriptor
+        is_pre_19_syntax = True
+    except ImportError:
+        from django.db.models.fields.related import ManyToManyDescriptor
+        is_pre_19_syntax = False
+
+    if is_pre_19_syntax:
+        if isinstance(getattr(model_class, field), ReverseManyRelatedObjectsDescriptor):
+            return True
+    else:
+        if isinstance(getattr(model_class, field), ManyToManyDescriptor) and \
+           not getattr(model_class, field).reverse:
+            return True
+    
+    return False
+
+
 def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_model_name,
                 foreign_key_field_name, value, manager=None):
-    
     model_class = get_model(app, model)
-    m2m = False
-    if isinstance(getattr(model_class, field), ReverseManyRelatedObjectsDescriptor):
-        m2m = True
-
+    m2m = is_m2m(model_class, field)
     keywords = get_keywords(field, value, m2m=m2m)
     # filter queryset using limit_choices_to
     limit_choices_to = get_limit_choices_to(foreign_key_app_name, foreign_key_model_name, foreign_key_field_name)
