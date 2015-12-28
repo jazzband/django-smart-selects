@@ -10,6 +10,7 @@ except ImportError:
 
 from smart_selects import form_fields
 
+
 class ChainedManyToManyField(ManyToManyField):
     """
     chains the choices of a previous combo box with this ManyToMany

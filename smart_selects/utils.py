@@ -21,11 +21,12 @@ def unicode_sorter(input):
 
     # key2: sort the lowercase word before the uppercase word and sort
     # the word with umlaut after the word without umlaut
-    #key2=input.swapcase()
+    # key2=input.swapcase()
 
     # in case two words are the same according to key1, sort the words
     # according to key2.
     return key1
+
 
 def get_limit_choices_to(app_name, model_name, field_name):
     try:

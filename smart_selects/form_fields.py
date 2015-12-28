@@ -23,7 +23,7 @@ class ChainedModelChoiceField(ModelChoiceField):
                                     show_all, auto_choose, manager, view_name),
         }
         defaults.update(kwargs)
-        if not 'queryset' in kwargs:
+        if 'queryset' not in kwargs:
             queryset = get_model(to_app_name, to_model_name).objects.all()
             super(ChainedModelChoiceField, self).__init__(queryset=queryset, initial=initial, *args, **defaults)
         else:
@@ -48,14 +48,11 @@ class ChainedManyToManyField(ModelMultipleChoiceField):
                                             auto_choose, manager),
         }
         defaults.update(kwargs)
-        if not 'queryset' in kwargs:
+        if 'queryset' not in kwargs:
             queryset = get_model(to_app_name, to_model_name).objects.all()
             super(ChainedManyToManyField, self).__init__(queryset=queryset, initial=initial, *args, **defaults)
         else:
             super(ChainedManyToManyField, self).__init__(initial=initial, *args, **defaults)
-
-    def clean(self, value):
-        return value
 
 
 class GroupedModelSelect(ModelChoiceField):
