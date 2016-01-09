@@ -113,7 +113,7 @@ class ChainedSelect(Select):
         js = js % {"chainfield": chained_field,
                    "url": url,
                    "id": attrs['id'],
-                   'value': 'undefined' if value is None else value,
+                   'value': 'undefined' if not value else value,
                    'auto_choose': auto_choose,
                    'empty_label': escape(empty_label)}
         final_choices = []
@@ -136,9 +136,9 @@ class ChainedSelect(Select):
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-
-        output = super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
-        output += js
+        
+        output = js
+        output += super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
         return mark_safe(output)
 
     def _get_available_choices(self, queryset, value):
@@ -255,6 +255,6 @@ class ChainedSelectMultiple(SelectMultiple):
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-        output = super(ChainedSelectMultiple, self).render(name, value, final_attrs, choices=final_choices)
-        output += js
+        output = js
+        output += super(ChainedSelectMultiple, self).render(name, value, final_attrs, choices=final_choices)
         return mark_safe(output)
