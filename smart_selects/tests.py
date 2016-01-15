@@ -2,7 +2,7 @@ import unittest
 
 import django
 
-from db_fields import ChainedForeignKey, GroupedForeignKey
+from .db_fields import ChainedForeignKey, GroupedForeignKey
 
 
 def has_new_migrations():
