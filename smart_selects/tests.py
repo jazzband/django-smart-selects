@@ -28,7 +28,7 @@ class ChainedForeignKeyTests(AssertReconstructibleMixin, unittest.TestCase):
     def setUp(self):
         self.field_class = ChainedForeignKey
         self.deconstruct_attrs = [
-            'chain_field', 'model_field', 'show_all', 'auto_choose',
+            'chained_field', 'chained_model_field', 'show_all', 'auto_choose',
             'view_name',
         ]
 
