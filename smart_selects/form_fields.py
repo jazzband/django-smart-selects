@@ -7,7 +7,6 @@ from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 from django.forms import ChoiceField
 from smart_selects.widgets import ChainedSelect, ChainedSelectMultiple
 from django.utils.encoding import force_text
-import traceback
 
 
 class ChainedModelChoiceField(ModelChoiceField):
@@ -78,7 +77,7 @@ class GroupedModelSelect(ModelChoiceField):
         for item in self.queryset:
             order_field = getattr(item, self.order_field)
             group_index = order_field.pk
-            if not group_index in group_indexes:
+            if group_index not in group_indexes:
                 group_indexes[group_index] = i
                 choices.append([force_text(order_field), []])
                 i += 1
