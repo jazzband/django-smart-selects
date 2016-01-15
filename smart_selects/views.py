@@ -4,7 +4,7 @@ try:
     get_model = apps.get_model
 except ImportError:
     from django.db.models.loading import get_model
-    
+
 try:
     import json
 except ImportError:
@@ -29,7 +29,7 @@ def is_m2m(model_class, field):
         if isinstance(getattr(model_class, field), ManyToManyDescriptor) and \
            not getattr(model_class, field).reverse:
             return True
-    
+
     return False
 
 

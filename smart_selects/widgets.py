@@ -1,13 +1,9 @@
-import locale
-
 import django
 
 from django.conf import settings
 from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.forms.widgets import Select, SelectMultiple
-from django.db.models import get_model
-from django.forms.widgets import Select
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
@@ -135,7 +131,7 @@ class ChainedSelect(Select):
             self.choices = list(self.choices)
             self.choices.sort(key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
-                if not ch in final_choices:
+                if ch not in final_choices:
                     final_choices.append(ch)
         self.choices = ()
         final_attrs = self.build_attrs(attrs, name=name)
@@ -256,7 +252,7 @@ class ChainedSelectMultiple(SelectMultiple):
         # so we just render empty choices here and let the js
         # fetch related choices later
         final_choices = []
-        self.choices = () # need to set explicitly because the Select widget will use it in render
+        self.choices = ()  # need to set explicitly because the Select widget will use it in render
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'

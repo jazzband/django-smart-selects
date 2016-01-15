@@ -126,10 +126,10 @@ class ChainedForeignKey(ForeignKey):
         class Location(models.Model):
             continent = models.ForeignKey(Continent)
             country = ChainedForeignKey(
-                Country, 
+                Country,
                 chained_field="continent",
-                chained_model_field="continent", 
-                show_all=True, 
+                chained_model_field="continent",
+                show_all=True,
                 auto_choose=True,
                 # limit_choices_to={'name':'test'}
             )
