@@ -11,7 +11,7 @@ before_script:
   - pip install coverage coveralls
   - pip install -q "$DJANGO_VERSION"
 script: 
-  - coverage run test.py
+  - coverage run manage.py test
 after_script:
   - coveralls
 matrix:
