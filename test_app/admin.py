@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from django.contrib import admin
 from .models import Continent, Country, Location, Publication, Book, Writer
+
 
 class ContinentAdmin(admin.ModelAdmin):
     list_display = ('name',)

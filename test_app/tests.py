@@ -1,10 +1,11 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
-from .models import Country
+from .models import Book, Location
 from smart_selects.views import filterchain, filterchain_all
-  
+
+
 class ViewTests(TestCase):
-    fixtures = [ 'data', ]
+    fixtures = ['data', ]
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -22,11 +23,24 @@ class ViewTests(TestCase):
             'city': 'New York',
             'street': 'Wallstreet',
         }
-        response = self.client.post(reverse('admin:test_app_location_add'), post_data, follow=True)
-        country = Country.objects.get(pk=2)
-        location = country.location_set.first()
+        self.client.post(reverse('admin:test_app_location_add'), post_data, follow=True)
+        location = Location.objects.get(country__pk=2, continent__pk=1)
         self.assertEquals(location.city, 'New York')
         self.assertEquals(location.street, 'Wallstreet')
+
+    def test_book_add_get(self):
+        response = self.client.get(reverse('admin:test_app_book_change', args=(1,)), follow=True)
+        self.assertContains(response, 'var value = [3];')
+
+    def test_book_add_post(self):
+        post_data = {
+            'publication': '1',
+            'writer': '2',
+            'name': 'Book 2',
+        }
+        self.client.post(reverse('admin:test_app_book_add'), post_data, follow=True)
+        book = Book.objects.get(writer__pk=2, publication__pk=1)
+        self.assertEquals(book.name, 'Book 2')
 
     def test_location_add_post_no_data(self):
         post_data = {
@@ -49,6 +63,7 @@ class ViewTests(TestCase):
     def test_filterchain_all_view(self):
         request = self.factory.get('')
         response = filterchain_all(request, 'test_app', 'Country', 'continent', 'test_app', 'Location', 'country', 1)
-        expected_value = '[{"display": "Czech republic", "value": 1}, {"display": "Germany", "value": 3}, {"display": "Great Britain", "value": 4}, {"display": "---------", "value": ""}, {"display": "New York", "value": 2}]'
+        expected_value = '[{"display": "Czech republic", "value": 1}, {"display": "Germany", "value": 3},'\
+            ' {"display": "Great Britain", "value": 4}, {"display": "---------", "value": ""}, {"display": "New York", "value": 2}]'
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
