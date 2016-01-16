@@ -46,9 +46,9 @@ class ChainedManyToManyField(ManyToManyField):
 
         """
         try:
-            isbasestring =  isinstance(to, basestring)
+            isbasestring = isinstance(to, basestring)
         except NameError:
-            isbasestring =  isinstance(to, str)
+            isbasestring = isinstance(to, str)
         if isbasestring:
             self.to_app_name, self.to_model_name = to.split('.')
         else:
