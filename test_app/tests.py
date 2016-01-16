@@ -25,3 +25,14 @@ class ViewTests(TestCase):
         location = country.location_set.first()
         self.assertEquals(location.city, 'New York')
         self.assertEquals(location.street, 'Wallstreet')
+
+    def test_location_add_post_no_data(self):
+        post_data = {
+            'continent': '1',
+            'country': '',
+            'city': 'New York',
+            'street': 'Wallstreet',
+        }
+        response = self.client.post(reverse('admin:test_app_location_add'), post_data)
+        self.assertContains(response, 'This field is required.')
+        self.assertContains(response, 'var value = undefined;')
