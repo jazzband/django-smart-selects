@@ -45,7 +45,11 @@ class ChainedManyToManyField(ManyToManyField):
         ``auto_choose`` controls whether auto select the choice when there is only one available choice.
 
         """
-        if isinstance(to, basestring):
+        try:
+            isbasestring = isinstance(to, basestring)
+        except NameError:
+            isbasestring = isinstance(to, str)
+        if isbasestring:
             self.to_app_name, self.to_model_name = to.split('.')
         else:
             self.to_app_name = to._meta.app_label

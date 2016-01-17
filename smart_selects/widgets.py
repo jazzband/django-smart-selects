@@ -116,7 +116,7 @@ class ChainedSelect(Select):
         js = js % {"chainfield": chained_field,
                    "url": url,
                    "id": attrs['id'],
-                   'value': 'undefined' if value is None else value,
+                   'value': 'undefined' if value is None or value == '' else value,
                    'auto_choose': auto_choose,
                    'empty_label': escape(empty_label)}
         final_choices = []

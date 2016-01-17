@@ -12,7 +12,7 @@ class Country(models.Model):
     	continent = models.ForeignKey(Continent)
     	name = models.CharField(max_length=255)
 
-class Location(models.Model)
+class Location(models.Model):
 	continent = models.ForeignKey(Continent)
 	country = models.ForeignKey(Country)
 	area = models.ForeignKey(Area)
@@ -66,6 +66,8 @@ class Country(models.Model):
 ## Chained ManyToMany Selects
 Similar to `Chained Selects`, but behaves like `ManyToManyField`. For example:
 ```
+from smart_selects.db_fields import ChainedManyToManyField
+
 class Publication(models.Model):
 	name = models.CharField(max_length=255)
 
