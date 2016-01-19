@@ -1,11 +1,10 @@
-import locale
-
 import django
 
 from django.conf import settings
 from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.forms.widgets import Select, SelectMultiple
+from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.html import escape
@@ -45,7 +44,9 @@ class ChainedSelect(Select):
         self.foreign_key_field_name = foreign_key_field_name
         super(Select, self).__init__(*args, **kwargs)
 
-    class Media:
+    @property
+    def media(self):
+        """Media defined as a dynamic property instead of an inner class."""
         extra = '' if settings.DEBUG else '.min'
         js = [
             'jquery%s.js' % extra,
@@ -56,6 +57,8 @@ class ChainedSelect(Select):
         elif JQUERY_URL:
             js = [JQUERY_URL]
         js = js + [static('smart-selects/admin/js/chainedfk.js')]
+
+        return forms.Media(js=js)
 
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
@@ -113,7 +116,7 @@ class ChainedSelect(Select):
         js = js % {"chainfield": chained_field,
                    "url": url,
                    "id": attrs['id'],
-                   'value': 'undefined' if value is None else value,
+                   'value': 'undefined' if value is None or value == '' else value,
                    'auto_choose': auto_choose,
                    'empty_label': escape(empty_label)}
         final_choices = []
@@ -128,7 +131,7 @@ class ChainedSelect(Select):
             self.choices = list(self.choices)
             self.choices.sort(key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
-                if not ch in final_choices:
+                if ch not in final_choices:
                     final_choices.append(ch)
         self.choices = ()
         final_attrs = self.build_attrs(attrs, name=name)
@@ -249,7 +252,7 @@ class ChainedSelectMultiple(SelectMultiple):
         # so we just render empty choices here and let the js
         # fetch related choices later
         final_choices = []
-        self.choices = () # need to set explicitly because the Select widget will use it in render
+        self.choices = ()  # need to set explicitly because the Select widget will use it in render
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'

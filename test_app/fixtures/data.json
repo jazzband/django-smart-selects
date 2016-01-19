@@ -1,0 +1,120 @@
+[
+    {
+        "fields": {
+            "name": "Europe"
+        },
+        "model": "test_app.continent",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "name": "America"
+        },
+        "model": "test_app.continent",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "continent": 1,
+            "name": "Czech republic"
+        },
+        "model": "test_app.country",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "continent": 2,
+            "name": "New York"
+        },
+        "model": "test_app.country",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "continent": 1,
+            "name": "Germany"
+        },
+        "model": "test_app.country",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "continent": 1,
+            "name": "Great Britain"
+        },
+        "model": "test_app.country",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "city": "Praha",
+            "continent": 1,
+            "country": 1,
+            "street": "Bo\u0159ivojova"
+        },
+        "model": "test_app.location",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "name": "Publication 1"
+        },
+        "model": "test_app.publication",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "name": "Author 1",
+            "publications": []
+        },
+        "model": "test_app.writer",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "name": "Author 2",
+            "publications": []
+        },
+        "model": "test_app.writer",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "name": "Author 2",
+            "publications": [
+                1
+            ]
+        },
+        "model": "test_app.writer",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "name": "Book 1",
+            "publication": 1,
+            "writer": [
+                3
+            ]
+        },
+        "model": "test_app.book",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:16:03.886Z",
+            "email": "admin@admin.com",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": "2016-01-16T17:16:11.609Z",
+            "last_name": "",
+            "password": "pbkdf2_sha256$24000$Wx6h5GFwF85f$ghtDkGbfcm6jirxju4ewNgr0p8oLEO11yxAlmvCQMgk=",
+            "user_permissions": [],
+            "username": "admin"
+        },
+        "model": "auth.user",
+        "pk": 1
+    }
+]

@@ -45,7 +45,11 @@ class ChainedManyToManyField(ManyToManyField):
         ``auto_choose`` controls whether auto select the choice when there is only one available choice.
 
         """
-        if isinstance(to, basestring):
+        try:
+            isbasestring = isinstance(to, basestring)
+        except NameError:
+            isbasestring = isinstance(to, str)
+        if isbasestring:
             self.to_app_name, self.to_model_name = to.split('.')
         else:
             self.to_app_name = to._meta.app_label
@@ -126,10 +130,10 @@ class ChainedForeignKey(ForeignKey):
         class Location(models.Model):
             continent = models.ForeignKey(Continent)
             country = ChainedForeignKey(
-                Country, 
+                Country,
                 chained_field="continent",
-                chained_model_field="continent", 
-                show_all=True, 
+                chained_model_field="continent",
+                show_all=True,
                 auto_choose=True,
                 # limit_choices_to={'name':'test'}
             )
