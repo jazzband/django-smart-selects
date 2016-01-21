@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/digi604/django-smart-selects/badge.svg?branch=master)](https://coveralls.io/github/digi604/django-smart-selects?branch=master)
+
 # Django Smart Selects
 
 
