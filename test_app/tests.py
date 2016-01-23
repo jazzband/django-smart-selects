@@ -53,11 +53,24 @@ class ViewTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
-    def test_filterchain_all_view_chained_foreignkey(self):
+    def test_filterchain_all_view_for_chained_foreignkey(self):
         request = self.factory.get('')
         response = filterchain_all(request, 'test_app', 'Country', 'continent', 'test_app', 'Location', 'country', 1)
         expected_value = '[{"display": "Czech republic", "value": 1}, {"display": "Germany", "value": 3},'\
             ' {"display": "Great Britain", "value": 4}, {"display": "---------", "value": ""}, {"display": "New York", "value": 2}]'
+        self.assertEquals(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected_value)
+
+    def test_limit_to_choice_for_chained_foreignkey(self):
+        request = self.factory.get('')
+        # filterchain
+        response = filterchain(request, 'test_app', 'Country', 'continent', 'test_app', 'Location1', 'country', 1)
+        expected_value = '[{"value": 3, "display": "Germany"}, {"value": 4, "display": "Great Britain"}]'
+        self.assertEquals(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected_value)
+        # filterchain_all
+        response = filterchain_all(request, 'test_app', 'Country', 'continent', 'test_app', 'Location1', 'country', 1)
+        expected_value = '[{"value": 3, "display": "Germany"}, {"value": 4, "display": "Great Britain"}, {"display": "---------", "value": ""}]'
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
@@ -97,4 +110,11 @@ class ViewTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
+    def test_limit_to_choice_for_chained_manytomany(self):
+        request = self.factory.get('')
+        # filterchain
+        response = filterchain(request, 'test_app', 'Writer', 'publications', 'test_app', 'Book1', 'writer', 1)
+        expected_value = '[]'
+        self.assertEquals(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected_value)
     
