@@ -1,11 +1,11 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
-from .models import Book, Location
+from .models import Book, Location, Student
 from smart_selects.views import filterchain, filterchain_all
 
 
 class ViewTests(TestCase):
-    fixtures = ['data', ]
+    fixtures = ['chained_select', 'chained_m2m_select', 'grouped_select', 'user' ]
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -117,4 +117,20 @@ class ViewTests(TestCase):
         expected_value = '[]'
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
+
+    ############################ grouped foreignkey ############################
+    def test_student_add_get(self):
+        response = self.client.get(reverse('admin:test_app_student_add'))
+        self.assertContains(response, '<optgroup label="Grade 1">\n<option value="1">   Team 1</option>\n</optgroup>')
+        self.assertContains(response, '<optgroup label="Grade 2">\n<option value="2">   Team 2</option>\n</optgroup>')
+
+    def test_student_add_post(self):
+        post_data = {
+            'name': 'Student 2',
+            'grade': 2,
+            'team': 2
+        }
+        response = self.client.post(reverse('admin:test_app_student_add'), post_data)
+        student = Student.objects.get(grade=2, team=2)
+        self.assertEquals(student.name, 'Student 2')
     

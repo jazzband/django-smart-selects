@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
+from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField, GroupedForeignKey
 
 
 class Continent(models.Model):
@@ -82,3 +82,23 @@ class Book1(models.Model):
         limit_choices_to={'name__contains': '2' }
         )
     name = models.CharField(max_length=255)
+
+
+#################### group foreignkey ####################
+class Grade(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return "%s" % self.name
+
+class Team(models.Model):
+    name = models.CharField(max_length=255)
+    grade = models.ForeignKey(Grade)
+
+    def __str__(self):
+        return "%s" % self.name
+
+class Student(models.Model):
+    name = models.CharField(max_length=255)
+    grade = models.ForeignKey(Grade)
+    team = GroupedForeignKey(Team, 'grade')

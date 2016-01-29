@@ -83,6 +83,7 @@ class GroupedModelSelect(ModelChoiceField):
                 i += 1
             choice_index = group_indexes[group_index]
             choices[choice_index][1].append(self.make_choice(item))
+
         return choices
 
     def make_choice(self, obj):
