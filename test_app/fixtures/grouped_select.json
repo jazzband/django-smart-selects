@@ -1,0 +1,41 @@
+[
+    {
+        "fields": {
+            "name": "Grade 1"
+        },
+        "model": "test_app.grade",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "name": "Grade 2"
+        },
+        "model": "test_app.grade",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "name": "Team 1",
+            "grade": 1
+        },
+        "model": "test_app.team",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "name": "Team 2",
+            "grade": 2
+        },
+        "model": "test_app.team",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "name": "Student 1",
+            "grade": 1,
+            "team": 1
+        },
+        "model": "test_app.student",
+        "pk": 1
+    }
+]

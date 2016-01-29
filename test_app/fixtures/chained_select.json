@@ -1,0 +1,58 @@
+[
+    {
+        "fields": {
+            "name": "Europe"
+        },
+        "model": "test_app.continent",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "name": "America"
+        },
+        "model": "test_app.continent",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "continent": 1,
+            "name": "Czech republic"
+        },
+        "model": "test_app.country",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "continent": 2,
+            "name": "New York"
+        },
+        "model": "test_app.country",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "continent": 1,
+            "name": "Germany"
+        },
+        "model": "test_app.country",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "continent": 1,
+            "name": "Great Britain"
+        },
+        "model": "test_app.country",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "city": "Praha",
+            "continent": 1,
+            "country": 1,
+            "street": "Bo\u0159ivojova"
+        },
+        "model": "test_app.location",
+        "pk": 1
+    }
+]
