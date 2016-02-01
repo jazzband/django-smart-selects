@@ -188,18 +188,21 @@ class ChainedSelectMultiple(SelectMultiple):
 
         super(SelectMultiple, self).__init__(*args, **kwargs)
 
-    class Media:
+    @property
+    def media(self):
+        """Media defined as a dynamic property instead of an inner class."""
         extra = '' if settings.DEBUG else '.min'
         js = [
             'jquery%s.js' % extra,
             'jquery.init.js',
         ]
-
         if USE_DJANGO_JQUERY:
             js = [static('admin/js/%s' % url) for url in js]
         elif JQUERY_URL:
             js = [JQUERY_URL]
         js = js + [static('smart-selects/admin/js/chainedm2m.js')]
+
+        return forms.Media(js=js)
 
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
