@@ -47,9 +47,10 @@ class ChainedSelect(Select):
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
+        vendor = '' if django.VERSION < (1, 9, 0) else 'vendor/jquery/'
         extra = '' if settings.DEBUG else '.min'
         js = [
-            'jquery%s.js' % extra,
+            '%sjquery%s.js' % (vendor, extra),
             'jquery.init.js',
         ]
         if USE_DJANGO_JQUERY:
@@ -191,9 +192,10 @@ class ChainedSelectMultiple(SelectMultiple):
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
+        vendor = '' if django.VERSION < (1, 9, 0) else 'vendor/jquery/'
         extra = '' if settings.DEBUG else '.min'
         js = [
-            'jquery%s.js' % extra,
+            '%sjquery%s.js' % (vendor, extra),
             'jquery.init.js',
         ]
         if USE_DJANGO_JQUERY:
