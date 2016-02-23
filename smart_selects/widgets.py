@@ -140,9 +140,10 @@ class ChainedSelect(Select):
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-
-        output = super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
-        output += js
+        
+        output = js
+        output += super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
+        
         return mark_safe(output)
 
     def _get_available_choices(self, queryset, value):
