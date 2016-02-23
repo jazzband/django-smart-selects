@@ -22,7 +22,7 @@ if django.VERSION >= (1, 2, 0) and getattr(settings, 'USE_DJANGO_JQUERY', True):
     USE_DJANGO_JQUERY = True
 else:
     USE_DJANGO_JQUERY = False
-    JQUERY_URL = getattr(settings, 'JQUERY_URL', 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js')
+    JQUERY_URL = getattr(settings, 'JQUERY_URL', 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
 
 URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 
@@ -54,7 +54,7 @@ class ChainedSelect(Select):
             'jquery.init.js',
         ]
         if USE_DJANGO_JQUERY:
-            js = [static('admin/js/%s' % url) for url in js]
+            js = [static('admin/vendor/js/%s' % url) for url in js]
         elif JQUERY_URL:
             js = [JQUERY_URL]
         js = js + [static('smart-selects/admin/js/chainedfk.js')]
