@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 try:
     from django.apps import apps
     get_model = apps.get_model
@@ -50,8 +50,7 @@ def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_mo
         sort_results(results)
 
     serialized_results = serialize_results(results)
-    results_json = json.dumps(serialized_results)
-    return HttpResponse(results_json, content_type='application/json')
+    return JsonResponse(serialized_results, safe=False)
 
 
 def filterchain_all(request, app, model, field, foreign_key_app_name,
