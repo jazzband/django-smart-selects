@@ -41,7 +41,12 @@
                         options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
                     }
                     var width = $(elem_id).outerWidth();
+                    var selected_values = [];
+                    $(elem_id + ' option:selected').each(function(){
+                        selected_values.push($(this).val());
+                    });
                     $(elem_id).html(options);
+
                     if (navigator.appVersion.indexOf("MSIE") != -1)
                         $(elem_id).width(width + 'px');
 
@@ -50,6 +55,12 @@
                             $(elem_id + ' option[value="'+ initial_value[i] +'"]').attr('selected', 'selected');
                         }
                     }
+
+                    // select values which were previosly selected (for many2many - many2many chain)
+                    for (var i = 0; i < selected_values.length; i++) {
+                        $(elem_id + ' option[value="'+ selected_values[i] +'"]').attr('selected', 'selected');
+                    }
+
                     if(auto_choose && j.length == 1){
                         $(elem_id + ' option[value="'+ j[0].value +'"]').attr('selected', 'selected');
                     }
