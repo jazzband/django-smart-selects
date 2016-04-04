@@ -29,8 +29,15 @@
             },
 
             fill_field: function(val, initial_value, elem_id, url, initial_parent, auto_choose){
+                function trigger_chosen_updated(){
+                    if ($.fn.chosen !== undefined) {
+                        $(elem_id).trigger('chosen:updated');
+                    }
+                }
+
                 if (!val || val === ''){
                     $(elem_id).html('');
+                    trigger_chosen_updated();
                     return;
                 }
                 var target_url = url + "/" + val + "/";
@@ -55,10 +62,7 @@
                     }
 
                     $(elem_id).trigger('change');
-
-                    if ($.fn.chosen !== undefined) {
-                        $(elem_id).trigger('chosen:updated');
-                    }
+                    trigger_chosen_updated();
                 })
             },
 
