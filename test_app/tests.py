@@ -105,7 +105,7 @@ class ViewTests(TestCase):
 
     def test_filterchain_view_for_chained_manytomany(self):
         request = self.factory.get('')
-        response = filterchain(request, 'test_app', 'Writer', 'publications', 'test_app', 'Book', 'writer', 1)
+        response = filterchain(request, 'test_app', 'Writer', 'publications', 'test_app', 'Book', 'writer', '1')
         expected_value = '[{"display": "Author 3", "value": 3}]'
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
@@ -113,7 +113,7 @@ class ViewTests(TestCase):
     def test_limit_to_choice_for_chained_manytomany(self):
         request = self.factory.get('')
         # filterchain
-        response = filterchain(request, 'test_app', 'Writer', 'publications', 'test_app', 'Book1', 'writer', 1)
+        response = filterchain(request, 'test_app', 'Writer', 'publications', 'test_app', 'Book1', 'writer', '1')
         expected_value = '[]'
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
@@ -133,4 +133,3 @@ class ViewTests(TestCase):
         response = self.client.post(reverse('admin:test_app_student_add'), post_data)
         student = Student.objects.get(grade=2, team=2)
         self.assertEquals(student.name, 'Student 2')
-    
