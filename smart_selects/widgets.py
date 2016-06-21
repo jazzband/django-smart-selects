@@ -1,10 +1,8 @@
 import django
 
 from django.conf import settings
-from django.contrib.admin.templatetags.admin_static import static
 from django.core.urlresolvers import reverse
 from django.forms.widgets import Select, SelectMultiple
-from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.html import escape
@@ -20,6 +18,7 @@ except ImportError:
 
 if django.VERSION >= (1, 2, 0) and getattr(settings, 'USE_DJANGO_JQUERY', True):
     USE_DJANGO_JQUERY = True
+    JQUERY_URL = None
 else:
     USE_DJANGO_JQUERY = False
     JQUERY_URL = getattr(settings, 'JQUERY_URL', 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
@@ -47,19 +46,29 @@ class ChainedSelect(Select):
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
-        vendor = '' if django.VERSION < (1, 9, 0) else 'vendor/jquery/'
-        extra = '' if settings.DEBUG else '.min'
-        js = [
-            '%sjquery%s.js' % (vendor, extra),
-            'jquery.init.js',
-        ]
-        if USE_DJANGO_JQUERY:
-            js = [static('admin/js/%s' % url) for url in js]
-        elif JQUERY_URL:
-            js = [JQUERY_URL]
-        js = js + [static('smart-selects/admin/js/chainedfk.js')]
+        media = super(ChainedSelect, self).media
 
-        return forms.Media(js=js)
+        js = ['smart-selects/admin/js/chainedfk.js']
+
+        if JQUERY_URL:
+            js.append(JQUERY_URL)
+        else:
+            vendor = '' if django.VERSION < (1, 9, 0) else 'vendor/jquery/'
+            extra = '' if settings.DEBUG else '.min'
+
+            jquery_paths = [
+                '{}jquery{}.js'.format(vendor, extra),
+                'jquery.init.js',
+            ]
+
+            if USE_DJANGO_JQUERY:
+                jquery_paths = ['admin/js/{}'.format(path) for path in jquery_paths]
+
+            js.extend(jquery_paths)
+
+        media.add_js(js)
+
+        return media
 
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
@@ -140,10 +149,10 @@ class ChainedSelect(Select):
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-        
+
         output = js
         output += super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
-        
+
         return mark_safe(output)
 
     def _get_available_choices(self, queryset, value):
@@ -193,19 +202,29 @@ class ChainedSelectMultiple(SelectMultiple):
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
-        vendor = '' if django.VERSION < (1, 9, 0) else 'vendor/jquery/'
-        extra = '' if settings.DEBUG else '.min'
-        js = [
-            '%sjquery%s.js' % (vendor, extra),
-            'jquery.init.js',
-        ]
-        if USE_DJANGO_JQUERY:
-            js = [static('admin/js/%s' % url) for url in js]
-        elif JQUERY_URL:
-            js = [JQUERY_URL]
-        js = js + [static('smart-selects/admin/js/chainedm2m.js')]
+        media = super(ChainedSelectMultiple, self).media
 
-        return forms.Media(js=js)
+        js = ['smart-selects/admin/js/chainedm2m.js']
+
+        if JQUERY_URL:
+            js.append(JQUERY_URL)
+        else:
+            vendor = '' if django.VERSION < (1, 9, 0) else 'vendor/jquery/'
+            extra = '' if settings.DEBUG else '.min'
+
+            jquery_paths = [
+                '{}jquery{}.js'.format(vendor, extra),
+                'jquery.init.js',
+            ]
+
+            if USE_DJANGO_JQUERY:
+                jquery_paths = ['admin/js/{}'.format(path) for path in jquery_paths]
+
+            js.extend(jquery_paths)
+
+        media.add_js(js)
+
+        return media
 
     def render(self, name, value, attrs=None, choices=()):
         if len(name.split('-')) > 1:  # formset
