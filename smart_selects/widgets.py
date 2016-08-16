@@ -61,7 +61,7 @@ class ChainedSelect(Select):
 
         return forms.Media(js=js)
 
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None):
         if len(name.split('-')) > 1:  # formset
             chained_field = '-'.join(name.split('-')[:-1] + [self.chained_field])
         else:
@@ -134,16 +134,15 @@ class ChainedSelect(Select):
             for ch in self.choices:
                 if ch not in final_choices:
                     final_choices.append(ch)
-        self.choices = ()
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-        
+
+        self.choices = final_choices
         output = js
-        output += super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
-        
+        output += super(ChainedSelect, self).render(name, value, final_attrs)
         return mark_safe(output)
 
     def _get_available_choices(self, queryset, value):
@@ -207,7 +206,7 @@ class ChainedSelectMultiple(SelectMultiple):
 
         return forms.Media(js=js)
 
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None):
         if len(name.split('-')) > 1:  # formset
             chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
         else:
@@ -257,13 +256,12 @@ class ChainedSelectMultiple(SelectMultiple):
         # since we cannot deduce the value of the chained_field
         # so we just render empty choices here and let the js
         # fetch related choices later
-        final_choices = []
         self.choices = ()  # need to set explicitly because the Select widget will use it in render
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-        output = super(ChainedSelectMultiple, self).render(name, value, final_attrs, choices=final_choices)
+        output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)
         output += js
         return mark_safe(output)
