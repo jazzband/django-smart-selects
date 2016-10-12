@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.db.models import Q
+from django.utils.six import iteritems
 
 try:
     from django.apps import apps
@@ -41,7 +42,7 @@ def do_filter(qs, keywords, exclude=False):
     Support for multiple-selected parent values.
     """
     and_q = Q()
-    for keyword, value in keywords.iteritems():
+    for keyword, value in iteritems(keywords):
         values = value.split(",")
         if len(values) > 0:
             or_q = Q()
