@@ -117,7 +117,7 @@ class ChainedForeignKey(ForeignKey):
     chains the choices of a previous combo box with this one
     """
     def __init__(self, to, chained_field=None, chained_model_field=None,
-                 show_all=False, auto_choose=False, view_name=None, **kwargs):
+                 show_all=False, auto_choose=False, sort=True, view_name=None, **kwargs):
         """
         examples:
 
@@ -135,6 +135,7 @@ class ChainedForeignKey(ForeignKey):
                 chained_model_field="continent",
                 show_all=True,
                 auto_choose=True,
+                sort=True,
                 # limit_choices_to={'name':'test'}
             )
         ``chained_field`` is the name of the ForeignKey field referenced by ChainedForeignKey of the same Model.
@@ -146,6 +147,8 @@ class ChainedForeignKey(ForeignKey):
         ``show_all`` controls whether show other choices below the filtered choices, with separater '----------'.
 
         ``auto_choose`` controls whether auto select the choice when there is only one available choice.
+
+        ``sort`` controls whether or not to sort results lexicographically or not.
 
         ``view_name`` controls which view to use, 'chained_filter' or 'chained_filter_all'.
 
@@ -159,6 +162,7 @@ class ChainedForeignKey(ForeignKey):
         self.chained_model_field = chained_model_field
         self.show_all = show_all
         self.auto_choose = auto_choose
+        self.sort = sort
         self.view_name = view_name
         ForeignKey.__init__(self, to, **kwargs)
 
@@ -172,6 +176,7 @@ class ChainedForeignKey(ForeignKey):
             'chained_model_field': None,
             'show_all': False,
             'auto_choose': False,
+            'sort': True,
             'view_name': None,
         }
 
@@ -181,6 +186,7 @@ class ChainedForeignKey(ForeignKey):
             'chained_model_field': 'chained_model_field',
             'show_all': 'show_all',
             'auto_choose': 'auto_choose',
+            'sort': 'sort',
             'view_name': 'view_name',
         }
 
@@ -213,6 +219,7 @@ class ChainedForeignKey(ForeignKey):
             'chained_model_field': self.chained_model_field,
             'show_all': self.show_all,
             'auto_choose': self.auto_choose,
+            'sort': self.sort,
             'view_name': self.view_name,
             'foreign_key_app_name': foreign_key_app_name,
             'foreign_key_model_name': foreign_key_model_name,

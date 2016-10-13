@@ -57,13 +57,14 @@ class JqueryMediaMixin(object):
 class ChainedSelect(JqueryMediaMixin, Select):
     def __init__(self, to_app_name, to_model_name, chained_field, chained_model_field,
                  foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
-                 show_all, auto_choose, manager=None, view_name=None, *args, **kwargs):
+                 show_all, auto_choose, sort=True, manager=None, view_name=None, *args, **kwargs):
         self.to_app_name = to_app_name
         self.to_model_name = to_model_name
         self.chained_field = chained_field
         self.chained_model_field = chained_model_field
         self.show_all = show_all
         self.auto_choose = auto_choose
+        self.sort = sort
         self.manager = manager
         self.view_name = view_name
         self.foreign_key_app_name = foreign_key_app_name
@@ -148,7 +149,8 @@ class ChainedSelect(JqueryMediaMixin, Select):
         if self.show_all:
             final_choices.append(("", (empty_label)))
             self.choices = list(self.choices)
-            self.choices.sort(key=lambda x: unicode_sorter(x[1]))
+            if self.sort:
+                self.choices.sort(key=lambda x: unicode_sorter(x[1]))
             for ch in self.choices:
                 if ch not in final_choices:
                     final_choices.append(ch)
@@ -185,7 +187,8 @@ class ChainedSelect(JqueryMediaMixin, Select):
                     except:  # give up
                         filter = {}
             filtered = list(get_model(self.to_app_name, self.to_model_name).objects.filter(**filter).distinct())
-            sort_results(filtered)
+            if self.sort:
+                sort_results(filtered)
         else:
             # invalid value for queryset
             filtered = []

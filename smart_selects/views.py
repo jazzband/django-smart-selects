@@ -62,11 +62,15 @@ def filterchain_all(request, app, model, field, foreign_key_app_name,
     limit_choices_to = get_limit_choices_to(foreign_key_app_name, foreign_key_model_name, foreign_key_field_name)
     queryset = get_queryset(model_class, limit_choices_to=limit_choices_to)
 
-    filtered = list(queryset.filter(**keywords))
-    sort_results(filtered)
+    filtered = queryset.filter(**keywords)
+    # Sort results if model doesn't include a default ordering.
+    if not getattr(model_class._meta, 'ordering', False):
+        sort_results(list(filtered))
 
-    excluded = list(queryset.exclude(**keywords))
-    sort_results(excluded)
+    excluded = queryset.exclude(**keywords)
+    # Sort results if model doesn't include a default ordering.
+    if not getattr(model_class._meta, 'ordering', False):
+        sort_results(list(excluded))
 
     # Empty choice to separate filtered and excluded results.
     empty_choice = {'value': "", 'display': "---------"}
