@@ -134,15 +134,16 @@ class ChainedSelect(Select):
             for ch in self.choices:
                 if ch not in final_choices:
                     final_choices.append(ch)
-        self.choices = ()
+        self.choices = final_choices
+
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-        
-        output = js
-        output += super(ChainedSelect, self).render(name, value, final_attrs, choices=final_choices)
+
+        output = super(ChainedSelect, self).render(name, value, final_attrs)
+        output += js
         
         return mark_safe(output)
 
@@ -258,12 +259,14 @@ class ChainedSelectMultiple(SelectMultiple):
         # so we just render empty choices here and let the js
         # fetch related choices later
         final_choices = []
-        self.choices = ()  # need to set explicitly because the Select widget will use it in render
+        self.choices = final_choices
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
-        output = super(ChainedSelectMultiple, self).render(name, value, final_attrs, choices=final_choices)
+        output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)
         output += js
+        
         return mark_safe(output)
+

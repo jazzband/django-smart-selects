@@ -1,13 +1,14 @@
 sudo: false
 language: python
 env:
-  - DJANGO_VERSION="Django>=1.7,<1.8"
   - DJANGO_VERSION="Django>=1.8,<1.9"
   - DJANGO_VERSION="Django>=1.9,<1.10"
+  - DJANGO_VERSION="Django>=1.10,<2.0"
   - DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
 python:
   - "2.7"
   - "3.4"
+  - "3.5"
 before_script:
   - pip install coverage coveralls
   - pip install -q "$DJANGO_VERSION"
