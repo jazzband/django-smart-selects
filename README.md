@@ -149,4 +149,4 @@ urlpatterns = patterns('',
 
 `JQUERY_URL`
 :   By default, jQuery will be loaded from Google's CDN. If you would prefer to
-    use a different version put the full URL here.
+    use a different version put the full URL here. Set `JQUERY_URL = False` to disable loading jQuery.

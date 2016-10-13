@@ -36,7 +36,7 @@ class JqueryMediaMixin(object):
 
         if JQUERY_URL:
             js.append(JQUERY_URL)
-        else:
+        elif JQUERY_URL is not False:
             vendor = '' if django.VERSION < (1, 9, 0) else 'vendor/jquery/'
             extra = '' if settings.DEBUG else '.min'
 
