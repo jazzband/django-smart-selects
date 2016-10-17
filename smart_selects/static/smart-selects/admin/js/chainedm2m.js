@@ -72,8 +72,15 @@
                 }
                 var fill_field = this.fill_field;
                 $(chainfield).change(function(){
+                    var localID = id;
+                    if (localID.indexOf("__prefix__") > -1) {
+                        var prefix = $(this).attr("id").match(/\d+/)[0];
+                        localID = localID.replace("__prefix__", prefix);
+                    }
+
+                    var start_value = $(localID).val();
                     var val = $(this).val();
-                    fill_field(val, initial_value, id, url, initial_parent, auto_choose);
+                    fill_field(val, initial_value, localID, url, initial_parent, auto_choose);
                 })
 
                 // allait en bas, hors du documentready
