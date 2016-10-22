@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.db.models import Q
 from django.utils.six import iteritems
 
@@ -7,11 +7,6 @@ try:
     get_model = apps.get_model
 except ImportError:
     from django.db.models.loading import get_model
-
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
 
 from smart_selects.utils import (get_keywords, sort_results, serialize_results,
                                  get_queryset, get_limit_choices_to)
@@ -104,5 +99,4 @@ def filterchain_all(request, app, model, field, foreign_key_app_name,
         serialize_results(excluded)
     )
 
-    results_json = json.dumps(serialized_results)
-    return HttpResponse(results_json, content_type='application/json')
+    return JsonResponse(serialized_results, safe=False)
