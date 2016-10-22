@@ -3,14 +3,15 @@
     chainedm2m = function() {
         return {
             fireEvent: function(element,event) {
+                var evt;
                 if (document.createEventObject){
                     // dispatch for IE
-                    var evt = document.createEventObject();
-                    return element.fireEvent('on'+event,evt)
+                    evt = document.createEventObject();
+                    return element.fireEvent('on'+event,evt);
                 }
                 else{
                     // dispatch for firefox + others
-                    var evt = document.createEvent("HTMLEvents");
+                    evt = document.createEvent("HTMLEvents");
                     evt.initEvent(event, true, true ); // event type,bubbling,cancelable
                     return !element.dispatchEvent(evt);
                 }
@@ -47,7 +48,7 @@
 
                     // if val and initial_parent have any common values, we need to set selected options.
                     if($(val).filter(initial_parent).length > 0) {
-                        for (var i = 0; i < initial_value.length; i++) {
+                        for (i = 0; i < initial_value.length; i++) {
                             $(elem_id + ' option[value="'+ initial_value[i] +'"]').attr('selected', 'selected');
                         }
                     }
@@ -60,7 +61,7 @@
                     if ($.fn.chosen !== undefined) {
                         $(elem_id).trigger('chosen:updated');
                     }
-                })
+                });
             },
 
             init: function(chainfield, url, id, value, auto_choose) {
@@ -82,7 +83,7 @@
                     var start_value = $(localID).val();
                     var val = $(this).val();
                     fill_field(val, initial_value, localID, url, initial_parent, auto_choose);
-                })
+                });
 
                 // allait en bas, hors du documentready
                 if (typeof(dismissAddAnotherPopup) !== 'undefined') {
@@ -92,10 +93,9 @@
                         if ("#" + windowname_to_id(win.name) == chainfield) {
                             $(chainfield).change();
                         }
-                    }
+                    };
                 }
-
             }
-        }
+        };
     }();
 })(jQuery || django.jQuery);
