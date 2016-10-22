@@ -1,7 +1,15 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
-from .models import Book, Location, Student
+from .models import Book, Country, Location, Student
 from smart_selects.views import filterchain, filterchain_all
+
+
+class ModelTests(TestCase):
+    fixtures = ['chained_select', 'chained_m2m_select', 'grouped_select', 'user' ]
+
+    def test_reverse_relationship_manager(self):
+        cr = Country.objects.get(name='Czech republic')
+        self.assertEqual(list(cr.location_set.all().values_list('city', flat=True)), ['Praha'])
 
 
 class ViewTests(TestCase):
