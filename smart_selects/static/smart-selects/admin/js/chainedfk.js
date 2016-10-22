@@ -43,12 +43,13 @@
                     $(elem_id).html(options);
                     if (navigator.appVersion.indexOf("MSIE") != -1)
                         $(elem_id).width(width + 'px');
-                    $(elem_id + ' option:first').attr('selected', 'selected');
                     if(init_value){
                         $(elem_id + ' option[value="'+ init_value +'"]').attr('selected', 'selected');
                     }
                     if(auto_choose && j.length == 1){
                         $(elem_id + ' option[value="'+ j[0].value +'"]').attr('selected', 'selected');
+                    } else if ($(elem_id + ' option[selected=selected]').length === 0) {
+                        $(elem_id + ' option:first').attr('selected', 'selected');
                     }
                     $(elem_id).trigger('change');
                 })
