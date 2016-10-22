@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.db.models import Q
 from django.utils.six import iteritems
+from django.views.decorators.cache import never_cache
 
 try:
     from django.apps import apps
@@ -51,6 +52,7 @@ def do_filter(qs, keywords, exclude=False):
     return qs
 
 
+@never_cache
 def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_model_name,
                 foreign_key_field_name, value, manager=None):
     model_class = get_model(app, model)
@@ -71,6 +73,7 @@ def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_mo
     return JsonResponse(serialized_results, safe=False)
 
 
+@never_cache
 def filterchain_all(request, app, model, field, foreign_key_app_name,
                     foreign_key_model_name, foreign_key_field_name, value):
     """Returns filtered results followed by excluded results below."""
