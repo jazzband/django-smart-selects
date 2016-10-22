@@ -1,4 +1,7 @@
 from django.http import HttpResponse, JsonResponse
+from django.db.models import Q
+from django.utils.six import iteritems
+
 try:
     from django.apps import apps
     get_model = apps.get_model
@@ -33,6 +36,26 @@ def is_m2m(model_class, field):
     return False
 
 
+def do_filter(qs, keywords, exclude=False):
+    """
+    Filter queryset based on keywords.
+    Support for multiple-selected parent values.
+    """
+    and_q = Q()
+    for keyword, value in iteritems(keywords):
+        values = value.split(",")
+        if len(values) > 0:
+            or_q = Q()
+            for value in values:
+                or_q |= Q(**{keyword: value})
+            and_q &= or_q
+    if exclude:
+        qs = qs.exclude(and_q)
+    else:
+        qs = qs.filter(and_q)
+    return qs
+
+
 def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_model_name,
                 foreign_key_field_name, value, manager=None):
     model_class = get_model(app, model)
@@ -42,7 +65,7 @@ def filterchain(request, app, model, field, foreign_key_app_name, foreign_key_mo
     limit_choices_to = get_limit_choices_to(foreign_key_app_name, foreign_key_model_name, foreign_key_field_name)
     queryset = get_queryset(model_class, manager, limit_choices_to)
 
-    results = queryset.filter(**keywords)
+    results = do_filter(queryset, keywords)
 
     # Sort results if model doesn't include a default ordering.
     if not getattr(model_class._meta, 'ordering', False):
@@ -62,12 +85,12 @@ def filterchain_all(request, app, model, field, foreign_key_app_name,
     limit_choices_to = get_limit_choices_to(foreign_key_app_name, foreign_key_model_name, foreign_key_field_name)
     queryset = get_queryset(model_class, limit_choices_to=limit_choices_to)
 
-    filtered = queryset.filter(**keywords)
+    filtered = list(do_filter(queryset, keywords))
     # Sort results if model doesn't include a default ordering.
     if not getattr(model_class._meta, 'ordering', False):
         sort_results(list(filtered))
 
-    excluded = queryset.exclude(**keywords)
+    excluded = list(do_filter(queryset, keywords, exclude=True))
     # Sort results if model doesn't include a default ordering.
     if not getattr(model_class._meta, 'ordering', False):
         sort_results(list(excluded))

@@ -45,7 +45,8 @@
                     if (navigator.appVersion.indexOf("MSIE") != -1)
                         $(elem_id).width(width + 'px');
 
-                    if(val == initial_parent){
+                    // if val and initial_parent have any common values, we need to set selected options.
+                    if($(val).filter(initial_parent).length > 0) {
                         for (var i = 0; i < initial_value.length; i++) {
                             $(elem_id + ' option[value="'+ initial_value[i] +'"]').attr('selected', 'selected');
                         }
