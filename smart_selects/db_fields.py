@@ -28,11 +28,6 @@ class IntrospectiveFieldMixin(object):
 
         super(IntrospectiveFieldMixin, self).__init__(to, **kwargs)
 
-    def contribute_to_class(self, cls, *args, **kwargs):
-        self.to_app_name = cls._meta.app_label
-        self.to_model_name = cls._meta.object_name
-        super(IntrospectiveFieldMixin, self).contribute_to_class(cls, *args, **kwargs)
-
 
 class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
     """
@@ -71,7 +66,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         self.chain_field = chained_field
         self.chained_model_field = chained_model_field
         self.auto_choose = auto_choose
-        ManyToManyField.__init__(self, to, **kwargs)
+        super(ChainedManyToManyField, self).__init__(to, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
@@ -173,7 +168,7 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
         self.auto_choose = auto_choose
         self.sort = sort
         self.view_name = view_name
-        ForeignKey.__init__(self, to, **kwargs)
+        super(ChainedForeignKey, self).__init__(to, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
