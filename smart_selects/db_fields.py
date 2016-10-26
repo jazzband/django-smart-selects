@@ -9,28 +9,36 @@ try:
 except ImportError:
     has_south = False
 
-
 from smart_selects import form_fields
 
 
 class IntrospectiveFieldMixin(object):
-    def __init__(self, to, **kwargs):
+    to_app_name = None
+    to_model_name = None
+
+    def __init__(self, to, *args, **kwargs):
         if isinstance(to, six.string_types):
-            if to == RECURSIVE_RELATIONSHIP_CONSTANT:
+            if to == RECURSIVE_RELATIONSHIP_CONSTANT:  # to == 'self'
                 # This will be handled in contribute_to_class(), when we have
                 # enough informatino to set these properly
                 self.to_app_name, self.to_model_name = (None, to)
-            else:
+            elif '.' in to:  # 'app_label.ModelName'
                 self.to_app_name, self.to_model_name = to.split('.')
+            else:  # 'ModelName'
+                self.to_app_name, self.to_model_name = (None, to)
         else:
             self.to_app_name = to._meta.app_label
             self.to_model_name = to._meta.object_name
 
-        super(IntrospectiveFieldMixin, self).__init__(to, **kwargs)
+        super(IntrospectiveFieldMixin, self).__init__(to, *args, **kwargs)
 
     def contribute_to_class(self, cls, *args, **kwargs):
-        self.to_app_name = cls._meta.app_label
-        self.to_model_name = cls._meta.object_name
+        if self.to_model_name == RECURSIVE_RELATIONSHIP_CONSTANT:
+            # Resolve the model name
+            self.to_model_name = cls._meta.object_name
+        if self.to_app_name is None:
+            # Resolve the app name
+            self.to_app_name = cls._meta.app_label
         super(IntrospectiveFieldMixin, self).contribute_to_class(cls, *args, **kwargs)
 
 
