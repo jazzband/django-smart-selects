@@ -21,7 +21,7 @@ class Country(models.Model):
 class Location(models.Model):
     continent = models.ForeignKey(Continent)
     country = ChainedForeignKey(
-        Country,
+        'Country',
         chained_field="continent",
         chained_model_field="continent",
         show_all=False,
@@ -36,7 +36,7 @@ class Location(models.Model):
 class Location1(models.Model):
     continent = models.ForeignKey(Continent)
     country = ChainedForeignKey(
-        Country,
+        'test_app.Country',
         chained_field="continent",
         chained_model_field="continent",
         show_all=False,
@@ -76,7 +76,7 @@ class Book(models.Model):
 class Book1(models.Model):
     publication = models.ForeignKey(Publication)
     writer = ChainedManyToManyField(
-        Writer,
+        'Writer',
         chained_field="publication",
         chained_model_field="publications",
         limit_choices_to={'name__contains': '2' }
