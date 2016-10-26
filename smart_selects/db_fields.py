@@ -71,7 +71,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         self.chain_field = chained_field
         self.chained_model_field = chained_model_field
         self.auto_choose = auto_choose
-        ManyToManyField.__init__(self, to, **kwargs)
+        super(ChainedManyToManyField, self).__init__(to, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
@@ -173,7 +173,7 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
         self.auto_choose = auto_choose
         self.sort = sort
         self.view_name = view_name
-        ForeignKey.__init__(self, to, **kwargs)
+        super(ChainedForeignKey, self).__init__(to, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
@@ -245,7 +245,7 @@ class GroupedForeignKey(ForeignKey):
     def __init__(self, to, group_field, **kwargs):
         self.group_field = group_field
         self._choices = True
-        ForeignKey.__init__(self, to, **kwargs)
+        super(GroupedForeignKey, self).__init__(to, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
