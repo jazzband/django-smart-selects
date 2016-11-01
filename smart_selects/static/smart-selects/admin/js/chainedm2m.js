@@ -34,6 +34,11 @@
                     $(elem_id).html('');
                     return;
                 }
+
+                // Make sure that these are always an arrays
+                val = [].concat(val);
+                initial_parent = [].concat(initial_parent);
+
                 var target_url = url + "/" + val + "/";
                 $.getJSON(target_url, function(j){
                     var options = '';
