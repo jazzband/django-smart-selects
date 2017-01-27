@@ -59,6 +59,7 @@
                         selected_values.push($(this).val());
                     });
                     $(elem_id).html(options);
+
                     if (navigator.appVersion.indexOf("MSIE") != -1)
                         $(elem_id).width(width + 'px');
 

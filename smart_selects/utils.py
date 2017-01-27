@@ -60,7 +60,11 @@ def get_keywords(field, value, m2m=False):
     if value == '0':
         keywords = {str("%s__isnull" % field): True}
     elif m2m:
-        keywords = {str("%s__pk" % field): str(value)}
+        if ',' in value:
+            values = value.split(',')
+            keywords = {str("%s__pk__in" % field): values}
+        else:
+            keywords = {str("%s__pk" % field): str(value)}
     else:
         keywords = {str(field): str(value)}
 
