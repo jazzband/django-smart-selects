@@ -4,5 +4,7 @@ prune .hgignore
 prune .ropeproject
 prune .git
 prune .gitignore
+prune */__pycache__
+prune */*/__pycache__
 include README.md
 include smart_selects/static/smart-selects/admin/js/*
