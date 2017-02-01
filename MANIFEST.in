@@ -4,4 +4,5 @@ prune .hgignore
 prune .ropeproject
 prune .git
 prune .gitignore
+include README.md
 include smart_selects/static/smart-selects/admin/js/*
