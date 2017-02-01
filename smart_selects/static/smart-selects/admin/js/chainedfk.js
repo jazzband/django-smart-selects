@@ -27,6 +27,7 @@
                 win.close();
             },
             fill_field: function(val, init_value, elem_id, url, empty_label, auto_choose){
+                var $selectField = $(elem_id);
                 url = url + "/" + val+ "/";
                 if (!val || val === ''){
                     var options = '<option value="">' + empty_label +'</option>';
@@ -36,12 +37,20 @@
                     return;
                 }
                 $.getJSON(url, function(j){
-                    var options = '<option value="">' + empty_label +'</option>';
-                    for (var i = 0; i < j.length; i++) {
-                        options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
-                    }
+                    // Append empty label as the first option
+                    $('<option></option>')
+                        .attr('value', '')
+                        .text(empty_label)
+                        .appendTo($selectField);
+
+                    // Append each option to the select
+                    $.each(j, function (index, optionData) {
+                        $('<option></option>')
+                            .attr('value', optionData.value)
+                            .text(optionData.display)
+                            .appendTo($selectField);
+                    });
                     var width = $(elem_id).outerWidth();
-                    $(elem_id).html(options);
                     if (navigator.appVersion.indexOf("MSIE") != -1)
                         $(elem_id).width(width + 'px');
                     if(init_value){
