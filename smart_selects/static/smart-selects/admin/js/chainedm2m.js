@@ -30,6 +30,7 @@
             },
 
             fill_field: function(val, initial_value, elem_id, url, initial_parent, auto_choose){
+                var $selectField = $(elem_id);
                 function trigger_chosen_updated() {
                     if ($.fn.chosen !== undefined) {
                         $(elem_id).trigger('chosen:updated');
@@ -48,17 +49,19 @@
 
                 var target_url = url + "/" + val + "/";
                 $.getJSON(target_url, function(j){
-                    var options = '';
-
-                    for (var i = 0; i < j.length; i++) {
-                        options += '<option value="' + j[i].value + '">' + j[i].display + '<'+'/option>';
-                    }
+                    $.each(j, function (index, optionData) {
+                        $.each(j, function (index, optionData) {
+                            $('<option></option>')
+                                .attr('value', optionData.value)
+                                .text(optionData.display)
+                                .appendTo($selectField);
+                        });
+                    });
                     var width = $(elem_id).outerWidth();
                     var selected_values = [];
                     $(elem_id + ' option:selected').each(function(){
                         selected_values.push($(this).val());
                     });
-                    $(elem_id).html(options);
                     if (navigator.appVersion.indexOf("MSIE") != -1)
                         $(elem_id).width(width + 'px');
 
