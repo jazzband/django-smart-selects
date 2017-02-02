@@ -4,6 +4,7 @@ prune .hgignore
 prune .ropeproject
 prune .git
 prune .gitignore
+prune dist
 prune */__pycache__
 prune */*/__pycache__
 include README.md
