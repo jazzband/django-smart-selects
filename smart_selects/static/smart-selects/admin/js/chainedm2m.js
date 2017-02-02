@@ -33,12 +33,12 @@
                 var $selectField = $(elem_id);
                 function trigger_chosen_updated() {
                     if ($.fn.chosen !== undefined) {
-                        $(elem_id).trigger('chosen:updated');
+                        $selectField.trigger('chosen:updated');
                     }
                 }
 
                 if (!val || val === ''){
-                    $(elem_id).html('');
+                    $selectField.html('');
                     trigger_chosen_updated();
                     return;
                 }
@@ -48,40 +48,39 @@
                 initial_parent = [].concat(initial_parent);
 
                 var target_url = url + "/" + val + "/";
+                var options = [];
                 $.getJSON(target_url, function(j){
-                    $.each(j, function (index, optionData) {
-                        $.each(j, function (index, optionData) {
-                            $('<option></option>')
-                                .attr('value', optionData.value)
-                                .text(optionData.display)
-                                .appendTo($selectField);
-                        });
-                    });
-                    var width = $(elem_id).outerWidth();
-                    var selected_values = [];
-                    $(elem_id + ' option:selected').each(function(){
-                        selected_values.push($(this).val());
-                    });
-                    if (navigator.appVersion.indexOf("MSIE") != -1)
-                        $(elem_id).width(width + 'px');
+                    auto_choose = j.length == 1 && auto_choose;
 
+                    var selected_values = {};
                     // if val and initial_parent have any common values, we need to set selected options.
                     if($(val).filter(initial_parent).length >= 0) {
-                        for (i = 0; i < initial_value.length; i++) {
-                            $(elem_id + ' option[value="'+ initial_value[i] +'"]').attr('selected', 'selected');
+                        for (var i = 0; i < initial_value.length; i++) {
+                            selected_values[initial_value[i]] = true;
                         }
                     }
 
-                    // select values which were previosly selected (for many2many - many2many chain)
-                    for (var i = 0; i < selected_values.length; i++) {
-                        $(elem_id + ' option[value="'+ selected_values[i] +'"]').attr('selected', 'selected');
-                    }
+                    // select values which were previously selected (for many2many - many2many chain)
+                    $(elem_id + ' option:selected').each(function(){
+                        selected_values[$(this).val()] = true;
+                    });
 
-                    if(auto_choose && j.length == 1){
-                        $(elem_id + ' option[value="'+ j[0].value +'"]').attr('selected', 'selected');
-                    }
+                    $.each(j, function (index, optionData) {
+                        var option = $('<option></option>')
+                            .attr('value', optionData.value)
+                            .text(optionData.display);
+                        if (auto_choose || selected_values[optionData.value] === true) {
+                            option.prop('selected', true);
+                        }
+                        options.push(option);
+                    });
 
-                    $(elem_id).trigger('change');
+                    $selectField.html(options);
+                    var width = $selectField.outerWidth();
+                    if (navigator.appVersion.indexOf("MSIE") != -1)
+                        $selectField.width(width + 'px');
+
+                    $selectField.trigger('change');
 
                     trigger_chosen_updated();
                 });
