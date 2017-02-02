@@ -281,4 +281,3 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         output += js
 
         return mark_safe(output)
-

@@ -41,7 +41,7 @@ class Location1(models.Model):
         chained_model_field="continent",
         show_all=False,
         auto_choose=True,
-        limit_choices_to={'name__startswith': 'G' }
+        limit_choices_to={'name__startswith': 'G'}
     )
     # area = ChainedForeignKey(Area, chained_field="country", chained_model_field="country")
     city = models.CharField(max_length=50)
@@ -72,6 +72,7 @@ class Book(models.Model):
         )
     name = models.CharField(max_length=255)
 
+
 # test limit_to_choice field option
 class Book1(models.Model):
     publication = models.ForeignKey(Publication)
@@ -79,7 +80,7 @@ class Book1(models.Model):
         'Writer',
         chained_field="publication",
         chained_model_field="publications",
-        limit_choices_to={'name__contains': '2' }
+        limit_choices_to={'name__contains': '2'}
         )
     name = models.CharField(max_length=255)
 
@@ -91,12 +92,14 @@ class Grade(models.Model):
     def __str__(self):
         return "%s" % self.name
 
+
 class Team(models.Model):
     name = models.CharField(max_length=255)
     grade = models.ForeignKey(Grade)
 
     def __str__(self):
         return "%s" % self.name
+
 
 class Student(models.Model):
     name = models.CharField(max_length=255)

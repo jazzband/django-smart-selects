@@ -5,7 +5,7 @@ from smart_selects.views import filterchain, filterchain_all
 
 
 class ModelTests(TestCase):
-    fixtures = ['chained_select', 'chained_m2m_select', 'grouped_select', 'user' ]
+    fixtures = ['chained_select', 'chained_m2m_select', 'grouped_select', 'user']
 
     def test_reverse_relationship_manager(self):
         cr = Country.objects.get(name='Czech republic')
@@ -13,7 +13,7 @@ class ModelTests(TestCase):
 
 
 class ViewTests(TestCase):
-    fixtures = ['chained_select', 'chained_m2m_select', 'grouped_select', 'user' ]
+    fixtures = ['chained_select', 'chained_m2m_select', 'grouped_select', 'user']
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -141,4 +141,3 @@ class ViewTests(TestCase):
         response = self.client.post(reverse('admin:test_app_student_add'), post_data)
         student = Student.objects.get(grade=2, team=2)
         self.assertEquals(student.name, 'Student 2')
-    
