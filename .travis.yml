@@ -12,7 +12,8 @@ python:
 before_script:
   - pip install coverage coveralls
   - pip install -q "$DJANGO_VERSION"
-script: 
+script:
+  - python manage.py migrate
   - coverage run manage.py test
 after_script:
   - coveralls
