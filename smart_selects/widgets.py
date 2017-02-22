@@ -46,7 +46,7 @@ class JqueryMediaMixin(object):
             ]
 
             if USE_DJANGO_JQUERY:
-                jquery_paths = ['admin/js/{}'.format(path) for path in jquery_paths]
+                jquery_paths = ['{}admin/js/{}'.format(settings.STATIC_URL, path) for path in jquery_paths]
 
             js.extend(jquery_paths)
 
