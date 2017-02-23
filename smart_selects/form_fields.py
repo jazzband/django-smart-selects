@@ -39,12 +39,12 @@ class ChainedManyToManyField(ModelMultipleChoiceField):
 
     def __init__(self, to_app_name, to_model_name, chain_field, chained_model_field,
                  foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
-                 auto_choose, manager=None, initial=None, *args, **kwargs):
+                 auto_choose, horizontal, manager=None, initial=None, *args, **kwargs):
 
         defaults = {
             'widget': ChainedSelectMultiple(to_app_name, to_model_name, chain_field, chained_model_field,
                                             foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
-                                            auto_choose, manager),
+                                            auto_choose, horizontal, manager),
         }
         defaults.update(kwargs)
         if 'queryset' not in kwargs:
