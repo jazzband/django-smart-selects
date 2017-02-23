@@ -47,7 +47,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
     chains the choices of a previous combo box with this ManyToMany
     """
     def __init__(self, to, chained_field=None, chained_model_field=None,
-                 auto_choose=False, horizontal=False, **kwargs):
+                 auto_choose=False, horizontal=False, verbose_name='', **kwargs):
         """
         examples:
 
@@ -80,6 +80,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         self.chained_model_field = chained_model_field
         self.auto_choose = auto_choose
         self.horizontal = horizontal
+        self.verbose_name = verbose_name
         super(ChainedManyToManyField, self).__init__(to, **kwargs)
 
     def deconstruct(self):
@@ -99,7 +100,8 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
             'chain_field': 'chained_field',
             'chained_model_field': 'chained_model_field',
             'auto_choose': 'auto_choose',
-            'horizontal': 'horizontal'
+            'horizontal': 'horizontal',
+            'verbose_name': 'verbose_name'
         }
 
         for name, default in defaults.items():
@@ -130,6 +132,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
             'chained_model_field': self.chained_model_field,
             'auto_choose': self.auto_choose,
             'horizontal': self.horizontal,
+            'verbose_name': self.verbose_name,
             'foreign_key_app_name': foreign_key_app_name,
             'foreign_key_model_name': foreign_key_model_name,
             'foreign_key_field_name': foreign_key_field_name,

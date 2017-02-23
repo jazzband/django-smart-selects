@@ -199,24 +199,28 @@ class ChainedSelect(JqueryMediaMixin, Select):
 class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
     def __init__(self, to_app_name, to_model_name, chain_field, chained_model_field,
                  foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
-                 auto_choose,horizontal, manager=None, *args, **kwargs):
+                 auto_choose, horizontal, verbose_name='', manager=None, *args, **kwargs):
         self.to_app_name = to_app_name
         self.to_model_name = to_model_name
         self.chain_field = chain_field
         self.chained_model_field = chained_model_field
         self.auto_choose = auto_choose
+        self.horizontal = horizontal
+        self.verbose_name = verbose_name
         self.manager = manager
         self.foreign_key_app_name = foreign_key_app_name
         self.foreign_key_model_name = foreign_key_model_name
         self.foreign_key_field_name = foreign_key_field_name
-
         super(SelectMultiple, self).__init__(*args, **kwargs)
 
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
         media = super(ChainedSelectMultiple, self).media
-
+        if self.horizontal:
+            js = ["core.js", "SelectBox.js", "SelectFilter2.js"]
+            for path in js:
+                media.add_js(["admin/js/%s" % path])
         media.add_js(['smart-selects/admin/js/chainedm2m.js'])
         return media
 
@@ -274,10 +278,12 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         self.choices = final_choices
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
-            final_attrs['class'] += ' chained selectfilter'
+            final_attrs['class'] += ' chained'
         else:
-            final_attrs['class'] = 'chained selectfilter'
-        #final_attrs['data-field-name'] = self.verbose_name
+            final_attrs['class'] = 'chained'
+        if self.horizontal:
+            final_attrs['class'] += ' selectfilter'
+        final_attrs['data-field-name'] = self.verbose_name
         output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)
         output += js
 
