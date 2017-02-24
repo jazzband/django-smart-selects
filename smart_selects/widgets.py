@@ -218,6 +218,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         """Media defined as a dynamic property instead of an inner class."""
         media = super(ChainedSelectMultiple, self).media
         if self.horizontal:
+            # FOr hozontal mode add django filter horizontal javascript code
             js = ["core.js", "SelectBox.js", "SelectFilter2.js"]
             for path in js:
                 media.add_js(["admin/js/%s" % path])
@@ -257,7 +258,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         var id = "#%(id)s";
         var value = %(value)s;
         var auto_choose = %(auto_choose)s;
-
+        // Use $(window).load to call function after SelectBox and SelectFilter2
         $(window).load(function() {
             chainedm2m.init(chainfield, url, id, value, auto_choose);
         });
@@ -282,6 +283,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         else:
             final_attrs['class'] = 'chained'
         if self.horizontal:
+            # FOr hozontal mode add django filter horizontal javascript selector class
             final_attrs['class'] += ' selectfilter'
         final_attrs['data-field-name'] = self.verbose_name
         output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)

@@ -31,7 +31,9 @@
 
             fill_field: function(val, initial_value, elem_id, url, initial_parent, auto_choose){
                 var $selectField = $(elem_id),
-                    $selectedto = $(elem_id+'_to');
+                    $selectedto = $(elem_id+'_to'),
+                    cache_to = elem_id.replace('#', '') + '_to',
+                    cache_from = elem_id.replace('#', '') + '_from';
                 if (!$selectField.length) {
                     $selectField = $(elem_id+'_from');
                 }
@@ -91,13 +93,14 @@
                     $selectField.html(options);
                     if ($selectedto.length) {
                         $selectedto.html(selectedoptions);
-                         for (var i = 0, j = selectedoptions.length; i < j; i++) {
+                        // SelectBox is a global var from djangojs "admin/js/SelectBox.js"
+                        for (var i = 0, j = selectedoptions.length; i < j; i++) {
                             node = selectedoptions[i];
-                            SelectBox.cache[elem_id.replace('#', '') + '_to'].push({value: node.prop("value"), text: node.prop("text"), displayed: 1});
+                            SelectBox.cache[cache_to].push({value: node.prop("value"), text: node.prop("text"), displayed: 1});
                         }
                         for (var i = 0, j = options.length; i < j; i++) {
                             node = options[i];
-                            SelectBox.cache[elem_id.replace('#', '') + '_from'].push({value: node.prop("value"), text: node.prop("text"), displayed: 1});
+                            SelectBox.cache[cache_from].push({value: node.prop("value"), text: node.prop("text"), displayed: 1});
                         }
                     }
                     var width = $selectField.outerWidth();
