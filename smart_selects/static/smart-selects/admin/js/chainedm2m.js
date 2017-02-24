@@ -62,7 +62,7 @@
 
                     var selected_values = {};
                     // if val and initial_parent have any common values, we need to set selected options.
-                    if($(val).filter(initial_parent).length >= 0) {
+                    if($(val).filter(initial_parent).length >= 0 && initial_value) {
                         for (var i = 0; i < initial_value.length; i++) {
                             selected_values[initial_value[i]] = true;
                         }
