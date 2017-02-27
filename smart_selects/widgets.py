@@ -264,7 +264,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         js = js % {"chainfield": chain_field,
                    "url": url,
                    "id": attrs['id'],
-                   'value': json.dumps(value),
+                   'value': '""' if value is None else json.dumps(value),
                    'auto_choose': auto_choose}
 
         # since we cannot deduce the value of the chained_field
