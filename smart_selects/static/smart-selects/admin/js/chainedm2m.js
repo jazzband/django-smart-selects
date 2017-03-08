@@ -30,7 +30,13 @@
             },
 
             fill_field: function(val, initial_value, elem_id, url, initial_parent, auto_choose){
-                var $selectField = $(elem_id);
+                var $selectField = $(elem_id),
+                    $selectedto = $(elem_id+'_to'),
+                    cache_to = elem_id.replace('#', '') + '_to',
+                    cache_from = elem_id.replace('#', '') + '_from';
+                if (!$selectField.length) {
+                    $selectField = $(elem_id+'_from');
+                }
                 function trigger_chosen_updated() {
                     if ($.fn.chosen !== undefined) {
                         $selectField.trigger('chosen:updated');
@@ -48,17 +54,17 @@
                 initial_parent = [].concat(initial_parent);
 
                 var target_url = url + "/" + val + "/";
-                var options = [];
+                    options = [],
+                    selectedoptions = [];
+
                 $.getJSON(target_url, function(j){
                     auto_choose = j.length == 1 && auto_choose;
 
                     var selected_values = {};
                     // if val and initial_parent have any common values, we need to set selected options.
-                    if (initial_value != null){
-                        if($(val).filter(initial_parent).length >= 0) {
-                            for (var i = 0; i < initial_value.length; i++) {
-                                selected_values[initial_value[i]] = true;
-                            }
+                    if($(val).filter(initial_parent).length >= 0 && initial_value) {
+                        for (var i = 0; i < initial_value.length; i++) {
+                            selected_values[initial_value[i]] = true;
                         }
                     }
 
@@ -70,14 +76,33 @@
                     $.each(j, function (index, optionData) {
                         var option = $('<option></option>')
                             .attr('value', optionData.value)
-                            .text(optionData.display);
+                            .text(optionData.display)
+                            .attr('title', optionData.display);
                         if (auto_choose || selected_values[optionData.value] === true) {
-                            option.prop('selected', true);
+                            if ($selectedto.length) {
+                                selectedoptions.push(option);
+                            } else {
+                                option.prop('selected', true);
+                                options.push(option);
+                            }
+                        } else {
+                            options.push(option);
                         }
-                        options.push(option);
                     });
 
                     $selectField.html(options);
+                    if ($selectedto.length) {
+                        $selectedto.html(selectedoptions);
+                        // SelectBox is a global var from djangojs "admin/js/SelectBox.js"
+                        for (var i = 0, j = selectedoptions.length; i < j; i++) {
+                            node = selectedoptions[i];
+                            SelectBox.cache[cache_to].push({value: node.prop("value"), text: node.prop("text"), displayed: 1});
+                        }
+                        for (var i = 0, j = options.length; i < j; i++) {
+                            node = options[i];
+                            SelectBox.cache[cache_from].push({value: node.prop("value"), text: node.prop("text"), displayed: 1});
+                        }
+                    }
                     var width = $selectField.outerWidth();
                     if (navigator.appVersion.indexOf("MSIE") != -1)
                         $selectField.width(width + 'px');

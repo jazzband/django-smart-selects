@@ -46,7 +46,7 @@ class JqueryMediaMixin(object):
             ]
 
             if USE_DJANGO_JQUERY:
-                jquery_paths = ['{}admin/js/{}'.format(settings.STATIC_URL, path) for path in jquery_paths]
+                jquery_paths = ['admin/js/{}'.format(path) for path in jquery_paths]
 
             js.extend(jquery_paths)
 
@@ -199,24 +199,29 @@ class ChainedSelect(JqueryMediaMixin, Select):
 class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
     def __init__(self, to_app_name, to_model_name, chain_field, chained_model_field,
                  foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
-                 auto_choose, manager=None, *args, **kwargs):
+                 auto_choose, horizontal, verbose_name='', manager=None, *args, **kwargs):
         self.to_app_name = to_app_name
         self.to_model_name = to_model_name
         self.chain_field = chain_field
         self.chained_model_field = chained_model_field
         self.auto_choose = auto_choose
+        self.horizontal = horizontal
+        self.verbose_name = verbose_name
         self.manager = manager
         self.foreign_key_app_name = foreign_key_app_name
         self.foreign_key_model_name = foreign_key_model_name
         self.foreign_key_field_name = foreign_key_field_name
-
         super(SelectMultiple, self).__init__(*args, **kwargs)
 
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
         media = super(ChainedSelectMultiple, self).media
-
+        if self.horizontal:
+            # FOr hozontal mode add django filter horizontal javascript code
+            js = ["core.js", "SelectBox.js", "SelectFilter2.js"]
+            for path in js:
+                media.add_js(["admin/js/%s" % path])
         media.add_js(['smart-selects/admin/js/chainedm2m.js'])
         return media
 
@@ -253,8 +258,8 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         var id = "#%(id)s";
         var value = %(value)s;
         var auto_choose = %(auto_choose)s;
-
-        $(document).ready(function() {
+        // Use $(window).load to call function after SelectBox and SelectFilter2
+        $(window).load(function() {
             chainedm2m.init(chainfield, url, id, value, auto_choose);
         });
         })(jQuery || django.jQuery);
@@ -277,6 +282,10 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
             final_attrs['class'] += ' chained'
         else:
             final_attrs['class'] = 'chained'
+        if self.horizontal:
+            # FOr hozontal mode add django filter horizontal javascript selector class
+            final_attrs['class'] += ' selectfilter'
+        final_attrs['data-field-name'] = self.verbose_name
         output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)
         output += js
 
