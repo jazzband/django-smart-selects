@@ -52,7 +52,7 @@ def get_queryset(model_class, manager=None, limit_choices_to=None):
 
 def serialize_results(results):
     return [
-        {'value': item.pk, 'display': force_text(item)} for item in results
+        {'value': item.pk if str(item.pk).isdigit() else str(item.pk), 'display': force_text(item)} for item in results
     ]
 
 
