@@ -85,7 +85,7 @@ class Book1(models.Model):
     name = models.CharField(max_length=255)
 
 
-#################### group foreignkey ####################
+# group foreignkey
 class Grade(models.Model):
     name = models.CharField(max_length=255)
 
@@ -107,13 +107,14 @@ class Student(models.Model):
     team = GroupedForeignKey(Team, 'grade')
 
 
-## The following scenario causes a null initial value in the js in ChainedManyToManyFields ##
+# The following scenario causes a null initial value in the js in ChainedManyToManyFields
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return "%s" % self.name
+
 
 class Domain(models.Model):
     name = models.CharField(max_length=255)
@@ -122,6 +123,7 @@ class Domain(models.Model):
     def __str__(self):
         return "%s" % self.name
 
+
 class Website(models.Model):
     name = models.CharField(max_length=255)
     client = models.ForeignKey(Client)
@@ -129,4 +131,3 @@ class Website(models.Model):
 
     def __str__(self):
         return "%s" % self.name
-

@@ -80,7 +80,8 @@ class ChainedSelect(JqueryMediaMixin, Select):
         media.add_js(['smart-selects/admin/js/chainedfk.js'])
         return media
 
-    def render(self, name, value, attrs=None, choices=()):
+    # TODO: Simplify this and remove the noqa tag
+    def render(self, name, value, attrs=None, choices=()):  # noqa: C901
         if len(name.split('-')) > 1:  # formset
             chained_field = '-'.join(name.split('-')[:-1] + [self.chained_field])
         else:

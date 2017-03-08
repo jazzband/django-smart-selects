@@ -288,6 +288,7 @@ class GroupedForeignKey(ForeignKey):
         defaults.update(kwargs)
         return super(ForeignKey, self).formfield(**defaults)
 
+
 if has_south:
     rules_grouped = [(
         (GroupedForeignKey,),
