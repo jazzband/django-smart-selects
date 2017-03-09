@@ -107,6 +107,35 @@ class Student(models.Model):
     team = GroupedForeignKey(Team, 'grade')
 
 
+# test filter when chained_field not is a ForeignKeyField
+KIND_CHOICES = (
+    ('music', 'Music'),
+    ('video', 'Video'),
+)
+
+
+class Tag(models.Model):
+    kind = models.CharField(max_length=20, choices=KIND_CHOICES)
+    slug = models.SlugField(max_length=60)
+
+    def __str__(self):
+        return "%s" % self.slug
+
+
+class TagResource(models.Model):
+    name = models.CharField(max_length=255)
+    kind = models.CharField(max_length=20, choices=KIND_CHOICES)
+    tag = ChainedForeignKey(
+        Tag,
+        chained_field='kind',
+        chained_model_field='kind',
+        show_all=False,
+        auto_choose=True
+    )
+
+    def __str__(self):
+        return "%s - " % (self.kind, self.tag.slug)
+
 # The following scenario causes a null initial value in the js in ChainedManyToManyFields
 
 class Client(models.Model):

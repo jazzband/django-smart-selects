@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
 from .models import Book, Country, Location, Student
-from smart_selects.views import filterchain, filterchain_all
+from smart_selects.views import filterchain, filterchain_all, is_m2m
 
 
 class ModelTests(TestCase):
@@ -141,3 +141,22 @@ class ViewTests(TestCase):
         response = self.client.post(reverse('admin:test_app_student_add'), post_data)  # noqa: F841
         student = Student.objects.get(grade=2, team=2)
         self.assertEquals(student.name, 'Student 2')
+
+    ############################ chained without foreign key field ############################
+    def test_view_for_chained_charfield(self):
+        request = self.factory.get('')
+        # filterchain
+        response = filterchain(request, 'test_app', 'Tag', 'kind', 'test_app', 'TagResource', 'kind', 'music')
+        expected_value = '[{"display": "reggae", "value": 2}, {"display": "rock-and-roll", "value": 1}]'
+        self.assertEquals(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected_value)
+
+    def test_is_m2m_for_chained_charfield(self):
+        try:
+            from django.apps import apps
+            get_model = apps.get_model
+        except ImportError:
+            from django.db.models.loading import get_model
+
+        # should return false
+        self.assertEquals(is_m2m(get_model('test_app', 'TagResource'), 'kind'), False)
