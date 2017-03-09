@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from .models import Continent, Country, Location, Publication, Book, Writer, Grade, Team, Student
+from .models import Continent, Country, Location, Publication, \
+    Book, Writer, Grade, Team, Student, Tag, TagResource
 
 
 class ContinentAdmin(admin.ModelAdmin):
@@ -39,6 +40,14 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('slug',)
+
+
+class TagResourceAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
 admin.site.register(Continent, ContinentAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(Location, LocationAdmin)
@@ -48,3 +57,5 @@ admin.site.register(Writer, WriterAdmin)
 admin.site.register(Grade, GradeAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Student, StudentAdmin)
+admin.site.register(Tag, TagAdmin)
+admin.site.register(TagResource, TagResourceAdmin)
