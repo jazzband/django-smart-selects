@@ -85,7 +85,7 @@ class Book1(models.Model):
     name = models.CharField(max_length=255)
 
 
-#################### group foreignkey ####################
+# group foreignkey
 class Grade(models.Model):
     name = models.CharField(max_length=255)
 
@@ -135,3 +135,28 @@ class TagResource(models.Model):
 
     def __str__(self):
         return "%s - " % (self.kind, self.tag.slug)
+
+# The following scenario causes a null initial value in the js in ChainedManyToManyFields
+
+class Client(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return "%s" % self.name
+
+
+class Domain(models.Model):
+    name = models.CharField(max_length=255)
+    client = models.ForeignKey(Client)
+
+    def __str__(self):
+        return "%s" % self.name
+
+
+class Website(models.Model):
+    name = models.CharField(max_length=255)
+    client = models.ForeignKey(Client)
+    domains = ChainedManyToManyField(Domain, chained_field='client', chained_model_field='client')
+
+    def __str__(self):
+        return "%s" % self.name
