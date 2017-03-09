@@ -28,9 +28,12 @@ def is_m2m(model_class, field):
         except AttributeError:
             return False
     else:
-        if isinstance(getattr(model_class, field), ManyToManyDescriptor) and \
-           not getattr(model_class, field).reverse:
-            return True
+        try:
+            if isinstance(getattr(model_class, field), ManyToManyDescriptor) and \
+               not getattr(model_class, field).reverse:
+                return True
+        except AttributeError:
+            return False
 
     return False
 
