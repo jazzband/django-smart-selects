@@ -96,6 +96,41 @@ class Book(models.Model):
     	name = models.CharField(max_length=255)
 ```
 
+
+## Chained ManyToMany Selects HorizontalFiltered (way to mix with django FilteredSelectMultiple)
+
+Similar to `Chained Selects`, but behaves like `ManyToManyField`. For example:
+
+```python
+from smart_selects.db_fields import ChainedManyToManyField
+
+class Publication(models.Model):
+	name = models.CharField(max_length=255)
+
+class Writer(models.Model):
+    	name = models.CharField(max_length=255)
+    	publications = models.ManyToManyField('Publication', blank=True, null=True)
+
+class Book(models.Model):
+    	publication = models.ForeignKey(Publication)
+    	writer = ChainedManyToManyField(
+        	Writer,
+		horizontal=True,
+		verbose_name='writer',
+        	chained_field="publication",
+        	chained_model_field="publications",
+        	)
+    	name = models.CharField(max_length=255)
+```
+with this little change you can use django horizontal mode view, but do not add the field to admin filter_horizontal
+this change is not needed:
+admin.py
+```
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    filter_horizontal = ('writer',) # don't do that because you will be changing the widget.
+```
+
 ### Field options
 
 #### chained_field(required)

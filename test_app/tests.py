@@ -19,7 +19,7 @@ class ViewTests(TestCase):
         self.factory = RequestFactory()
         self.assertTrue(self.client.login(username='admin', password='admin'))
 
-    ############################ chained foreignkey ############################
+    # chained foreignkey
     def test_location_add_get(self):
         response = self.client.get(reverse('admin:test_app_location_add'), follow=True)
         self.assertContains(response, 'Europe')
@@ -82,11 +82,11 @@ class ViewTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
-    ############################ chained manytomany ############################
+    # chained manytomany
     def test_book_add_get(self):
         response = self.client.get(reverse('admin:test_app_book_add'))
         self.assertContains(response, 'Publication 1')
-        self.assertContains(response, 'var value = null')
+        self.assertContains(response, 'var value = ""')
 
     def test_book_add_post(self):
         post_data = {
@@ -126,7 +126,7 @@ class ViewTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
-    ############################ grouped foreignkey ############################
+    # grouped foreignkey
     def test_student_add_get(self):
         response = self.client.get(reverse('admin:test_app_student_add'))
         self.assertContains(response, '<optgroup label="Grade 1">\n<option value="1">   Team 1</option>\n</optgroup>')
@@ -138,7 +138,7 @@ class ViewTests(TestCase):
             'grade': 2,
             'team': 2
         }
-        response = self.client.post(reverse('admin:test_app_student_add'), post_data)
+        response = self.client.post(reverse('admin:test_app_student_add'), post_data)  # noqa: F841
         student = Student.objects.get(grade=2, team=2)
         self.assertEquals(student.name, 'Student 2')
 

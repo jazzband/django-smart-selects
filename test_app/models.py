@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField, GroupedForeignKey
+from smart_selects.db_fields import ChainedForeignKey, \
+    ChainedManyToManyField, GroupedForeignKey
 
 
 class Continent(models.Model):
@@ -85,7 +86,7 @@ class Book1(models.Model):
     name = models.CharField(max_length=255)
 
 
-#################### group foreignkey ####################
+# group foreignkey
 class Grade(models.Model):
     name = models.CharField(max_length=255)
 
@@ -105,6 +106,32 @@ class Student(models.Model):
     name = models.CharField(max_length=255)
     grade = models.ForeignKey(Grade)
     team = GroupedForeignKey(Team, 'grade')
+
+
+# The following scenario causes a null initial value in the js in ChainedManyToManyFields
+
+class Client(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return "%s" % self.name
+
+
+class Domain(models.Model):
+    name = models.CharField(max_length=255)
+    client = models.ForeignKey(Client)
+
+    def __str__(self):
+        return "%s" % self.name
+
+
+class Website(models.Model):
+    name = models.CharField(max_length=255)
+    client = models.ForeignKey(Client)
+    domains = ChainedManyToManyField(Domain, chained_field='client', chained_model_field='client')
+
+    def __str__(self):
+        return "%s" % self.name
 
 
 # test filter when chained_field not is a ForeignKeyField
