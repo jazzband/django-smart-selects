@@ -142,7 +142,7 @@ class ViewTests(TestCase):
         student = Student.objects.get(grade=2, team=2)
         self.assertEquals(student.name, 'Student 2')
 
-    ############################ chained without foreign key field ############################
+    # chained without foreign key field
     def test_view_for_chained_charfield(self):
         request = self.factory.get('')
         # filterchain
