@@ -54,5 +54,29 @@
         },
         "model": "test_app.location",
         "pk": 1
+    },
+    {
+        "fields": {
+            "kind": "music",
+            "slug": "rock-and-roll"
+        },
+        "model": "test_app.tag",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "kind": "music",
+            "slug": "reggae"
+        },
+        "model": "test_app.tag",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "kind": "video",
+            "slug": "funny"
+        },
+        "model": "test_app.tag",
+        "pk": 3
     }
 ]
