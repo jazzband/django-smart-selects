@@ -205,3 +205,9 @@ This example assumes that the Country Model has a foreignKey to Continent named 
 `JQUERY_URL`
 :   By default, jQuery will be loaded from Google's CDN. If you would prefer to
     use a different version put the full URL here. Set `JQUERY_URL = False` to disable loading jQuery.
+
+
+
+## TODO
+
+* Add a ChainedCheckboxSelectMultiple widget and adjust `chainedm2m.js` and `chainedfk.js` to build checkboxes in that case
