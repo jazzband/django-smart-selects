@@ -53,7 +53,7 @@
                 val = [].concat(val);
                 initial_parent = [].concat(initial_parent);
 
-                var target_url = url + "/" + val + "/";
+                var target_url = url + "/" + val + "/",
                     options = [],
                     selectedoptions = [];
 
