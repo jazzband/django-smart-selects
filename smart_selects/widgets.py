@@ -157,7 +157,12 @@ class ChainedSelect(JqueryMediaMixin, Select):
                     final_choices.append(ch)
         self.choices = final_choices
 
-        final_attrs = self.build_attrs(attrs, name=name)
+        try:
+            final_attrs = self.build_attrs(attrs, name=name)
+        except TypeError:
+            # Django >= 1.11
+            final_attrs = self.build_attrs(attrs, {'name': name})
+
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
         else:
