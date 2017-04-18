@@ -78,6 +78,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
         media = super(ChainedSelect, self).media
 
         media.add_js(['smart-selects/admin/js/chainedfk.js'])
+        media.add_js(['smart-selects/admin/js/bindfields.js'])
         return media
 
     # TODO: Simplify this and remove the noqa tag
@@ -117,30 +118,36 @@ class ChainedSelect(JqueryMediaMixin, Select):
             # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
             empty_label = iterator.next()[1]
 
-        js = """
-        <script type="text/javascript">
-        (function($) {
-            var chainfield = "#id_%(chainfield)s";
-            var url = "%(url)s";
-            var id = "#%(id)s";
-            var value = %(value)s;
-            var auto_choose = %(auto_choose)s;
-            var empty_label = "%(empty_label)s";
-
-            $(document).ready(function() {
-                chainedfk.init(chainfield, url, id, value, empty_label, auto_choose);
-            });
-        })(jQuery || django.jQuery);
-        </script>
-
-        """
-        js = js % {"chainfield": chained_field,
-                   "url": url,
-                   "id": attrs['id'],
-                   'value': 'undefined' if value is None or value == '' else value,
-                   'auto_choose': auto_choose,
-                   'empty_label': escape(empty_label)}
+        # js = """
+        # <script type="text/javascript">
+        # (function($) {
+        #     var chainfield = "#id_%(chainfield)s";
+        #     var url = "%(url)s";
+        #     var id = "#%(id)s";
+        #     var value = %(value)s;
+        #     var auto_choose = %(auto_choose)s;
+        #     var empty_label = "%(empty_label)s";
+        #
+        #     $(document).ready(function() {
+        #         chainedfk.init(chainfield, url, id, value, empty_label, auto_choose);
+        #     });
+        # })(jQuery || django.jQuery);
+        # </script>
+        #
+        # """
+        # js = js % {"chainfield": chained_field,
+        #            "url": url,
+        #            "id": attrs['id'],
+        #            'value': 'undefined' if value is None or value == '' else value,
+        #            'auto_choose': auto_choose,
+        #            'empty_label': escape(empty_label)}
         final_choices = []
+
+        attrs["data-chainfield"] = chained_field
+        attrs["data-url"] = url
+        attrs["data-value"] = "undefined" if value is None or value == "" else value
+        attrs["data-auto_choose"] = auto_choose
+        attrs["data-empty_label"] = escape(empty_label)
         if value:
             available_choices = self._get_available_choices(self.queryset, value)
             for choice in available_choices:
@@ -159,12 +166,12 @@ class ChainedSelect(JqueryMediaMixin, Select):
 
         final_attrs = self.build_attrs(attrs, name=name)
         if 'class' in final_attrs:
-            final_attrs['class'] += ' chained'
+            final_attrs['class'] += ' chained-fk'
         else:
-            final_attrs['class'] = 'chained'
+            final_attrs['class'] = 'chained-fk'
 
-        output = js
-        output += super(ChainedSelect, self).render(name, value, final_attrs)
+        # output = js
+        output = super(ChainedSelect, self).render(name, value, final_attrs)
 
         return mark_safe(output)
 
@@ -224,6 +231,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
             for path in js:
                 media.add_js(["admin/js/%s" % path])
         media.add_js(['smart-selects/admin/js/chainedm2m.js'])
+        media.add_js(['smart-selects/admin/js/bindfields.js'])
         return media
 
     def render(self, name, value, attrs=None, choices=()):
@@ -250,28 +258,33 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
             auto_choose = 'true'
         else:
             auto_choose = 'false'
-        js = """
-        <script type="text/javascript">
-        (function($) {
+        # js = """
+        # <script type="text/javascript">
+        # (function($) {
+        # 
+        # var chainfield = "#id_%(chainfield)s";
+        # var url = "%(url)s";
+        # var id = "#%(id)s";
+        # var value = %(value)s;
+        # var auto_choose = %(auto_choose)s;
+        # // Use $(window).load to call function after SelectBox and SelectFilter2
+        # $(window).load(function() {
+        #     chainedm2m.init(chainfield, url, id, value, auto_choose);
+        # });
+        # })(jQuery || django.jQuery);
+        # </script>
+        # 
+        # """
+        # js = js % {"chainfield": chain_field,
+        #            "url": url,
+        #            "id": attrs['id'],
+        #            'value': '""' if value is None else json.dumps(value),
+        #            'auto_choose': auto_choose}
 
-        var chainfield = "#id_%(chainfield)s";
-        var url = "%(url)s";
-        var id = "#%(id)s";
-        var value = %(value)s;
-        var auto_choose = %(auto_choose)s;
-        // Use $(window).load to call function after SelectBox and SelectFilter2
-        $(window).load(function() {
-            chainedm2m.init(chainfield, url, id, value, auto_choose);
-        });
-        })(jQuery || django.jQuery);
-        </script>
-
-        """
-        js = js % {"chainfield": chain_field,
-                   "url": url,
-                   "id": attrs['id'],
-                   'value': '""' if value is None else json.dumps(value),
-                   'auto_choose': auto_choose}
+        attrs["data-chainfield"] = chain_field
+        attrs["data-url"] = url
+        attrs["data-value"] = '""' if value is None else json.dumps(value)
+        attrs["data-auto_choose"] = auto_choose
 
         # since we cannot deduce the value of the chained_field
         # so we just render empty choices here and let the js
@@ -288,6 +301,6 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
             final_attrs['class'] += ' selectfilter'
         final_attrs['data-field-name'] = self.verbose_name
         output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)
-        output += js
+        # output += js
 
         return mark_safe(output)
