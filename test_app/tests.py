@@ -24,7 +24,7 @@ class ViewTests(TestCase):
         response = self.client.get(reverse('admin:test_app_location_add'), follow=True)
         self.assertContains(response, 'Europe')
         self.assertContains(response, 'America')
-        self.assertContains(response, 'var value = undefined;')
+        self.assertContains(response, 'data-value="undefined"')
 
     def test_location_add_post(self):
         post_data = {
@@ -47,12 +47,12 @@ class ViewTests(TestCase):
         }
         response = self.client.post(reverse('admin:test_app_location_add'), post_data)
         self.assertContains(response, 'This field is required.')
-        self.assertContains(response, 'var value = undefined;')
+        self.assertContains(response, 'data-value="undefined"')
 
     def test_location_change_get(self):
         response = self.client.get(reverse('admin:test_app_location_change', args=(1,)))
         self.assertContains(response, 'Europe')
-        self.assertContains(response, 'var value = 1')
+        self.assertContains(response, 'data-value="1"')
 
     def test_filterchain_view_for_chained_foreignkey(self):
         request = self.factory.get('')
@@ -86,7 +86,7 @@ class ViewTests(TestCase):
     def test_book_add_get(self):
         response = self.client.get(reverse('admin:test_app_book_add'))
         self.assertContains(response, 'Publication 1')
-        self.assertContains(response, 'var value = ""')
+        self.assertContains(response, 'data-value=""')
 
     def test_book_add_post(self):
         post_data = {
@@ -105,11 +105,11 @@ class ViewTests(TestCase):
         }
         response = self.client.post(reverse('admin:test_app_book_add'), post_data)
         self.assertContains(response, 'This field is required.')
-        self.assertContains(response, 'var value = []')
+        self.assertContains(response, 'data-value="[]"')
 
     def test_book_change_get(self):
         response = self.client.get(reverse('admin:test_app_book_change', args=(1,)), follow=True)
-        self.assertContains(response, 'var value = [3];')
+        self.assertContains(response, 'data-value="[3]"')
 
     def test_filterchain_view_for_chained_manytomany(self):
         request = self.factory.get('')
