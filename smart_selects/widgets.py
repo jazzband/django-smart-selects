@@ -261,7 +261,6 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         # js = """
         # <script type="text/javascript">
         # (function($) {
-        # 
         # var chainfield = "#id_%(chainfield)s";
         # var url = "%(url)s";
         # var id = "#%(id)s";
@@ -273,7 +272,6 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         # });
         # })(jQuery || django.jQuery);
         # </script>
-        # 
         # """
         # js = js % {"chainfield": chain_field,
         #            "url": url,

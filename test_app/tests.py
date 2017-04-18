@@ -86,7 +86,8 @@ class ViewTests(TestCase):
     def test_book_add_get(self):
         response = self.client.get(reverse('admin:test_app_book_add'))
         self.assertContains(response, 'Publication 1')
-        self.assertContains(response, 'data-value=""')
+        print response
+        self.assertContains(response, 'data-value="&quot;&quot;"')
 
     def test_book_add_post(self):
         post_data = {
