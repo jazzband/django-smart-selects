@@ -114,11 +114,6 @@ class ChainedSelect(JqueryMediaMixin, Select):
 
         final_choices = []
 
-        attrs["data-chainfield"] = chained_field
-        attrs["data-url"] = url
-        attrs["data-value"] = "null" if value is None or value == "" else value
-        attrs["data-auto_choose"] = auto_choose
-        attrs["data-empty_label"] = escape(empty_label)
         if value:
             available_choices = self._get_available_choices(self.queryset, value)
             for choice in available_choices:
@@ -135,6 +130,11 @@ class ChainedSelect(JqueryMediaMixin, Select):
                     final_choices.append(ch)
         self.choices = final_choices
 
+        attrs["data-chainfield"] = chained_field
+        attrs["data-url"] = url
+        attrs["data-value"] = "null" if value is None or value == "" else value
+        attrs["data-auto_choose"] = auto_choose
+        attrs["data-empty_label"] = escape(empty_label)
         attrs["name"] = name
         final_attrs = self.build_attrs(attrs)
         if 'class' in final_attrs:
@@ -230,16 +230,16 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         else:
             auto_choose = 'false'
 
-        attrs["data-chainfield"] = chain_field
-        attrs["data-url"] = url
-        attrs["data-value"] = "null" if value is None else json.dumps(value)
-        attrs["data-auto_choose"] = auto_choose
-
         # since we cannot deduce the value of the chained_field
         # so we just render empty choices here and let the js
         # fetch related choices later
         final_choices = []
         self.choices = final_choices
+
+        attrs["data-chainfield"] = chain_field
+        attrs["data-url"] = url
+        attrs["data-value"] = "null" if value is None else json.dumps(value)
+        attrs["data-auto_choose"] = auto_choose
         attrs["name"] = name
         final_attrs = self.build_attrs(attrs)
         if 'class' in final_attrs:
