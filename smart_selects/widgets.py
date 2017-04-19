@@ -145,7 +145,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
 
         attrs["data-chainfield"] = chained_field
         attrs["data-url"] = url
-        attrs["data-value"] = "undefined" if value is None or value == "" else value
+        attrs["data-value"] = "null" if value is None or value == "" else value
         attrs["data-auto_choose"] = auto_choose
         attrs["data-empty_label"] = escape(empty_label)
         if value:
@@ -281,7 +281,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
 
         attrs["data-chainfield"] = chain_field
         attrs["data-url"] = url
-        attrs["data-value"] = '""' if value is None else json.dumps(value)
+        attrs["data-value"] = "null" if value is None else json.dumps(value)
         attrs["data-auto_choose"] = auto_choose
 
         # since we cannot deduce the value of the chained_field
