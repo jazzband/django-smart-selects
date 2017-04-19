@@ -64,8 +64,8 @@ class ViewTests(TestCase):
     def test_filterchain_all_view_for_chained_foreignkey(self):
         request = self.factory.get('')
         response = filterchain_all(request, 'test_app', 'Country', 'continent', 'test_app', 'Location', 'country', 1)
-        expected_value = '[{"display": "Czech republic", "value": 1}, {"display": "Germany", "value": 3},'\
-            ' {"display": "Great Britain", "value": 4}, {"display": "---------", "value": ""}, {"display": "New York", "value": 2}]'
+        expected_value = '[{"display": "Czech republic", "value": 1}, {"display": "Germany", "value": 3},' \
+                         ' {"display": "Great Britain", "value": 4}, {"display": "---------", "value": ""}, {"display": "New York", "value": 2}]'
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
@@ -129,12 +129,10 @@ class ViewTests(TestCase):
     # grouped foreignkey
     def test_student_add_get(self):
         response = self.client.get(reverse('admin:test_app_student_add'))
-        # For some reason, Django 1.11 renders this with additional new lines and spaces, so we strip all of them off
-        splitted = response.content.split(b'\n')
-        splitted = [part.lstrip(b' \t\n\r') for part in splitted]
-        response.content = b''.join(splitted)
-        self.assertContains(response, '<optgroup label="Grade 1"><option value="1">   Team 1</option></optgroup>')
-        self.assertContains(response, '<optgroup label="Grade 2"><option value="2">   Team 2</option></optgroup>')
+        self.assertContains(response, '<optgroup label="Grade 1">\n<option value="1">   Team 1</option>\n</optgroup>',
+                            html=True)
+        self.assertContains(response, '<optgroup label="Grade 2">\n<option value="2">   Team 2</option>\n</optgroup>',
+                            html=True)
 
     def test_student_add_post(self):
         post_data = {
