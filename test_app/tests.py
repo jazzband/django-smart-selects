@@ -1,3 +1,5 @@
+import re
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
 from .models import Book, Country, Location, Student
@@ -129,8 +131,12 @@ class ViewTests(TestCase):
     # grouped foreignkey
     def test_student_add_get(self):
         response = self.client.get(reverse('admin:test_app_student_add'))
-        self.assertContains(response, '<optgroup label="Grade 1">\n<option value="1">   Team 1</option>\n</optgroup>')
-        self.assertContains(response, '<optgroup label="Grade 2">\n<option value="2">   Team 2</option>\n</optgroup>')
+        # For some reason, Django 1.11 renders this with additional new lines and spaces, so we strip all of them off
+        splitted = response.content.split('\n')
+        splitted = [part.lstrip(' \t\n\r') for part in splitted]
+        response.content = ''.join(splitted)
+        self.assertContains(response, '<optgroup label="Grade 1"><option value="1">   Team 1</option></optgroup>')
+        self.assertContains(response, '<optgroup label="Grade 2"><option value="2">   Team 2</option></optgroup>')
 
     def test_student_add_post(self):
         post_data = {
