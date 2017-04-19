@@ -1,4 +1,5 @@
 .tmp*
+.coverage
 .env
 *.pyc
 *.DS_Store
@@ -6,6 +7,7 @@
 .project
 build/
 dist/
+htmlcov/
 *.egg*
 *.swp
 *~
