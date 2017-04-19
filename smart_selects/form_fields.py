@@ -1,12 +1,10 @@
-try:
-    from django.apps import apps
-    get_model = apps.get_model
-except ImportError:
-    from django.db.models.loading import get_model
+from django.apps import apps
 from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 from django.forms import ChoiceField
 from smart_selects.widgets import ChainedSelect, ChainedSelectMultiple
 from django.utils.encoding import force_text
+
+get_model = apps.get_model
 
 
 class ChainedModelChoiceField(ModelChoiceField):

@@ -12,12 +12,61 @@ class ModelTests(TestCase):
         self.assertEqual(list(cr.location_set.all().values_list('city', flat=True)), ['Praha'])
 
 
+class SecurityTests(TestCase):
+    fixtures = ['user']
+
+    def test_models_arent_exposed_with_filter(self):
+        # Make sure only models with ChainedManyToMany or ChainedForeignKey
+        # fields are globally searchable
+        response = self.client.get('/chaining/filter/auth/User/is_superuser/auth/User/password/1/')
+        self.assertEquals(response.status_code, 403)
+
+    def test_models_arent_exposed_with_all(self):
+        # Make sure only models with ChainedManyToMany or ChainedForeignKey
+        # fields are globally searchable
+        response = self.client.get('/chaining/all/auth/User/is_superuser/auth/User/password/1/')
+        self.assertEquals(response.status_code, 403)
+
+
 class ViewTests(TestCase):
     fixtures = ['chained_select', 'chained_m2m_select', 'grouped_select', 'user']
 
     def setUp(self):
         self.factory = RequestFactory()
         self.assertTrue(self.client.login(username='admin', password='admin'))
+
+    def test_model_manager(self):
+        # Make sure only models with ChainedManyToMany or ChainedForeignKey
+        # fields are globally searchable
+        expected_data = [
+            {
+                'value': 1,
+                'display': "Czech republic",
+            }, {
+                'value': 3,
+                'display': "Germany",
+            }, {
+                'value': 4,
+                'display': "Great Britain",
+            }
+        ]
+
+        response = self.client.get('/chaining/filter/test_app/Country/objects/continent/test_app/Location/country/1/')
+        if hasattr(response, 'json'):
+            self.assertEqual(response.json(), expected_data)
+        else:
+            import json
+            json_data = json.loads(response.content.decode(response.charset))
+            self.assertEqual(json_data, expected_data)
+
+    def test_null_value(self):
+        # Make sure only models with ChainedManyToMany or ChainedForeignKey
+        # fields are globally searchable
+        response = self.client.get('/chaining/filter/test_app/Country/objects/continent/test_app/Location/country/0/')
+        if hasattr(response, 'json'):
+            self.assertEqual(response.json(), [])
+        else:
+            self.assertEqual(response.content.decode(response.charset), '[]')
 
     # chained foreignkey
     def test_location_add_get(self):

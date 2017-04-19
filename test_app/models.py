@@ -128,7 +128,10 @@ class Domain(models.Model):
 class Website(models.Model):
     name = models.CharField(max_length=255)
     client = models.ForeignKey(Client)
-    domains = ChainedManyToManyField(Domain, chained_field='client', chained_model_field='client')
+    domains = ChainedManyToManyField(
+        Domain,
+        chained_field='client',
+        chained_model_field='client')
 
     def __str__(self):
         return "%s" % self.name

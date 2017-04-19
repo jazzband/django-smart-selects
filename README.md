@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/digi604/django-smart-selects.svg?branch=master)](https://travis-ci.org/digi604/django-smart-selects)
+
 [![Coverage Status](https://coveralls.io/repos/github/digi604/django-smart-selects/badge.svg?branch=master)](https://coveralls.io/github/digi604/django-smart-selects?branch=master)
 
 # Django Smart Selects

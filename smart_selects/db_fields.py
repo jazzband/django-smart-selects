@@ -3,12 +3,6 @@ from django.db.models.fields.related import (
 )
 from django.utils import six
 
-try:
-    from south.modelsinspector import add_introspection_rules
-    has_south = True
-except ImportError:
-    has_south = False
-
 from smart_selects import form_fields
 
 
@@ -20,7 +14,7 @@ class IntrospectiveFieldMixin(object):
         if isinstance(to, six.string_types):
             if to == RECURSIVE_RELATIONSHIP_CONSTANT:  # to == 'self'
                 # This will be handled in contribute_to_class(), when we have
-                # enough informatino to set these properly
+                # enough information to set these properly
                 self.to_app_name, self.to_model_name = (None, to)
             elif '.' in to:  # 'app_label.ModelName'
                 self.to_app_name, self.to_model_name = to.split('.')
@@ -287,20 +281,3 @@ class GroupedForeignKey(ForeignKey):
         }
         defaults.update(kwargs)
         return super(ForeignKey, self).formfield(**defaults)
-
-
-if has_south:
-    rules_grouped = [(
-        (GroupedForeignKey,),
-        [],
-        {
-            'to': ['rel.to', {}],
-            'group_field': ['group_field', {}],
-        },
-    )]
-    add_introspection_rules([],
-                            ["^smart_selects\.db_fields\.ChainedManyToManyField"])
-    add_introspection_rules([],
-                            ["^smart_selects\.db_fields\.ChainedForeignKey"])
-    add_introspection_rules(rules_grouped,
-                            ["^smart_selects\.db_fields\.GroupedForeignKey"])

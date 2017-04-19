@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from django.apps import apps
 from django.utils.encoding import force_text
-try:
-    from django.apps import apps
-    get_model = apps.get_model
-except ImportError:
-    from django.db.models.loading import get_model
+
+get_model = apps.get_model
 
 
 def unicode_sorter(input):
