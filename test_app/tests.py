@@ -130,9 +130,9 @@ class ViewTests(TestCase):
     def test_student_add_get(self):
         response = self.client.get(reverse('admin:test_app_student_add'))
         # For some reason, Django 1.11 renders this with additional new lines and spaces, so we strip all of them off
-        splitted = response.content.split('\n')
-        splitted = [part.lstrip(' \t\n\r') for part in splitted]
-        response.content = ''.join(splitted)
+        splitted = response.content.split(b'\n')
+        splitted = [part.lstrip(b' \t\n\r') for part in splitted]
+        response.content = b''.join(splitted)
         self.assertContains(response, '<optgroup label="Grade 1"><option value="1">   Team 1</option></optgroup>')
         self.assertContains(response, '<optgroup label="Grade 2"><option value="2">   Team 2</option></optgroup>')
 
