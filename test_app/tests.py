@@ -38,8 +38,7 @@ class ViewTests(TestCase):
     def test_model_manager(self):
         # Make sure only models with ChainedManyToMany or ChainedForeignKey
         # fields are globally searchable
-        response = self.client.get('/chaining/filter/test_app/Country/objects/continent/test_app/Location/country/1/')
-        self.assertEqual(response.json(), [
+        expected_data = [
             {
                 'value': 1,
                 'display': "Czech republic",
@@ -50,13 +49,24 @@ class ViewTests(TestCase):
                 'value': 4,
                 'display': "Great Britain",
             }
-        ])
+        ]
+
+        response = self.client.get('/chaining/filter/test_app/Country/objects/continent/test_app/Location/country/1/')
+        if hasattr(response, 'json'):
+            self.assertEqual(response.json(), expected_data)
+        else:
+            import json
+            json_data = json.loads(response.content.decode(response.charset))
+            self.assertEqual(json_data, expected_data)
 
     def test_null_value(self):
         # Make sure only models with ChainedManyToMany or ChainedForeignKey
         # fields are globally searchable
         response = self.client.get('/chaining/filter/test_app/Country/objects/continent/test_app/Location/country/0/')
-        self.assertEqual(response.json(), [])
+        if hasattr(response, 'json'):
+            self.assertEqual(response.json(), [])
+        else:
+            self.assertEqual(response.content.decode(response.charset), '[]')
 
     # chained foreignkey
     def test_location_add_get(self):
