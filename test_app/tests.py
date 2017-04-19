@@ -1,5 +1,3 @@
-import re
-
 from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
 from .models import Book, Country, Location, Student
