@@ -12,6 +12,22 @@ class ModelTests(TestCase):
         self.assertEqual(list(cr.location_set.all().values_list('city', flat=True)), ['Praha'])
 
 
+class SecurityTests(TestCase):
+    fixtures = ['user']
+
+    def test_models_arent_exposed_with_filter(self):
+        # Make sure only models with ChainedManyToMany or ChainedForeignKey
+        # fields are globally searchable
+        response = self.client.get('/chaining/filter/auth/User/is_superuser/auth/User/password/1/')
+        self.assertEquals(response.status_code, 403)
+
+    def test_models_arent_exposed_with_all(self):
+        # Make sure only models with ChainedManyToMany or ChainedForeignKey
+        # fields are globally searchable
+        response = self.client.get('/chaining/all/auth/User/is_superuser/auth/User/password/1/')
+        self.assertEquals(response.status_code, 403)
+
+
 class ViewTests(TestCase):
     fixtures = ['chained_select', 'chained_m2m_select', 'grouped_select', 'user']
 
