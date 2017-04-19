@@ -19,6 +19,29 @@ class ViewTests(TestCase):
         self.factory = RequestFactory()
         self.assertTrue(self.client.login(username='admin', password='admin'))
 
+    def test_model_manager(self):
+        # Make sure only models with ChainedManyToMany or ChainedForeignKey
+        # fields are globally searchable
+        response = self.client.get('/chaining/filter/test_app/Country/objects/continent/test_app/Location/country/1/')
+        self.assertEqual(response.json(), [
+            {
+                'value': 1,
+                'display': "Czech republic",
+            }, {
+                'value': 3,
+                'display': "Germany",
+            }, {
+                'value': 4,
+                'display': "Great Britain",
+            }
+        ])
+
+    def test_null_value(self):
+        # Make sure only models with ChainedManyToMany or ChainedForeignKey
+        # fields are globally searchable
+        response = self.client.get('/chaining/filter/test_app/Country/objects/continent/test_app/Location/country/0/')
+        self.assertEqual(response.json(), [])
+
     # chained foreignkey
     def test_location_add_get(self):
         response = self.client.get(reverse('admin:test_app_location_add'), follow=True)
