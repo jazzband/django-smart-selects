@@ -1,27 +1,21 @@
+import json
+
 import django
 
+from django.apps import apps
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.forms.widgets import Select, SelectMultiple
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.html import escape
-import json
 
 from smart_selects.utils import unicode_sorter, sort_results
 
-try:
-    from django.apps import apps
-    get_model = apps.get_model
-except ImportError:
-    from django.db.models.loading import get_model
+get_model = apps.get_model
 
-if django.VERSION >= (1, 2, 0) and getattr(settings, 'USE_DJANGO_JQUERY', True):
-    USE_DJANGO_JQUERY = True
-    JQUERY_URL = None
-else:
-    USE_DJANGO_JQUERY = False
-    JQUERY_URL = getattr(settings, 'JQUERY_URL', 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
+USE_DJANGO_JQUERY = False
+JQUERY_URL = getattr(settings, 'JQUERY_URL', 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
 
 URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 
@@ -118,29 +112,6 @@ class ChainedSelect(JqueryMediaMixin, Select):
             # Hacky way to getting the correct empty_label from the field instead of a hardcoded '--------'
             empty_label = iterator.next()[1]
 
-        # js = """
-        # <script type="text/javascript">
-        # (function($) {
-        #     var chainfield = "#id_%(chainfield)s";
-        #     var url = "%(url)s";
-        #     var id = "#%(id)s";
-        #     var value = %(value)s;
-        #     var auto_choose = %(auto_choose)s;
-        #     var empty_label = "%(empty_label)s";
-        #
-        #     $(document).ready(function() {
-        #         chainedfk.init(chainfield, url, id, value, empty_label, auto_choose);
-        #     });
-        # })(jQuery || django.jQuery);
-        # </script>
-        #
-        # """
-        # js = js % {"chainfield": chained_field,
-        #            "url": url,
-        #            "id": attrs['id'],
-        #            'value': 'undefined' if value is None or value == '' else value,
-        #            'auto_choose': auto_choose,
-        #            'empty_label': escape(empty_label)}
         final_choices = []
 
         attrs["data-chainfield"] = chained_field
@@ -171,7 +142,6 @@ class ChainedSelect(JqueryMediaMixin, Select):
         else:
             final_attrs['class'] = 'chained-fk'
 
-        # output = js
         output = super(ChainedSelect, self).render(name, value, final_attrs)
 
         return mark_safe(output)
@@ -227,7 +197,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         """Media defined as a dynamic property instead of an inner class."""
         media = super(ChainedSelectMultiple, self).media
         if self.horizontal:
-            # FOr hozontal mode add django filter horizontal javascript code
+            # For horizontal mode add django filter horizontal javascript code
             js = ["core.js", "SelectBox.js", "SelectFilter2.js"]
             for path in js:
                 media.add_js(["admin/js/%s" % path])
@@ -251,7 +221,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
             'foreign_key_model_name': self.foreign_key_model_name,
             'foreign_key_field_name': self.foreign_key_field_name,
             'value': '1'
-            }
+        }
         if self.manager is not None:
             kwargs.update({'manager': self.manager})
         url = URL_PREFIX + ("/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2]))
@@ -259,26 +229,6 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
             auto_choose = 'true'
         else:
             auto_choose = 'false'
-        # js = """
-        # <script type="text/javascript">
-        # (function($) {
-        # var chainfield = "#id_%(chainfield)s";
-        # var url = "%(url)s";
-        # var id = "#%(id)s";
-        # var value = %(value)s;
-        # var auto_choose = %(auto_choose)s;
-        # // Use $(window).load to call function after SelectBox and SelectFilter2
-        # $(window).load(function() {
-        #     chainedm2m.init(chainfield, url, id, value, auto_choose);
-        # });
-        # })(jQuery || django.jQuery);
-        # </script>
-        # """
-        # js = js % {"chainfield": chain_field,
-        #            "url": url,
-        #            "id": attrs['id'],
-        #            'value': '""' if value is None else json.dumps(value),
-        #            'auto_choose': auto_choose}
 
         attrs["data-chainfield"] = chain_field
         attrs["data-url"] = url
@@ -297,10 +247,9 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         else:
             final_attrs['class'] = 'chained'
         if self.horizontal:
-            # FOr hozontal mode add django filter horizontal javascript selector class
+            # For hozontal mode add django filter horizontal javascript selector class
             final_attrs['class'] += ' selectfilter'
         final_attrs['data-field-name'] = self.verbose_name
         output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)
-        # output += js
 
         return mark_safe(output)

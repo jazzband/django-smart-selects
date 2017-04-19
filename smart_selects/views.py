@@ -1,16 +1,13 @@
-from django.http import JsonResponse
+from django.apps import apps
 from django.db.models import Q
+from django.http import JsonResponse
 from django.utils.six import iteritems
 from django.views.decorators.cache import never_cache
 
-try:
-    from django.apps import apps
-    get_model = apps.get_model
-except ImportError:
-    from django.db.models.loading import get_model
-
 from smart_selects.utils import (get_keywords, sort_results, serialize_results,
                                  get_queryset, get_limit_choices_to)
+
+get_model = apps.get_model
 
 
 def is_m2m(model_class, field):
