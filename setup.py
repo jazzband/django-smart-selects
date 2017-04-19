@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
     long_desc = f.read()
 
 setup(name="django-smart-selects",
-      version="1.3.4",
+      version="1.4.0",
       description="Django application to handle chained model fields.",
       long_description=long_desc,
       author="Patrick Lauber",
