@@ -164,7 +164,8 @@ class ChainedSelect(JqueryMediaMixin, Select):
                     final_choices.append(ch)
         self.choices = final_choices
 
-        final_attrs = self.build_attrs(attrs, name=name)
+        attrs["name"] = name
+        final_attrs = self.build_attrs(attrs)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained-fk'
         else:
@@ -289,7 +290,8 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         # fetch related choices later
         final_choices = []
         self.choices = final_choices
-        final_attrs = self.build_attrs(attrs, name=name)
+        attrs["name"] = name
+        final_attrs = self.build_attrs(attrs)
         if 'class' in final_attrs:
             final_attrs['class'] += ' chained'
         else:
