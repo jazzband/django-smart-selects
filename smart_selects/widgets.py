@@ -14,7 +14,7 @@ from smart_selects.utils import unicode_sorter, sort_results
 
 get_model = apps.get_model
 
-USE_DJANGO_JQUERY = False
+USE_DJANGO_JQUERY = getattr(settings, 'USE_DJANGO_JQUERY', False)
 JQUERY_URL = getattr(settings, 'JQUERY_URL', 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
 
 URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
