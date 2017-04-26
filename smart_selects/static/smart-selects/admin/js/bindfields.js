@@ -10,12 +10,12 @@
         if($(item).hasClass("chained-fk")) {
             var empty_label = $(item).attr("data-empty_label");
             chainedfk.init(chainfield, url, id, value, empty_label, auto_choose);
-        } else if ($(item).hasClass("chained-m2m")) {
+        } else if ($(item).hasClass("chained")) {
             chainedm2m.init(chainfield, url, id, value, auto_choose);
         }
     }
     $(window).load(function() {
-        $.each($(".chained-m2m"), function(index, item) {
+        $.each($(".chained"), function(index, item) {
             initItem(item);
         });
     });
