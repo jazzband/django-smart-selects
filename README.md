@@ -196,19 +196,22 @@ class Location(models.Model):
     )
     ```
 
+3. You will also need to include jQuery in every page that includes a field from `smart_selects`, or set `SMART_SELECTS_JQUERY_URL = True` in your project's `settings.py`.
+
 
 ## Settings
 
-`USE_DJANGO_JQUERY`
-:   By default, `smart_selects` will use the bundled jQuery from Django 1.2's
-    admin area. Set `USE_DJANGO_JQUERY = False` to disable this behaviour.
+`SMART_SELECTS_JQUERY_URL`
+:   jQuery 2.2.0 is loaded from Google's CDN if this is set to `True`. If you would prefer to
+    use a different version put the full URL here. Set `SMART_SELECTS_JQUERY_URL = False`
+    to disable loading jQuery altogether.
 
-`JQUERY_URL`
-:   By default, jQuery will be loaded from Google's CDN. If you would prefer to
-    use a different version put the full URL here. Set `JQUERY_URL = False` to disable loading jQuery.
+`SMART_SELECTS_USE_DJANGO_JQUERY`
+:   By default, `smart_selects` loads jQuery from Google's CDN. However, it can use jQuery from Django's
+    admin area. Set `SMART_SELECTS_USE_DJANGO_JQUERY = True` to enable this behaviour.
 
 
 ## TODO
 
 * Add permission checks to enable users to restrict who can use the chained fields.
-* Add a ChainedCheckboxSelectMultiple widget and adjust `chainedm2m.js` and `chainedfk.js` to build checkboxes in that case
+* Add a `ChainedCheckboxSelectMultiple` widget and adjust `chainedm2m.js` and `chainedfk.js` to build checkboxes in that case
