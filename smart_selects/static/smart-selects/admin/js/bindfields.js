@@ -50,4 +50,4 @@
         }
         initItem(chained);
      });
-})(jQuery || django.jQuery);
+})(django.jQuery || jQuery);
