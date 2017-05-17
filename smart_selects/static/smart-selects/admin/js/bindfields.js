@@ -29,7 +29,7 @@
     // Fired every time a new inline formset is created
     django.jQuery(document).on('formset:added', function (event, $row, formsetName) {
         var chainedFK = $row.find(".chained-fk");
-        $.each(chainedFK, function (chained) {
+        $.each(chainedFK, function (index, chained) {
             var chainfield = $(chained).attr("data-chainfield");
             if (chainfield.indexOf("__prefix__") > -1) {
                 /*
@@ -51,6 +51,6 @@
                 $(chained).attr("data-chainfield", chainfield)
             }
             initItem(chained);
-        })
+        });
     });
 })(jQuery || django.jQuery);
