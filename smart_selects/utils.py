@@ -30,7 +30,7 @@ def get_limit_choices_to(app_name, model_name, field_name):
     try:
         model = get_model(app_name, model_name)
         field = model._meta.get_field(field_name)
-        limit_choices_to = field.rel.limit_choices_to
+        limit_choices_to = field.remote_field.limit_choices_to
     except Exception:
         limit_choices_to = None
 
