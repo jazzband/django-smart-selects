@@ -4,11 +4,17 @@ import django
 
 from django.apps import apps
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.forms.widgets import Select, SelectMultiple
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.html import escape
+
+try:
+    # Django >= 1.10
+    from django.urls import reverse
+except ImportError:
+    # Django < 1.10
+    from django.core.urlresolvers import reverse
 
 from smart_selects.utils import unicode_sorter, sort_results
 

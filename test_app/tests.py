@@ -1,7 +1,15 @@
-from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory
-from .models import Book, Country, Location, Student
+
+try:
+    # Django >= 1.10
+    from django.urls import reverse
+except ImportError:
+    # Django < 1.10
+    from django.core.urlresolvers import reverse
+
 from smart_selects.views import filterchain, filterchain_all, is_m2m
+
+from .models import Book, Country, Location, Student
 
 
 class ModelTests(TestCase):
