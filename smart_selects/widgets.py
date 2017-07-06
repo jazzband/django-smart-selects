@@ -199,13 +199,13 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
         media = super(ChainedSelectMultiple, self).media
+        media.add_js(['smart-selects/admin/js/chainedm2m.js'])
+        media.add_js(['smart-selects/admin/js/bindfields.js'])
         if self.horizontal:
             # For horizontal mode add django filter horizontal javascript code
             js = ["core.js", "SelectBox.js", "SelectFilter2.js"]
             for path in js:
                 media.add_js(["admin/js/%s" % path])
-        media.add_js(['smart-selects/admin/js/chainedm2m.js'])
-        media.add_js(['smart-selects/admin/js/bindfields.js'])
         return media
 
     def render(self, name, value, attrs=None, choices=()):
