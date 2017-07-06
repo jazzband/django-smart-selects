@@ -196,19 +196,19 @@ class Location(models.Model):
     )
     ```
 
-3. You will also need to include jQuery in every page that includes a field from `smart_selects`, or set `SMART_SELECTS_JQUERY_URL = True` in your project's `settings.py`.
+3. You will also need to include jQuery in every page that includes a field from `smart_selects`, or set `JQUERY_URL = True` in your project's `settings.py`.
 
 
 ## Settings
 
-`SMART_SELECTS_JQUERY_URL`
+`JQUERY_URL`
 :   jQuery 2.2.0 is loaded from Google's CDN if this is set to `True`. If you would prefer to
-    use a different version put the full URL here. Set `SMART_SELECTS_JQUERY_URL = False`
+    use a different version put the full URL here. Set `JQUERY_URL = False`
     to disable loading jQuery altogether.
 
-`SMART_SELECTS_USE_DJANGO_JQUERY`
+`USE_DJANGO_JQUERY`
 :   By default, `smart_selects` loads jQuery from Google's CDN. However, it can use jQuery from Django's
-    admin area. Set `SMART_SELECTS_USE_DJANGO_JQUERY = True` to enable this behaviour.
+    admin area. Set `USE_DJANGO_JQUERY = True` to enable this behaviour.
 
 
 ## TODO
