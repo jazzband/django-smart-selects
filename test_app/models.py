@@ -70,6 +70,7 @@ class Book(models.Model):
         Writer,
         chained_field="publication",
         chained_model_field="publications",
+        horizontal=True,
         )
     name = models.CharField(max_length=255)
 
@@ -165,3 +166,39 @@ class TagResource(models.Model):
 
     def __str__(self):
         return "%s - " % (self.kind, self.tag.slug)
+
+
+# Test many to many with inlines and formsets
+class Person(models.Model):
+    name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return "%s" % self.name
+
+
+class Group(models.Model):
+    name = models.CharField(max_length=128)
+    members = models.ManyToManyField(Person, through='Membership')
+
+    def __str__(self):
+        return "%s" % self.name
+
+
+class Talent(models.Model):
+    name = models.CharField(max_length=64)
+    persons = models.ManyToManyField(Person, blank=True)
+
+    def __str__(self):
+        return "%s" % self.name
+
+
+class Membership(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    talents = ChainedManyToManyField(
+        Talent,
+        chained_field='person',
+        chained_model_field='persons',
+        horizontal=True
+    )
+    date_joined = models.DateField()
