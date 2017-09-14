@@ -15,7 +15,7 @@
         }
     }
 
-    $(window).load(function () {
+    $(window).on('load', function() {
         $.each($(".chained"), function (index, item) {
             initItem(item);
         });
