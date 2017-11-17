@@ -15,7 +15,7 @@
         }
     }
 
-    $(window).load(function () {
+    $(window).on('load', function () {
         $.each($(".chained"), function (index, item) {
             initItem(item);
         });
@@ -51,7 +51,7 @@
         initItem(chained);
     }
 
-    django.jQuery(document).on('formset:added', function (event, $row, formsetName) {
+    $(document).on('formset:added', function (event, $row, formsetName) {
         // Fired every time a new inline formset is created
 
         // For the ForeingKey
