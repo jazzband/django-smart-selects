@@ -12,6 +12,11 @@
             chainedfk.init(chainfield, url, id, value, empty_label, auto_choose);
         } else if ($(item).hasClass("chained")) {
             chainedm2m.init(chainfield, url, id, value, auto_choose);
+        } else if ($(item).hasClass("filtered")) {
+            // For the ManyToMany using horizontal=True added after the page load
+            // using javascript.
+            id = id.replace('_from', ''); // we need to remove the _from part
+            chainedm2m.init(chainfield, url, id, value, auto_choose);
         }
     }
 
@@ -64,6 +69,15 @@
         var chainedM2M = $row.find(".chained");
         $.each(chainedM2M, function (index, chained) {
             initFormset(chained);
+        });
+
+        // For the ManyToMany using horizontal=True added after the page load
+        // using javascript.
+        var filteredM2M = $row.find(".filtered");
+        $.each(filteredM2M, function (index, filtered) {
+            if(filtered.hasAttribute('data-chainfield')) {
+                initFormset(filtered);
+            }
         });
     });
 })(jQuery || django.jQuery);

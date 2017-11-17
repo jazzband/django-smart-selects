@@ -2,7 +2,7 @@
 from django.contrib import admin
 from .models import Continent, Country, Location, Publication, \
     Book, Writer, Grade, Team, Student, Client, Domain, Website, \
-    Tag, TagResource
+    Tag, TagResource, Person, Group, Membership, Talent
 
 
 class WriterAdminInline(admin.TabularInline):
@@ -65,6 +65,23 @@ class WebsiteAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
+class MembershipInline(admin.TabularInline):
+    model = Membership
+    extra = 1
+
+
+class PersonAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
+class GroupAdmin(admin.ModelAdmin):
+    inlines = (MembershipInline,)
+
+
+class TalentAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
 admin.site.register(Continent, ContinentAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(Location, LocationAdmin)
@@ -79,3 +96,6 @@ admin.site.register(Website, WebsiteAdmin)
 admin.site.register(Domain, DomainAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(TagResource, TagResourceAdmin)
+admin.site.register(Person, PersonAdmin)
+admin.site.register(Group, GroupAdmin)
+admin.site.register(Talent, TalentAdmin)
