@@ -166,7 +166,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
                     try:  # maybe a set?
                         pks = getattr(item, self.chained_model_field + "_set").all().values_list('pk', flat=True)
                         filter = {self.chained_model_field + "__in": pks}
-                    except:  # give up
+                    except AttributeError:  # give up
                         filter = {}
             filtered = list(get_model(self.to_app_name, self.to_model_name).objects.filter(**filter).distinct())
             if self.sort:
