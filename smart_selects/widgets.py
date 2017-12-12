@@ -4,7 +4,10 @@ import django
 
 from django.apps import apps
 from django.conf import settings
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
 from django.forms.widgets import Select, SelectMultiple
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
