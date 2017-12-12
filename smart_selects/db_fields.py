@@ -2,6 +2,7 @@ from django.db.models.fields.related import (
     ForeignKey, ManyToManyField, RECURSIVE_RELATIONSHIP_CONSTANT
 )
 from django.utils import six
+from django.db import models
 
 from smart_selects import form_fields
 
@@ -10,7 +11,7 @@ class IntrospectiveFieldMixin(object):
     to_app_name = None
     to_model_name = None
 
-    def __init__(self, to, *args, **kwargs):
+    def __init__(self, to, on_delete=models.CASCADE, *args, **kwargs):
         if isinstance(to, six.string_types):
             if to == RECURSIVE_RELATIONSHIP_CONSTANT:  # to == 'self'
                 # This will be handled in contribute_to_class(), when we have
@@ -24,7 +25,7 @@ class IntrospectiveFieldMixin(object):
             self.to_app_name = to._meta.app_label
             self.to_model_name = to._meta.object_name
 
-        super(IntrospectiveFieldMixin, self).__init__(to, *args, **kwargs)
+        super(IntrospectiveFieldMixin, self).__init__(to, on_delete, *args, **kwargs)
 
     def contribute_to_class(self, cls, *args, **kwargs):
         if self.to_model_name == RECURSIVE_RELATIONSHIP_CONSTANT:
@@ -40,7 +41,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
     """
     chains the choices of a previous combo box with this ManyToMany
     """
-    def __init__(self, to, chained_field=None, chained_model_field=None,
+    def __init__(self, to, on_delete=models.CASCADE, chained_field=None, chained_model_field=None,
                  auto_choose=False, horizontal=False, verbose_name='', **kwargs):
         """
         examples:
@@ -75,7 +76,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         self.auto_choose = auto_choose
         self.horizontal = horizontal
         self.verbose_name = verbose_name
-        super(ChainedManyToManyField, self).__init__(to, **kwargs)
+        super(ChainedManyToManyField, self).__init__(to, on_delete, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
@@ -139,7 +140,7 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
     """
     chains the choices of a previous combo box with this one
     """
-    def __init__(self, to, chained_field=None, chained_model_field=None,
+    def __init__(self, to, on_delete=models.CASCADE, chained_field=None, chained_model_field=None,
                  show_all=False, auto_choose=False, sort=True, view_name=None, **kwargs):
         """
         examples:
@@ -182,7 +183,7 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
         self.auto_choose = auto_choose
         self.sort = sort
         self.view_name = view_name
-        super(ChainedForeignKey, self).__init__(to, **kwargs)
+        super(ChainedForeignKey, self).__init__(to, on_delete, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
@@ -251,10 +252,10 @@ class GroupedForeignKey(ForeignKey):
     """
     Opt Grouped Field
     """
-    def __init__(self, to, group_field, **kwargs):
+    def __init__(self, to, group_field, on_delete=models.CASCADE, **kwargs):
         self.group_field = group_field
         self._choices = True
-        super(GroupedForeignKey, self).__init__(to, **kwargs)
+        super(GroupedForeignKey, self).__init__(to, on_delete, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
