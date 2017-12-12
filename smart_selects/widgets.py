@@ -133,6 +133,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
                     final_choices.append(ch)
         self.choices = final_choices
 
+        attrs.update(self.attrs)
         attrs["data-chainfield"] = chained_field
         attrs["data-url"] = url
         attrs["data-value"] = "null" if value is None or value == "" else value
