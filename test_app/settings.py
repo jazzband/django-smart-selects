@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import django
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -51,15 +52,19 @@ INSTALLED_APPS = (
     'test_app',
 )
 
-MIDDLEWARE_CLASSES = (
+
+MIDDLEWARE = (
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+# For backwards compatibility with Django 1.8
+MIDDLEWARE_CLASSES = MIDDLEWARE
 
 ROOT_URLCONF = 'test_app.urls'
 

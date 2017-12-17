@@ -1,4 +1,8 @@
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    # TODO: swap this over when Django 2+ becomes more prevalent
+    from django.urls import reverse
 from django.test import TestCase, RequestFactory
 from .models import Book, Country, Location, Student
 from smart_selects.views import filterchain, filterchain_all, is_m2m
