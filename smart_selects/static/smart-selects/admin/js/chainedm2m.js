@@ -156,6 +156,15 @@
                         }
                     };
                 }
+                if (typeof(dismissRelatedLookupPopup) !== 'undefined') {
+                    var oldDismissRelatedLookupPopup = dismissRelatedLookupPopup;
+                    dismissRelatedLookupPopup = function(win, chosenId) {
+                        oldDismissRelatedLookupPopup(win, chosenId);
+                        if ("#" + windowname_to_id(win.name) == chainfield) {
+                            $(chainfield).change();
+                        }
+                    };
+                }
             }
         };
     }();
