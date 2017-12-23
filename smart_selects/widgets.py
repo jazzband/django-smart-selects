@@ -4,8 +4,12 @@ import django
 
 from django.apps import apps
 from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.forms.widgets import Select, SelectMultiple
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    # TODO: swap this over when Django 2+ becomes more prevalent
+    from django.urls import reverse
+from django.forms.widgets import Select, SelectMultiple, Media
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.html import escape
@@ -44,7 +48,7 @@ class JqueryMediaMixin(object):
 
             js.extend(jquery_paths)
 
-        media.add_js(js)
+        media += Media(js=js)
         return media
 
 
@@ -70,9 +74,9 @@ class ChainedSelect(JqueryMediaMixin, Select):
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
         media = super(ChainedSelect, self).media
-
-        media.add_js(['smart-selects/admin/js/chainedfk.js'])
-        media.add_js(['smart-selects/admin/js/bindfields.js'])
+        js = ['smart-selects/admin/js/chainedfk.js',
+              'smart-selects/admin/js/bindfields.js']
+        media += Media(js=js)
         return media
 
     # TODO: Simplify this and remove the noqa tag
@@ -200,13 +204,14 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
         media = super(ChainedSelectMultiple, self).media
-        media.add_js(['smart-selects/admin/js/chainedm2m.js'])
-        media.add_js(['smart-selects/admin/js/bindfields.js'])
+        js = ['smart-selects/admin/js/chainedm2m.js',
+              'smart-selects/admin/js/bindfields.js']
         if self.horizontal:
             # For horizontal mode add django filter horizontal javascript code
-            js = ["core.js", "SelectBox.js", "SelectFilter2.js"]
-            for path in js:
-                media.add_js(["admin/js/%s" % path])
+            js.extend(["admin/js/core.js",
+                       "admin/js/SelectBox.js",
+                       "admin/js/SelectFilter2.js"])
+        media += Media(js=js)
         return media
 
     def render(self, name, value, attrs=None, choices=()):

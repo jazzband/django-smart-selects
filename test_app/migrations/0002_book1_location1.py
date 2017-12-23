@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255)),
-                ('publication', models.ForeignKey(to='test_app.Publication')),
+                ('publication', models.ForeignKey(to='test_app.Publication', on_delete=models.CASCADE)),
                 ('writer', smart_selects.db_fields.ChainedManyToManyField(chained_model_field=b'publications', to='test_app.Writer', chained_field=b'publication')),
             ],
             options={
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('city', models.CharField(max_length=50)),
                 ('street', models.CharField(max_length=100)),
-                ('continent', models.ForeignKey(to='test_app.Continent')),
+                ('continent', models.ForeignKey(to='test_app.Continent', on_delete=models.CASCADE)),
                 ('country', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'continent', to='test_app.Country', chained_field=b'continent', auto_choose=True)),
             ],
             options={

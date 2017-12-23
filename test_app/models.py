@@ -12,7 +12,7 @@ class Continent(models.Model):
 
 
 class Country(models.Model):
-    continent = models.ForeignKey(Continent)
+    continent = models.ForeignKey(Continent, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -20,7 +20,7 @@ class Country(models.Model):
 
 
 class Location(models.Model):
-    continent = models.ForeignKey(Continent)
+    continent = models.ForeignKey(Continent, on_delete=models.CASCADE)
     country = ChainedForeignKey(
         'Country',
         chained_field="continent",
@@ -35,7 +35,7 @@ class Location(models.Model):
 
 # test limit_to_choice field option
 class Location1(models.Model):
-    continent = models.ForeignKey(Continent)
+    continent = models.ForeignKey(Continent, on_delete=models.CASCADE)
     country = ChainedForeignKey(
         'test_app.Country',
         chained_field="continent",
@@ -65,7 +65,7 @@ class Writer(models.Model):
 
 
 class Book(models.Model):
-    publication = models.ForeignKey(Publication)
+    publication = models.ForeignKey(Publication, on_delete=models.CASCADE)
     writer = ChainedManyToManyField(
         Writer,
         chained_field="publication",
@@ -77,7 +77,7 @@ class Book(models.Model):
 
 # test limit_to_choice field option
 class Book1(models.Model):
-    publication = models.ForeignKey(Publication)
+    publication = models.ForeignKey(Publication, on_delete=models.CASCADE)
     writer = ChainedManyToManyField(
         'Writer',
         chained_field="publication",
@@ -97,7 +97,7 @@ class Grade(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
-    grade = models.ForeignKey(Grade)
+    grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s" % self.name
@@ -105,7 +105,7 @@ class Team(models.Model):
 
 class Student(models.Model):
     name = models.CharField(max_length=255)
-    grade = models.ForeignKey(Grade)
+    grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
     team = GroupedForeignKey(Team, 'grade')
 
 
@@ -120,7 +120,7 @@ class Client(models.Model):
 
 class Domain(models.Model):
     name = models.CharField(max_length=255)
-    client = models.ForeignKey(Client)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s" % self.name
@@ -128,7 +128,7 @@ class Domain(models.Model):
 
 class Website(models.Model):
     name = models.CharField(max_length=255)
-    client = models.ForeignKey(Client)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
     domains = ChainedManyToManyField(
         Domain,
         chained_field='client',

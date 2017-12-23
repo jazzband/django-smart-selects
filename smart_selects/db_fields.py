@@ -1,6 +1,8 @@
+import django
 from django.db.models.fields.related import (
     ForeignKey, ManyToManyField, RECURSIVE_RELATIONSHIP_CONSTANT
 )
+from django.db import models
 from django.utils import six
 
 from smart_selects import form_fields
@@ -118,8 +120,10 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         foreign_key_field_name = self.name
         defaults = {
             'form_class': form_fields.ChainedManyToManyField,
-            'queryset': self.rel.to._default_manager.complex_filter(
-                self.rel.limit_choices_to),
+            'queryset': (self.rel.to._default_manager.complex_filter(
+                self.rel.limit_choices_to) if django.VERSION < (2, 0) else
+                self.remote_field.model._default_manager.complex_filter(
+                    self.remote_field.limit_choices_to)),
             'to_app_name': self.to_app_name,
             'to_model_name': self.to_model_name,
             'chain_field': self.chain_field,
@@ -182,6 +186,10 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
         self.auto_choose = auto_choose
         self.sort = sort
         self.view_name = view_name
+        if kwargs:
+            kwargs['on_delete'] = kwargs.get('on_delete', models.CASCADE)
+        else:
+            kwargs = {'on_delete': models.CASCADE}
         super(ChainedForeignKey, self).__init__(to, **kwargs)
 
     def deconstruct(self):
@@ -228,9 +236,12 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
         foreign_key_field_name = self.name
         defaults = {
             'form_class': form_fields.ChainedModelChoiceField,
-            'queryset': self.rel.to._default_manager.complex_filter(
-                self.rel.limit_choices_to),
-            'to_field_name': self.rel.field_name,
+            'queryset': (self.rel.to._default_manager.complex_filter(
+                self.rel.limit_choices_to) if django.VERSION < (2, 0) else
+                self.remote_field.model._default_manager.complex_filter(
+                    self.remote_field.limit_choices_to)),
+            'to_field_name': (self.rel.field_name if django.VERSION < (2, 0)
+                              else self.remote_field.field_name),
             'to_app_name': self.to_app_name,
             'to_model_name': self.to_model_name,
             'chained_field': self.chained_field,
@@ -254,6 +265,10 @@ class GroupedForeignKey(ForeignKey):
     def __init__(self, to, group_field, **kwargs):
         self.group_field = group_field
         self._choices = True
+        if kwargs:
+            kwargs['on_delete'] = kwargs.get('on_delete', models.CASCADE)
+        else:
+            kwargs = {'on_delete': models.CASCADE}
         super(GroupedForeignKey, self).__init__(to, **kwargs)
 
     def deconstruct(self):
@@ -274,9 +289,12 @@ class GroupedForeignKey(ForeignKey):
     def formfield(self, **kwargs):
         defaults = {
             'form_class': form_fields.GroupedModelSelect,
-            'queryset': self.rel.to._default_manager.complex_filter(
-                self.rel.limit_choices_to),
-            'to_field_name': self.rel.field_name,
+            'queryset': (self.rel.to._default_manager.complex_filter(
+                self.rel.limit_choices_to) if django.VERSION < (2, 0) else
+                self.remote_field.model._default_manager.complex_filter(
+                    self.remote_field.limit_choices_to)),
+            'to_field_name': (self.rel.field_name if django.VERSION < (2, 0)
+                              else self.remote_field.field_name),
             'order_field': self.group_field,
         }
         defaults.update(kwargs)
