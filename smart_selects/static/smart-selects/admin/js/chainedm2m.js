@@ -90,6 +90,11 @@
                             .attr('value', optionData.value)
                             .text(optionData.display)
                             .attr('title', optionData.display);
+                        if (auto_choose === "true" || auto_choose === "True") {
+                            auto_choose = true;
+                        } else if (auto_choose === "false" || auto_choose === "False") {
+                            auto_choose = false;
+                        }
                         if (auto_choose || selected_values[optionData.value] === true) {
                             if ($selectedto.length) {
                                 selectedoptions.push(option);

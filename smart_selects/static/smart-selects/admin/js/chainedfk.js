@@ -56,6 +56,11 @@
                         var option = $('<option></option>')
                             .prop('value', optionData.value)
                             .text(optionData.display);
+                        if (auto_choose === "true" || auto_choose === "True") {
+                            auto_choose = true;
+                        } else if (auto_choose === "false" || auto_choose === "False") {
+                            auto_choose = false;
+                        }
                         if (auto_choose || init_value && optionData.value == init_value) {
                             option.prop('selected', true);
                         }
