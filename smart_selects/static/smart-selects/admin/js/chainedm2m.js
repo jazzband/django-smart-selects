@@ -1,26 +1,28 @@
+(function ($) {
+    "use strict";
 
-(function($) {
-    chainedm2m = function() {
+    (function chainedm2m() {
         return {
-            fireEvent: function(element,event) {
-                var evt;
-                if (document.createEventObject){
+            fireEvent: function (element, event) {
+                var evt, rtn;
+                if (document.createEventObject) {
                     // dispatch for IE
                     evt = document.createEventObject();
-                    return element.fireEvent('on'+event,evt);
-                }
-                else{
+                    rtn = element.fireEvent('on' + event, evt);
+                } else {
                     // dispatch for firefox + others
                     evt = document.createEvent("HTMLEvents");
-                    evt.initEvent(event, true, true ); // event type,bubbling,cancelable
-                    return !element.dispatchEvent(evt);
+                    evt.initEvent(event, true, true); // event type,bubbling,cancelable
+                    rtn = !element.dispatchEvent(evt);
                 }
+
+                return rtn;
             },
 
             dismissRelatedLookupPopup: function(win, chosenId) {
-                var name = windowname_to_id(win.name);
-                var elem = document.getElementById(name);
-                if (elem.className.indexOf('vManyToManyRawIdAdminField') != -1 && elem.value) {
+                var name = windowname_to_id(win.name),
+                    elem = document.getElementById(name);
+                if (elem.className.indexOf('vManyToManyRawIdAdminField') !== -1 && elem.value) {
                     elem.value += ',' + chosenId;
                 } else {
                     elem.value = chosenId;
@@ -29,13 +31,13 @@
                 win.close();
             },
 
-            fill_field: function(val, initial_value, elem_id, url, initial_parent, auto_choose){
+            fill_field: function (val, initial_value, elem_id, url, initial_parent, auto_choose) {
                 var $selectField = $(elem_id),
-                    $selectedto = $(elem_id+'_to'),
+                    $selectedto = $(elem_id + '_to'),
                     cache_to = elem_id.replace('#', '') + '_to',
                     cache_from = elem_id.replace('#', '') + '_from';
                 if (!$selectField.length) {
-                    $selectField = $(elem_id+'_from');
+                    $selectField = $(elem_id + '_from');
                 }
                 function trigger_chosen_updated() {
                     if ($.fn.chosen !== undefined) {
@@ -54,7 +56,7 @@
                     }
                 }
 
-                if (!val || val === ''){
+                if (!val || val === '') {
                     $selectField.html('');
                     $selectedto.html('');
                     trigger_chosen_updated();
@@ -69,19 +71,20 @@
                     options = [],
                     selectedoptions = [];
 
-                $.getJSON(target_url, function(j){
-                    auto_choose = j.length == 1 && auto_choose;
+                $.getJSON(target_url, function (j) {
+                    var i, width;
+                    auto_choose = j.length === 1 && auto_choose;
 
                     var selected_values = {};
                     // if val and initial_parent have any common values, we need to set selected options.
-                    if($(val).filter(initial_parent).length >= 0 && initial_value) {
-                        for (var i = 0; i < initial_value.length; i++) {
+                    if ($(val).filter(initial_parent).length >= 0 && initial_value) {
+                        for (i = 0; i < initial_value.length; i = i + 1) {
                             selected_values[initial_value[i]] = true;
                         }
                     }
 
                     // select values which were previously selected (for many2many - many2many chain)
-                    $(elem_id + ' option:selected').each(function(){
+                    $(elem_id + ' option:selected').each(function () {
                         selected_values[$(this).val()] = true;
                     });
 
@@ -111,18 +114,19 @@
                     if ($selectedto.length) {
                         $selectedto.html(selectedoptions);
                         // SelectBox is a global var from djangojs "admin/js/SelectBox.js"
-                        for (var i = 0, j = selectedoptions.length; i < j; i++) {
+                        for (i = 0, j = selectedoptions.length; i < j; i = i + 1) {
                             node = selectedoptions[i];
                             SelectBox.cache[cache_to].push({value: node.prop("value"), text: node.prop("text"), displayed: 1});
                         }
-                        for (var i = 0, j = options.length; i < j; i++) {
+                        for (i = 0, j = options.length; i < j; i = i + 1) {
                             node = options[i];
                             SelectBox.cache[cache_from].push({value: node.prop("value"), text: node.prop("text"), displayed: 1});
                         }
                     }
-                    var width = $selectField.outerWidth();
-                    if (navigator.appVersion.indexOf("MSIE") != -1)
+                    width = $selectField.outerWidth();
+                    if (navigator.appVersion.indexOf("MSIE") !== -1) {
                         $selectField.width(width + 'px');
+                    }
 
                     $selectField.trigger('change');
 
@@ -130,47 +134,47 @@
                 });
             },
 
-            init: function(chainfield, url, id, value, auto_choose) {
-                var initial_parent = $(chainfield).val();
-                var initial_value = value;
+            init: function (chainfield, url, id, value, auto_choose) {
+                var fill_field, val, initial_parent = $(chainfield).val(),
+                    initial_value = value;
 
-                if(!$(chainfield).hasClass("chained")){
-                    var val = $(chainfield).val();
+                if (!$(chainfield).hasClass("chained")) {
+                    val = $(chainfield).val();
                     this.fill_field(val, initial_value, id, url, initial_parent, auto_choose);
                 }
-                var fill_field = this.fill_field;
-                $(chainfield).change(function(){
-                    var localID = id;
+                fill_field = this.fill_field;
+                $(chainfield).change(function () {
+                    var prefix, start_value, this_val, localID = id;
                     if (localID.indexOf("__prefix__") > -1) {
-                        var prefix = $(this).attr("id").match(/\d+/)[0];
+                        prefix = $(this).attr("id").match(/\d+/)[0];
                         localID = localID.replace("__prefix__", prefix);
                     }
 
-                    var start_value = $(localID).val();
-                    var val = $(this).val();
-                    fill_field(val, initial_value, localID, url, initial_parent, auto_choose);
+                    start_value = $(localID).val();
+                    this_val = $(this).val();
+                    fill_field(this_val, initial_value, localID, url, initial_parent, auto_choose);
                 });
 
                 // allait en bas, hors du documentready
                 if (typeof(dismissAddAnotherPopup) !== 'undefined') {
                     var oldDismissAddAnotherPopup = dismissAddAnotherPopup;
-                    dismissAddAnotherPopup = function(win, newId, newRepr) {
+                    dismissAddAnotherPopup = function (win, newId, newRepr) {
                         oldDismissAddAnotherPopup(win, newId, newRepr);
-                        if ("#" + windowname_to_id(win.name) == chainfield) {
+                        if ("#" + windowname_to_id(win.name) === chainfield) {
                             $(chainfield).change();
                         }
                     };
                 }
                 if (typeof(dismissRelatedLookupPopup) !== 'undefined') {
                     var oldDismissRelatedLookupPopup = dismissRelatedLookupPopup;
-                    dismissRelatedLookupPopup = function(win, chosenId) {
+                    dismissRelatedLookupPopup = function (win, chosenId) {
                         oldDismissRelatedLookupPopup(win, chosenId);
-                        if ("#" + windowname_to_id(win.name) == chainfield) {
+                        if ("#" + windowname_to_id(win.name) === chainfield) {
                             $(chainfield).change();
                         }
                     };
                 }
             }
         };
-    }();
-})(jQuery || django.jQuery);
+    }());
+}(jQuery || django.jQuery));
