@@ -74,7 +74,7 @@ class GroupedModelSelect(ModelChoiceField):
         i = len(choices)
         for item in self.queryset:
             order_field = getattr(item, self.order_field)
-            group_index = order_field.pk
+            group_index = order_field and order_field.pk
             if group_index not in group_indexes:
                 group_indexes[group_index] = i
                 choices.append([force_text(order_field), []])
