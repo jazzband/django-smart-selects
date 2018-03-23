@@ -34,7 +34,7 @@ Once you select a continent, if you want only the countries on that continent to
 ```python
 from smart_selects.db_fields import ChainedForeignKey
 
-class Location(models.Model)
+class Location(models.Model):
     continent = models.ForeignKey(Continent)
     country = ChainedForeignKey(
         Country,
