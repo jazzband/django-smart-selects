@@ -1,7 +1,8 @@
 (function ($) {
-    "use strict";
+    // We're declaring global variables, so we cannot use strict mode
+    // "use strict";
 
-    (function chainedfk() {
+    chainedfk = function() {
         return {
             fireEvent: function (element, event) {
                 var evt, rtn;
@@ -109,5 +110,5 @@
                 }
             }
         };
-    }());
+    }();
 }(jQuery || django.jQuery));

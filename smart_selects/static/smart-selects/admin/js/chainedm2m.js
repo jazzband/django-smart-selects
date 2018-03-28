@@ -1,7 +1,8 @@
 (function ($) {
-    "use strict";
+    // We're declaring global variables, so we cannot use strict mode
+    // "use strict";
 
-    (function chainedm2m() {
+    chainedm2m = function() {
         return {
             fireEvent: function (element, event) {
                 var evt, rtn;
@@ -176,5 +177,5 @@
                 }
             }
         };
-    }());
+    }();
 }(jQuery || django.jQuery));
