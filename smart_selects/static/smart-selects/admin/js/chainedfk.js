@@ -47,6 +47,8 @@
                     return;
                 }
                 $.getJSON(url, function (j) {
+                    // a quick & dirty hack to get the values appear in dropdown selection
+                    j = j.response;
                     auto_choose = j.length === 1 && auto_choose;
                     // Append empty label as the first option
                     if (!(init_value || auto_choose)) {
