@@ -77,7 +77,8 @@
                         $selectField.width(width + 'px');
                     }
 
-                    $selectField.trigger('change');
+                    // do not trigger changes manually, let the browser handle it
+                    // $selectField.trigger('change');
                 });
             },
             init: function (chainfield, url, id, init_value, empty_label, auto_choose) {
