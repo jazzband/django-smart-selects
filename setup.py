@@ -16,4 +16,8 @@ setup(name="django-smart-selects",
       tests_require=[
           'flake8',
       ],
+      classifiers=[
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 3',
+      ],
       )
