@@ -24,6 +24,11 @@
         $.each($(".chained"), function (index, item) {
             initItem(item);
         });
+        $.each($(".filtered"), function (index, item) {
+            if (item.hasAttribute('data-chainfield')) {
+                initItem(item);
+            }
+        });
     });
 
     $(document).ready(function () {
