@@ -87,7 +87,8 @@
                     val = $(chainfield).val();
                     fill_field(val, init_value, id, url, empty_label, auto_choose);
                 }
-                $(chainfield).change(function () {
+                $(document).on('change',$(chainfield), function(){
+                //$(chainfield).change(function () {
                     // Handle the case of inlines, where the ID will depend on which list item we are dealing with
                     var prefix, start_value, this_val, localID = id;
                     if (localID.indexOf("__prefix__") > -1) {
