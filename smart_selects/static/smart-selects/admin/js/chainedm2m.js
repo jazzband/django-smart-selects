@@ -135,10 +135,10 @@
 
                     $selectField.trigger('change');
 
-                    if(chainfieldG) {
-                        chainfieldG.change();
+                    if(window.chainfield_atFirst) {
+                        window.chainfield_atFirst.change();
                     }
-                    chainfieldG= null;
+                    window.chainfield_atFirst= null;
 
                     trigger_chosen_updated();
                 });
@@ -154,7 +154,7 @@
                 }
                 fill_field = this.fill_field;
 
-                window.chainfieldG = $(chainfield)
+                window.chainfield_atFirst = $(chainfield)
                 $(chainfield).change(function () {
                     var prefix, start_value, this_val, localID = id;
                     if (localID.indexOf("__prefix__") > -1) {
