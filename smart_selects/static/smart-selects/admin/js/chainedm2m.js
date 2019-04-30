@@ -1,7 +1,9 @@
-(function ($) {
-    "use strict";
 
-    (function chainedm2m() {
+
+(function ($) {
+    //"use strict";
+
+    window.chainedm2m=(function chainedm2m() {
         return {
             fireEvent: function (element, event) {
                 var evt, rtn;
@@ -36,9 +38,11 @@
                     $selectedto = $(elem_id + '_to'),
                     cache_to = elem_id.replace('#', '') + '_to',
                     cache_from = elem_id.replace('#', '') + '_from';
+
                 if (!$selectField.length) {
                     $selectField = $(elem_id + '_from');
                 }
+
                 function trigger_chosen_updated() {
                     if ($.fn.chosen !== undefined) {
                         $selectField.trigger('chosen:updated');
@@ -111,6 +115,7 @@
                     });
 
                     $selectField.html(options);
+
                     if ($selectedto.length) {
                         $selectedto.html(selectedoptions);
                         // SelectBox is a global var from djangojs "admin/js/SelectBox.js"
@@ -130,6 +135,11 @@
 
                     $selectField.trigger('change');
 
+                    if(chainfieldG) {
+                        chainfieldG.change();
+                    }
+                    chainfieldG= null;
+
                     trigger_chosen_updated();
                 });
             },
@@ -143,6 +153,8 @@
                     this.fill_field(val, initial_value, id, url, initial_parent, auto_choose);
                 }
                 fill_field = this.fill_field;
+
+                window.chainfieldG = $(chainfield)
                 $(chainfield).change(function () {
                     var prefix, start_value, this_val, localID = id;
                     if (localID.indexOf("__prefix__") > -1) {
