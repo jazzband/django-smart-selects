@@ -80,7 +80,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
         return media
 
     # TODO: Simplify this and remove the noqa tag
-    def render(self, name, value, attrs=None, choices=()):  # noqa: C901
+    def render(self, name, value, attrs=None, choices=(), renderer=None):  # noqa: C901
         if len(name.split('-')) > 1:  # formset
             chained_field = '-'.join(name.split('-')[:-1] + [self.chained_field])
         else:
@@ -150,7 +150,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
         else:
             final_attrs['class'] = 'chained-fk'
 
-        output = super(ChainedSelect, self).render(name, value, final_attrs)
+        output = super(ChainedSelect, self).render(name, value, final_attrs, renderer)
 
         return mark_safe(output)
 
@@ -214,7 +214,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         media += Media(js=js)
         return media
 
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None, choices=(), renderer=None):
         if len(name.split('-')) > 1:  # formset
             chain_field = '-'.join(name.split('-')[:-1] + [self.chain_field])
         else:
@@ -259,6 +259,6 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
             # For hozontal mode add django filter horizontal javascript selector class
             final_attrs['class'] += ' selectfilter'
         final_attrs['data-field-name'] = self.verbose_name
-        output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)
+        output = super(ChainedSelectMultiple, self).render(name, value, final_attrs, renderer)
 
         return mark_safe(output)
