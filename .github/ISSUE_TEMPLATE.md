@@ -2,7 +2,7 @@ You **MUST** use this template when reporting issues. Please make sure you follo
 
 ----------------
 
-All versions of django-smart-selects prior to version 1.2.8 are vulnerable to an XSS attack as detailed in [issue 171](https://github.com/digi604/django-smart-selects/issues/171#issuecomment-276774103). As a result, all previous versions have been removed from PyPI to prevent users from installing insecure versions. All users are urged to upgrade as soon as possible.
+All versions of django-smart-selects prior to version 1.2.8 are vulnerable to an XSS attack as detailed in [issue 171](https://github.com/jazzband/django-smart-selects/issues/171#issuecomment-276774103). As a result, all previous versions have been removed from PyPI to prevent users from installing insecure versions. All users are urged to upgrade as soon as possible.
 
 ## Checklist
 
