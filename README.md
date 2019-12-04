@@ -1,10 +1,10 @@
 # Django Smart Selects
 
-[![Build Status](https://travis-ci.org/digi604/django-smart-selects.svg?branch=master)](https://travis-ci.org/digi604/django-smart-selects)
+[![Jazzband](https://jazzband.co/static/img/badge.svg)](https://jazzband.co/)
 
-[![Coverage Status](https://coveralls.io/repos/github/digi604/django-smart-selects/badge.svg?branch=master)](https://coveralls.io/github/digi604/django-smart-selects?branch=master)
+[![Build Status](https://travis-ci.org/jazzband/django-smart-selects.svg?branch=master)](https://travis-ci.org/jazzband/django-smart-selects)
 
-# CURRENTLY UNMAINTAINED - Please contact digi604 if you would like to maintain this app #
+[![Coverage Status](https://coveralls.io/repos/github/jazzband/django-smart-selects/badge.svg?branch=master)](https://coveralls.io/github/jazzband/django-smart-selects?branch=master)
 
 
 This package allows you to quickly filter or group "chained" models by adding a custom foreign key or many to many field to your models. This will use an AJAX query to load only the applicable chained objects.
