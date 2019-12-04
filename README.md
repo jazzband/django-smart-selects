@@ -1,5 +1,7 @@
 # Django Smart Selects
 
+[![Jazzband](https://jazzband.co/static/img/badge.svg)](https://jazzband.co/)
+
 [![Build Status](https://travis-ci.org/jazzband/django-smart-selects.svg?branch=master)](https://travis-ci.org/jazzband/django-smart-selects)
 
 [![Coverage Status](https://coveralls.io/repos/github/jazzband/django-smart-selects/badge.svg?branch=master)](https://coveralls.io/github/jazzband/django-smart-selects?branch=master)
