@@ -1,2 +1,10 @@
+[report]
+precision=2
+
 [run]
 include = smart_selects*
+omit =
+    manage.py
+    setup.py
+    **/migrations/**
+    test_app/*
