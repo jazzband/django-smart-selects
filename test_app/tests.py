@@ -23,13 +23,13 @@ class SecurityTests(TestCase):
         # Make sure only models with ChainedManyToMany or ChainedForeignKey
         # fields are globally searchable
         response = self.client.get('/chaining/filter/auth/User/is_superuser/auth/User/password/1/')
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_models_arent_exposed_with_all(self):
         # Make sure only models with ChainedManyToMany or ChainedForeignKey
         # fields are globally searchable
         response = self.client.get('/chaining/all/auth/User/is_superuser/auth/User/password/1/')
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
 
 class ViewTests(TestCase):
@@ -88,8 +88,8 @@ class ViewTests(TestCase):
         }
         self.client.post(reverse('admin:test_app_location_add'), post_data, follow=True)
         location = Location.objects.get(country__pk=2, continent__pk=1)
-        self.assertEquals(location.city, 'New York')
-        self.assertEquals(location.street, 'Wallstreet')
+        self.assertEqual(location.city, 'New York')
+        self.assertEqual(location.street, 'Wallstreet')
 
     def test_location_add_post_no_data(self):
         post_data = {
@@ -111,7 +111,7 @@ class ViewTests(TestCase):
         request = self.factory.get('')
         response = filterchain(request, 'test_app', 'Country', 'continent', 'test_app', 'Location', 'country', 1)
         expected_value = '[{"value": 1, "display": "Czech republic"}, {"value": 3, "display": "Germany"}, {"value": 4, "display": "Great Britain"}]'
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
     def test_filterchain_all_view_for_chained_foreignkey(self):
@@ -119,7 +119,7 @@ class ViewTests(TestCase):
         response = filterchain_all(request, 'test_app', 'Country', 'continent', 'test_app', 'Location', 'country', 1)
         expected_value = '[{"display": "Czech republic", "value": 1}, {"display": "Germany", "value": 3},' \
                          ' {"display": "Great Britain", "value": 4}, {"display": "---------", "value": ""}, {"display": "New York", "value": 2}]'
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
     def test_limit_to_choice_for_chained_foreignkey(self):
@@ -127,12 +127,12 @@ class ViewTests(TestCase):
         # filterchain
         response = filterchain(request, 'test_app', 'Country', 'continent', 'test_app', 'Location1', 'country', 1)
         expected_value = '[{"value": 3, "display": "Germany"}, {"value": 4, "display": "Great Britain"}]'
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
         # filterchain_all
         response = filterchain_all(request, 'test_app', 'Country', 'continent', 'test_app', 'Location1', 'country', 1)
         expected_value = '[{"value": 3, "display": "Germany"}, {"value": 4, "display": "Great Britain"}, {"display": "---------", "value": ""}]'
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
     # chained manytomany
@@ -149,7 +149,7 @@ class ViewTests(TestCase):
         }
         self.client.post(reverse('admin:test_app_book_add'), post_data, follow=True)
         book = Book.objects.get(writer__pk=2, publication__pk=1)
-        self.assertEquals(book.name, 'Book 2')
+        self.assertEqual(book.name, 'Book 2')
 
     def test_book_add_post_no_data(self):
         post_data = {
@@ -168,7 +168,7 @@ class ViewTests(TestCase):
         request = self.factory.get('')
         response = filterchain(request, 'test_app', 'Writer', 'publications', 'test_app', 'Book', 'writer', 1)
         expected_value = '[{"display": "Author 3", "value": 3}]'
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
     def test_limit_to_choice_for_chained_manytomany(self):
@@ -176,7 +176,7 @@ class ViewTests(TestCase):
         # filterchain
         response = filterchain(request, 'test_app', 'Writer', 'publications', 'test_app', 'Book1', 'writer', 1)
         expected_value = '[]'
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
     # grouped foreignkey
@@ -195,7 +195,7 @@ class ViewTests(TestCase):
         }
         response = self.client.post(reverse('admin:test_app_student_add'), post_data)  # noqa: F841
         student = Student.objects.get(grade=2, team=2)
-        self.assertEquals(student.name, 'Student 2')
+        self.assertEqual(student.name, 'Student 2')
 
     # chained without foreign key field
     def test_view_for_chained_charfield(self):
@@ -203,7 +203,7 @@ class ViewTests(TestCase):
         # filterchain
         response = filterchain(request, 'test_app', 'Tag', 'kind', 'test_app', 'TagResource', 'kind', 'music')
         expected_value = '[{"display": "reggae", "value": 2}, {"display": "rock-and-roll", "value": 1}]'
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected_value)
 
     def test_is_m2m_for_chained_charfield(self):
@@ -214,4 +214,4 @@ class ViewTests(TestCase):
             from django.db.models.loading import get_model
 
         # should return false
-        self.assertEquals(is_m2m(get_model('test_app', 'TagResource'), 'kind'), False)
+        self.assertEqual(is_m2m(get_model('test_app', 'TagResource'), 'kind'), False)
