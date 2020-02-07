@@ -47,9 +47,26 @@
     },
     {
         "fields": {
+            "country": 3,
+            "name": "Berlin"
+        },
+        "model": "test_app.area",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "country": 2,
+            "name": "Manhattan"
+        },
+        "model": "test_app.area",
+        "pk": 2
+    },
+    {
+        "fields": {
             "city": "Praha",
             "continent": 1,
             "country": 1,
+            "area": 1,
             "street": "Bo\u0159ivojova"
         },
         "model": "test_app.location",
