@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from .models import Continent, Country, Location, Publication, \
+from .models import Area, Continent, Country, Location, Publication, \
     Book, Writer, Grade, Team, Student, Client, Domain, Website, \
     Tag, TagResource, Person, Group, Membership, Talent
 
@@ -15,6 +15,10 @@ class ContinentAdmin(admin.ModelAdmin):
 
 class CountryAdmin(admin.ModelAdmin):
     list_display = ('name', 'continent')
+
+
+class AreaAdmin(admin.ModelAdmin):
+    list_display = ('name', 'country')
 
 
 class LocationAdmin(admin.ModelAdmin):
@@ -84,6 +88,7 @@ class TalentAdmin(admin.ModelAdmin):
 
 admin.site.register(Continent, ContinentAdmin)
 admin.site.register(Country, CountryAdmin)
+admin.site.register(Area, AreaAdmin)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Publication, PublicationAdmin)
 admin.site.register(Book, BookAdmin)

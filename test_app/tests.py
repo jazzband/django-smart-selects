@@ -83,6 +83,7 @@ class ViewTests(TestCase):
         post_data = {
             'continent': '1',
             'country': '2',
+            'area': '2',
             'city': 'New York',
             'street': 'Wallstreet',
         }

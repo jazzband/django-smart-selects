@@ -19,6 +19,14 @@ class Country(models.Model):
         return "%s" % self.name
 
 
+class Area(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return "%s" % self.name
+
+
 class Location(models.Model):
     continent = models.ForeignKey(Continent, on_delete=models.CASCADE)
     country = ChainedForeignKey(
@@ -28,7 +36,13 @@ class Location(models.Model):
         show_all=False,
         auto_choose=True
     )
-    # area = ChainedForeignKey(Area, chained_field="country", chained_model_field="country")
+    area = ChainedForeignKey(
+        'Area',
+        chained_field="country",
+        chained_model_field="country",
+        show_all=False,
+        auto_choose=True
+    )
     city = models.CharField(max_length=50)
     street = models.CharField(max_length=100)
 
