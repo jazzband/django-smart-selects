@@ -83,7 +83,7 @@
                 var val, fill_field = this.fill_field;
 
                 if (!$(chainfield).hasClass("chained")) {
-                    val = $(chainfield).val();
+                    val = parseInt($(chainfield).val());
                     fill_field(val, init_value, id, url, empty_label, auto_choose);
                 }
                 $(chainfield).change(function () {
@@ -94,8 +94,8 @@
                         localID = localID.replace("__prefix__", prefix);
                     }
 
-                    start_value = $(localID).val();
-                    this_val = $(this).val();
+                    start_value = parseInt($(localID).val());
+                    this_val = parseInt($(this).val());              
                     fill_field(this_val, start_value, localID, url, empty_label, auto_choose);
                 });
                 if (typeof(dismissAddAnotherPopup) !== 'undefined') {
