@@ -1,10 +1,6 @@
 # Django Smart Selects
 
-[![Jazzband](https://jazzband.co/static/img/badge.svg)](https://jazzband.co/)
-
-[![Build Status](https://travis-ci.org/jazzband/django-smart-selects.svg?branch=master)](https://travis-ci.org/jazzband/django-smart-selects)
-
-[![Coverage Status](https://coveralls.io/repos/github/jazzband/django-smart-selects/badge.svg?branch=master)](https://coveralls.io/github/jazzband/django-smart-selects?branch=master)
+[![Jazzband](https://jazzband.co/static/img/badge.svg)](https://jazzband.co/) [![Build Status](https://travis-ci.org/jazzband/django-smart-selects.svg?branch=master)](https://travis-ci.org/jazzband/django-smart-selects) [![Coverage Status](https://coveralls.io/repos/github/jazzband/django-smart-selects/badge.svg?branch=master)](https://coveralls.io/github/jazzband/django-smart-selects?branch=master)
 
 
 This package allows you to quickly filter or group "chained" models by adding a custom foreign key or many to many field to your models. This will use an AJAX query to load only the applicable chained objects.
@@ -16,6 +12,18 @@ This package allows you to quickly filter or group "chained" models by adding a 
 For more information on installation and configuration see the documentation at:
 
 https://django-smart-selects.readthedocs.io/
+
+## Reporting issues / sending PRs
+
+You can try the test_app example using:
+
+```shell
+python manage.py migrate
+python manage.py loaddata test_app/fixtures/*
+python manage.py runserver
+```
+
+Then login with admin/admin at http://127.0.0.1:8000/admin/
 
 
 ## TODO
