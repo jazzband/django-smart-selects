@@ -14,6 +14,7 @@ setup(name="django-smart-selects",
       url="https://github.com/jazzband/django-smart-selects",
       packages=find_packages(),
       include_package_data=True,
+      install_requires=["django>=1.8, <2.1"],
       tests_require=[
           'flake8',
       ],

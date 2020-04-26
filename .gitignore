@@ -12,3 +12,4 @@ htmlcov/
 *.swp
 *~
 *.orig
+docs/_build
