@@ -15,5 +15,3 @@
         url(r'^chaining/', include('smart_selects.urls')),
     )
     ```
-
-4. You will also need to include jQuery in every page that includes a field from `smart_selects`, or set `JQUERY_URL = True` in your project's `settings.py`.
