@@ -113,6 +113,7 @@
                     $selectField.html(options);
                     if ($selectedto.length) {
                         $selectedto.html(selectedoptions);
+                        var node;
                         // SelectBox is a global var from djangojs "admin/js/SelectBox.js"
                         for (i = 0, j = selectedoptions.length; i < j; i = i + 1) {
                             node = selectedoptions[i];
