@@ -1,7 +1,13 @@
 ## Installation
 
-1. Add `smart_selects` to your `INSTALLED_APPS`
-2. Add the `smart_selects` urls into your project's `urls.py`. This is needed for the `Chained Selects` and `Chained ManyToMany Selects`. For example:
+1. Install `django-smart-selects` using a tool like `pip`:
+
+    ```console
+    $ pip install django-smart-selects
+    ```
+
+2. Add `smart_selects` to your `INSTALLED_APPS`
+3. Add the `smart_selects` urls into your project's `urls.py`. This is needed for the `Chained Selects` and `Chained ManyToMany Selects`. For example:
 
     ```python
     urlpatterns = patterns('',
@@ -10,4 +16,4 @@
     )
     ```
 
-3. You will also need to include jQuery in every page that includes a field from `smart_selects`, or set `JQUERY_URL = True` in your project's `settings.py`.
+4. You will also need to include jQuery in every page that includes a field from `smart_selects`, or set `JQUERY_URL = True` in your project's `settings.py`.
