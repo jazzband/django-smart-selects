@@ -179,7 +179,7 @@ class TagResource(models.Model):
     )
 
     def __str__(self):
-        return "%s - " % (self.kind, self.tag.slug)
+        return "%s - %s" % (self.kind, self.tag.slug)
 
 
 # Test many to many with inlines and formsets
