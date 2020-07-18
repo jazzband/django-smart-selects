@@ -89,14 +89,15 @@
                 $(chainfield).change(function () {
                     // Handle the case of inlines, where the ID will depend on which list item we are dealing with
                     var prefix, start_value, this_val, localID = id;
-                    if (localID.indexOf("__prefix__") > -1) {
-                        prefix = $(this).attr("id").match(/\d+/)[0];
-                        localID = localID.replace("__prefix__", prefix);
+                    if ($(this).attr("id").match(/\d+/)!=null){
+                        if (localID.indexOf("__prefix__") > -1) {
+                            prefix = $(this).attr("id").match(/\d+/)[0];
+                            localID = localID.replace("__prefix__", prefix);
+                        }
+                        start_value = $(localID).val();
+                        this_val = $(this).val();
+                        fill_field(this_val, start_value, localID, url, empty_label, auto_choose);
                     }
-
-                    start_value = $(localID).val();
-                    this_val = $(this).val();
-                    fill_field(this_val, start_value, localID, url, empty_label, auto_choose);
                 });
                 if (typeof(dismissAddAnotherPopup) !== 'undefined') {
                     var oldDismissAddAnotherPopup = dismissAddAnotherPopup;
