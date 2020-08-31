@@ -5,8 +5,6 @@ import django
 from django.apps import apps
 from django.conf import settings
 
-from encoders import UUIDEncoder
-
 try:
     from django.core.urlresolvers import reverse
 except ImportError:
@@ -17,6 +15,7 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.html import escape
 
+from smart_selects.encoders import UUIDEncoder
 from smart_selects.utils import unicode_sorter, sort_results
 
 get_model = apps.get_model
