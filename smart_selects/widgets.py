@@ -1,9 +1,9 @@
 import json
 
 import django
-
 from django.apps import apps
 from django.conf import settings
+
 try:
     from django.core.urlresolvers import reverse
 except ImportError:
@@ -11,7 +11,7 @@ except ImportError:
     from django.urls import reverse
 from django.forms.widgets import Select, SelectMultiple, Media
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_str, force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
 
 from smart_selects.utils import unicode_sorter, sort_results
@@ -101,7 +101,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
             'foreign_key_model_name': self.foreign_key_model_name,
             'foreign_key_field_name': self.foreign_key_field_name,
             'value': '1'
-            }
+        }
         if self.manager is not None:
             kwargs.update({'manager': self.manager})
         url = URL_PREFIX + ("/".join(reverse(view_name, kwargs=kwargs).split("/")[:-2]))
@@ -253,7 +253,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
 
         attrs["data-chainfield"] = chain_field
         attrs["data-url"] = url
-        attrs["data-value"] = "null" if value is None else json.dumps(force_text(value))
+        attrs["data-value"] = "null" if value is None else json.dumps(force_str(value))
         attrs["data-auto_choose"] = auto_choose
         attrs["name"] = name
         final_attrs = self.build_attrs(attrs)
