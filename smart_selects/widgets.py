@@ -4,6 +4,9 @@ import django
 
 from django.apps import apps
 from django.conf import settings
+
+from encoders import UUIDEncoder
+
 try:
     from django.core.urlresolvers import reverse
 except ImportError:
@@ -253,7 +256,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
 
         attrs["data-chainfield"] = chain_field
         attrs["data-url"] = url
-        attrs["data-value"] = "null" if value is None else json.dumps(value)
+        attrs["data-value"] = "null" if value is None else json.dumps(value, cls=UUIDEncoder)
         attrs["data-auto_choose"] = auto_choose
         attrs["name"] = name
         final_attrs = self.build_attrs(attrs)
