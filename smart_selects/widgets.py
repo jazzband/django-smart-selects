@@ -253,7 +253,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
 
         attrs["data-chainfield"] = chain_field
         attrs["data-url"] = url
-        attrs["data-value"] = "null" if value is None else json.dumps(force_str(value))
+        attrs["data-value"] = "null" if value is None else json.dumps(value)
         attrs["data-auto_choose"] = auto_choose
         attrs["name"] = name
         final_attrs = self.build_attrs(attrs)
