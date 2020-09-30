@@ -171,3 +171,23 @@ class Location(models.Model):
     continent = models.ForeignKey(Continent)
     country = GroupedForeignKey(Country, "continent")
 ```
+
+## Usage In Templates
+
+In templates, continue using Django forms or modelforms as usual. Just include `{{ form.media.js }}` within your form. This will automatically add the following Javascript files into your page:
+
+```html
+<script src="/static/smart-selects/admin/js/chainedfk.js"></script>
+<script src="/static/smart-selects/admin/js/bindfields.js"></script>
+```
+
+Here'a a basic usage example:
+
+```html
+<form method="post">
+    {% csrf_token %}
+    {{ form.media.js }}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+```
