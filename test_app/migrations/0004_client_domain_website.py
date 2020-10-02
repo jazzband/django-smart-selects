@@ -10,32 +10,75 @@ import smart_selects.db_fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('test_app', '0003_auto_20160129_1531'),
+        ("test_app", "0003_auto_20160129_1531"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Client',
+            name="Client",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
-            name='Domain',
+            name="Domain",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.Client')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "client",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.Client",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Website',
+            name="Website",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.Client')),
-                ('domains', smart_selects.db_fields.ChainedManyToManyField(chained_field=b'client', chained_model_field=b'client', to='test_app.Domain')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "client",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.Client",
+                    ),
+                ),
+                (
+                    "domains",
+                    smart_selects.db_fields.ChainedManyToManyField(
+                        chained_field=b"client",
+                        chained_model_field=b"client",
+                        to="test_app.Domain",
+                    ),
+                ),
             ],
         ),
     ]

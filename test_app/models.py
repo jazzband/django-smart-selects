@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from smart_selects.db_fields import ChainedForeignKey, \
-    ChainedManyToManyField, GroupedForeignKey
+from smart_selects.db_fields import (
+    ChainedForeignKey,
+    ChainedManyToManyField,
+    GroupedForeignKey,
+)
 
 
 class Continent(models.Model):
@@ -30,18 +33,18 @@ class Area(models.Model):
 class Location(models.Model):
     continent = models.ForeignKey(Continent, on_delete=models.CASCADE)
     country = ChainedForeignKey(
-        'Country',
+        "Country",
         chained_field="continent",
         chained_model_field="continent",
         show_all=False,
-        auto_choose=True
+        auto_choose=True,
     )
     area = ChainedForeignKey(
-        'Area',
+        "Area",
         chained_field="country",
         chained_model_field="country",
         show_all=False,
-        auto_choose=True
+        auto_choose=True,
     )
     city = models.CharField(max_length=50)
     street = models.CharField(max_length=100)
@@ -51,12 +54,12 @@ class Location(models.Model):
 class Location1(models.Model):
     continent = models.ForeignKey(Continent, on_delete=models.CASCADE)
     country = ChainedForeignKey(
-        'test_app.Country',
+        "test_app.Country",
         chained_field="continent",
         chained_model_field="continent",
         show_all=False,
         auto_choose=True,
-        limit_choices_to={'name__startswith': 'G'}
+        limit_choices_to={"name__startswith": "G"},
     )
     # area = ChainedForeignKey(Area, chained_field="country", chained_model_field="country")
     city = models.CharField(max_length=50)
@@ -72,7 +75,7 @@ class Publication(models.Model):
 
 class Writer(models.Model):
     name = models.CharField(max_length=255)
-    publications = models.ManyToManyField('Publication', blank=True)
+    publications = models.ManyToManyField("Publication", blank=True)
 
     def __str__(self):
         return "%s" % self.name
@@ -85,7 +88,7 @@ class Book(models.Model):
         chained_field="publication",
         chained_model_field="publications",
         horizontal=True,
-        )
+    )
     name = models.CharField(max_length=255)
 
 
@@ -93,11 +96,11 @@ class Book(models.Model):
 class Book1(models.Model):
     publication = models.ForeignKey(Publication, on_delete=models.CASCADE)
     writer = ChainedManyToManyField(
-        'Writer',
+        "Writer",
         chained_field="publication",
         chained_model_field="publications",
-        limit_choices_to={'name__contains': '2'}
-        )
+        limit_choices_to={"name__contains": "2"},
+    )
     name = models.CharField(max_length=255)
 
 
@@ -120,10 +123,11 @@ class Team(models.Model):
 class Student(models.Model):
     name = models.CharField(max_length=255)
     grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
-    team = GroupedForeignKey(Team, 'grade')
+    team = GroupedForeignKey(Team, "grade")
 
 
 # The following scenario causes a null initial value in the js in ChainedManyToManyFields
+
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
@@ -144,9 +148,8 @@ class Website(models.Model):
     name = models.CharField(max_length=255)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     domains = ChainedManyToManyField(
-        Domain,
-        chained_field='client',
-        chained_model_field='client')
+        Domain, chained_field="client", chained_model_field="client"
+    )
 
     def __str__(self):
         return "%s" % self.name
@@ -154,8 +157,8 @@ class Website(models.Model):
 
 # test filter when chained_field not is a ForeignKeyField
 KIND_CHOICES = (
-    ('music', 'Music'),
-    ('video', 'Video'),
+    ("music", "Music"),
+    ("video", "Video"),
 )
 
 
@@ -172,10 +175,10 @@ class TagResource(models.Model):
     kind = models.CharField(max_length=20, choices=KIND_CHOICES)
     tag = ChainedForeignKey(
         Tag,
-        chained_field='kind',
-        chained_model_field='kind',
+        chained_field="kind",
+        chained_model_field="kind",
         show_all=False,
-        auto_choose=True
+        auto_choose=True,
     )
 
     def __str__(self):
@@ -192,7 +195,7 @@ class Person(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=128)
-    members = models.ManyToManyField(Person, through='Membership')
+    members = models.ManyToManyField(Person, through="Membership")
 
     def __str__(self):
         return "%s" % self.name
@@ -210,9 +213,6 @@ class Membership(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     talents = ChainedManyToManyField(
-        Talent,
-        chained_field='person',
-        chained_model_field='persons',
-        horizontal=True
+        Talent, chained_field="person", chained_model_field="persons", horizontal=True
     )
     date_joined = models.DateField()

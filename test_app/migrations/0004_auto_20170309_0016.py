@@ -10,50 +10,109 @@ import smart_selects.db_fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('test_app', '0003_auto_20160129_1531'),
+        ("test_app", "0003_auto_20160129_1531"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Tag',
+            name="Tag",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('kind', models.CharField(choices=[('music', 'Music'), ('video', 'Video')], max_length=20)),
-                ('slug', models.SlugField(max_length=60)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[("music", "Music"), ("video", "Video")], max_length=20
+                    ),
+                ),
+                ("slug", models.SlugField(max_length=60)),
             ],
         ),
         migrations.CreateModel(
-            name='TagResource',
+            name="TagResource",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('kind', models.CharField(choices=[('music', 'Music'), ('video', 'Video')], max_length=20)),
-                ('tag', smart_selects.db_fields.ChainedForeignKey(auto_choose=True, chained_field='kind', chained_model_field='kind', on_delete=django.db.models.deletion.CASCADE, to='test_app.Tag')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[("music", "Music"), ("video", "Video")], max_length=20
+                    ),
+                ),
+                (
+                    "tag",
+                    smart_selects.db_fields.ChainedForeignKey(
+                        auto_choose=True,
+                        chained_field="kind",
+                        chained_model_field="kind",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.Tag",
+                    ),
+                ),
             ],
         ),
         migrations.AlterField(
-            model_name='book',
-            name='writer',
-            field=smart_selects.db_fields.ChainedManyToManyField(chained_field='publication', chained_model_field='publications', to='test_app.Writer'),
+            model_name="book",
+            name="writer",
+            field=smart_selects.db_fields.ChainedManyToManyField(
+                chained_field="publication",
+                chained_model_field="publications",
+                to="test_app.Writer",
+            ),
         ),
         migrations.AlterField(
-            model_name='book1',
-            name='writer',
-            field=smart_selects.db_fields.ChainedManyToManyField(chained_field='publication', chained_model_field='publications', to='test_app.Writer'),
+            model_name="book1",
+            name="writer",
+            field=smart_selects.db_fields.ChainedManyToManyField(
+                chained_field="publication",
+                chained_model_field="publications",
+                to="test_app.Writer",
+            ),
         ),
         migrations.AlterField(
-            model_name='location',
-            name='country',
-            field=smart_selects.db_fields.ChainedForeignKey(auto_choose=True, chained_field='continent', chained_model_field='continent', on_delete=django.db.models.deletion.CASCADE, to='test_app.Country'),
+            model_name="location",
+            name="country",
+            field=smart_selects.db_fields.ChainedForeignKey(
+                auto_choose=True,
+                chained_field="continent",
+                chained_model_field="continent",
+                on_delete=django.db.models.deletion.CASCADE,
+                to="test_app.Country",
+            ),
         ),
         migrations.AlterField(
-            model_name='location1',
-            name='country',
-            field=smart_selects.db_fields.ChainedForeignKey(auto_choose=True, chained_field='continent', chained_model_field='continent', on_delete=django.db.models.deletion.CASCADE, to='test_app.Country'),
+            model_name="location1",
+            name="country",
+            field=smart_selects.db_fields.ChainedForeignKey(
+                auto_choose=True,
+                chained_field="continent",
+                chained_model_field="continent",
+                on_delete=django.db.models.deletion.CASCADE,
+                to="test_app.Country",
+            ),
         ),
         migrations.AlterField(
-            model_name='student',
-            name='team',
-            field=smart_selects.db_fields.GroupedForeignKey(group_field='grade', on_delete=django.db.models.deletion.CASCADE, to='test_app.Team'),
+            model_name="student",
+            name="team",
+            field=smart_selects.db_fields.GroupedForeignKey(
+                group_field="grade",
+                on_delete=django.db.models.deletion.CASCADE,
+                to="test_app.Team",
+            ),
         ),
     ]

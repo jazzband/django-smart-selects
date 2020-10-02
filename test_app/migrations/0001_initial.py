@@ -11,65 +11,142 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Book',
+            name="Book",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
-            name='Continent',
+            name="Continent",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
-            name='Country',
+            name="Country",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('continent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.Continent')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "continent",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.Continent",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Location',
+            name="Location",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('city', models.CharField(max_length=50)),
-                ('street', models.CharField(max_length=100)),
-                ('continent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.Continent')),
-                ('country', smart_selects.db_fields.ChainedForeignKey(auto_choose=True, chained_field=b'continent', chained_model_field=b'continent', on_delete=django.db.models.deletion.CASCADE, to='test_app.Country')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("city", models.CharField(max_length=50)),
+                ("street", models.CharField(max_length=100)),
+                (
+                    "continent",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.Continent",
+                    ),
+                ),
+                (
+                    "country",
+                    smart_selects.db_fields.ChainedForeignKey(
+                        auto_choose=True,
+                        chained_field=b"continent",
+                        chained_model_field=b"continent",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.Country",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Publication',
+            name="Publication",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
-            name='Writer',
+            name="Writer",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('publications', models.ManyToManyField(blank=True, to='test_app.Publication')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "publications",
+                    models.ManyToManyField(blank=True, to="test_app.Publication"),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='book',
-            name='publication',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.Publication'),
+            model_name="book",
+            name="publication",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="test_app.Publication"
+            ),
         ),
         migrations.AddField(
-            model_name='book',
-            name='writer',
-            field=smart_selects.db_fields.ChainedManyToManyField(chained_field=b'publication', chained_model_field=b'publications', to='test_app.Writer'),
+            model_name="book",
+            name="writer",
+            field=smart_selects.db_fields.ChainedManyToManyField(
+                chained_field=b"publication",
+                chained_model_field=b"publications",
+                to="test_app.Writer",
+            ),
         ),
     ]

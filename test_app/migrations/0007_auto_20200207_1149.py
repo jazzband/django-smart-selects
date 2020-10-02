@@ -8,22 +8,43 @@ import smart_selects.db_fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('test_app', '0006_auto_20170707_2000'),
+        ("test_app", "0006_auto_20170707_2000"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Area',
+            name="Area",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('country', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.Country')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "country",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.Country",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='location',
-            name='area',
-            field=smart_selects.db_fields.ChainedForeignKey(auto_choose=True, chained_field='country', chained_model_field='country', default=1, on_delete=django.db.models.deletion.CASCADE, to='test_app.Area'),
+            model_name="location",
+            name="area",
+            field=smart_selects.db_fields.ChainedForeignKey(
+                auto_choose=True,
+                chained_field="country",
+                chained_model_field="country",
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="test_app.Area",
+            ),
             preserve_default=False,
         ),
     ]

@@ -1,8 +1,26 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from .models import Area, Continent, Country, Location, Publication, \
-    Book, Writer, Grade, Team, Student, Client, Domain, Website, \
-    Tag, TagResource, Person, Group, Membership, Talent
+from .models import (
+    Area,
+    Continent,
+    Country,
+    Location,
+    Publication,
+    Book,
+    Writer,
+    Grade,
+    Team,
+    Student,
+    Client,
+    Domain,
+    Website,
+    Tag,
+    TagResource,
+    Person,
+    Group,
+    Membership,
+    Talent,
+)
 
 
 class WriterAdminInline(admin.TabularInline):
@@ -10,63 +28,63 @@ class WriterAdminInline(admin.TabularInline):
 
 
 class ContinentAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class CountryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'continent')
+    list_display = ("name", "continent")
 
 
 class AreaAdmin(admin.ModelAdmin):
-    list_display = ('name', 'country')
+    list_display = ("name", "country")
 
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('continent', 'country', 'city', 'street')
+    list_display = ("continent", "country", "city", "street")
 
 
 class PublicationAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class WriterAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class GradeAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('slug',)
+    list_display = ("slug",)
 
 
 class TagResourceAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class DomainAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class WebsiteAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class MembershipInline(admin.TabularInline):
@@ -75,7 +93,7 @@ class MembershipInline(admin.TabularInline):
 
 
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -83,7 +101,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 class TalentAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("name",)
 
 
 admin.site.register(Continent, ContinentAdmin)

@@ -1,6 +1,8 @@
 import django
 from django.db.models.fields.related import (
-    ForeignKey, ManyToManyField, RECURSIVE_RELATIONSHIP_CONSTANT
+    ForeignKey,
+    ManyToManyField,
+    RECURSIVE_RELATIONSHIP_CONSTANT,
 )
 from django.db import models
 
@@ -19,8 +21,8 @@ class IntrospectiveFieldMixin(object):
                 # This will be handled in contribute_to_class(), when we have
                 # enough information to set these properly
                 self.to_app_name, self.to_model_name = (None, to)
-            elif '.' in to:  # 'app_label.ModelName'
-                self.to_app_name, self.to_model_name = to.split('.')
+            elif "." in to:  # 'app_label.ModelName'
+                self.to_app_name, self.to_model_name = to.split(".")
             else:  # 'ModelName'
                 self.to_app_name, self.to_model_name = (None, to)
         else:
@@ -43,8 +45,16 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
     """
     chains the choices of a previous combo box with this ManyToMany
     """
-    def __init__(self, to, chained_field=None, chained_model_field=None,
-                 auto_choose=False, horizontal=False, **kwargs):
+
+    def __init__(
+        self,
+        to,
+        chained_field=None,
+        chained_model_field=None,
+        auto_choose=False,
+        horizontal=False,
+        **kwargs
+    ):
         """
         examples:
 
@@ -77,28 +87,29 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         self.chained_model_field = chained_model_field
         self.auto_choose = auto_choose
         self.horizontal = horizontal
-        self.verbose_name = kwargs.get('verbose_name', '')
+        self.verbose_name = kwargs.get("verbose_name", "")
         super(ChainedManyToManyField, self).__init__(to, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
-            ChainedManyToManyField, self).deconstruct()
+            ChainedManyToManyField, self
+        ).deconstruct()
 
         # Maps attribute names to their default kwarg values.
         defaults = {
-            'chain_field': None,
-            'chained_model_field': None,
-            'auto_choose': False,
-            'horizontal': False
+            "chain_field": None,
+            "chained_model_field": None,
+            "auto_choose": False,
+            "horizontal": False,
         }
 
         # Maps attribute names to their __init__ kwarg names.
         attr_to_kwarg_names = {
-            'chain_field': 'chained_field',
-            'chained_model_field': 'chained_model_field',
-            'auto_choose': 'auto_choose',
-            'horizontal': 'horizontal',
-            'verbose_name': 'verbose_name'
+            "chain_field": "chained_field",
+            "chained_model_field": "chained_model_field",
+            "auto_choose": "auto_choose",
+            "horizontal": "horizontal",
+            "verbose_name": "verbose_name",
         }
 
         for name, default in defaults.items():
@@ -120,21 +131,24 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         foreign_key_model_name = self.model._meta.object_name
         foreign_key_field_name = self.name
         defaults = {
-            'form_class': form_fields.ChainedManyToManyField,
-            'queryset': (self.rel.to._default_manager.complex_filter(
-                self.rel.limit_choices_to) if django.VERSION < (2, 0) else
-                self.remote_field.model._default_manager.complex_filter(
-                    self.remote_field.limit_choices_to)),
-            'to_app_name': self.to_app_name,
-            'to_model_name': self.to_model_name,
-            'chain_field': self.chain_field,
-            'chained_model_field': self.chained_model_field,
-            'auto_choose': self.auto_choose,
-            'horizontal': self.horizontal,
-            'verbose_name': self.verbose_name,
-            'foreign_key_app_name': foreign_key_app_name,
-            'foreign_key_model_name': foreign_key_model_name,
-            'foreign_key_field_name': foreign_key_field_name,
+            "form_class": form_fields.ChainedManyToManyField,
+            "queryset": (
+                self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to)
+                if django.VERSION < (2, 0)
+                else self.remote_field.model._default_manager.complex_filter(
+                    self.remote_field.limit_choices_to
+                )
+            ),
+            "to_app_name": self.to_app_name,
+            "to_model_name": self.to_model_name,
+            "chain_field": self.chain_field,
+            "chained_model_field": self.chained_model_field,
+            "auto_choose": self.auto_choose,
+            "horizontal": self.horizontal,
+            "verbose_name": self.verbose_name,
+            "foreign_key_app_name": foreign_key_app_name,
+            "foreign_key_model_name": foreign_key_model_name,
+            "foreign_key_field_name": foreign_key_field_name,
         }
         defaults.update(kwargs)
         return super(ChainedManyToManyField, self).formfield(**defaults)
@@ -144,8 +158,18 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
     """
     chains the choices of a previous combo box with this one
     """
-    def __init__(self, to, chained_field=None, chained_model_field=None,
-                 show_all=False, auto_choose=False, sort=True, view_name=None, **kwargs):
+
+    def __init__(
+        self,
+        to,
+        chained_field=None,
+        chained_model_field=None,
+        show_all=False,
+        auto_choose=False,
+        sort=True,
+        view_name=None,
+        **kwargs
+    ):
         """
         examples:
 
@@ -188,33 +212,32 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
         self.sort = sort
         self.view_name = view_name
         if kwargs:
-            kwargs['on_delete'] = kwargs.get('on_delete', models.CASCADE)
+            kwargs["on_delete"] = kwargs.get("on_delete", models.CASCADE)
         else:
-            kwargs = {'on_delete': models.CASCADE}
+            kwargs = {"on_delete": models.CASCADE}
         super(ChainedForeignKey, self).__init__(to, **kwargs)
 
     def deconstruct(self):
-        field_name, path, args, kwargs = super(
-            ChainedForeignKey, self).deconstruct()
+        field_name, path, args, kwargs = super(ChainedForeignKey, self).deconstruct()
 
         # Maps attribute names to their default kwarg values.
         defaults = {
-            'chained_field': None,
-            'chained_model_field': None,
-            'show_all': False,
-            'auto_choose': False,
-            'sort': True,
-            'view_name': None,
+            "chained_field": None,
+            "chained_model_field": None,
+            "show_all": False,
+            "auto_choose": False,
+            "sort": True,
+            "view_name": None,
         }
 
         # Maps attribute names to their __init__ kwarg names.
         attr_to_kwarg_names = {
-            'chained_field': 'chained_field',
-            'chained_model_field': 'chained_model_field',
-            'show_all': 'show_all',
-            'auto_choose': 'auto_choose',
-            'sort': 'sort',
-            'view_name': 'view_name',
+            "chained_field": "chained_field",
+            "chained_model_field": "chained_model_field",
+            "show_all": "show_all",
+            "auto_choose": "auto_choose",
+            "sort": "sort",
+            "view_name": "view_name",
         }
 
         for name, default in defaults.items():
@@ -236,24 +259,30 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
         foreign_key_model_name = self.model._meta.object_name
         foreign_key_field_name = self.name
         defaults = {
-            'form_class': form_fields.ChainedModelChoiceField,
-            'queryset': (self.rel.to._default_manager.complex_filter(
-                self.rel.limit_choices_to) if django.VERSION < (2, 0) else
-                self.remote_field.model._default_manager.complex_filter(
-                    self.remote_field.limit_choices_to)),
-            'to_field_name': (self.rel.field_name if django.VERSION < (2, 0)
-                              else self.remote_field.field_name),
-            'to_app_name': self.to_app_name,
-            'to_model_name': self.to_model_name,
-            'chained_field': self.chained_field,
-            'chained_model_field': self.chained_model_field,
-            'show_all': self.show_all,
-            'auto_choose': self.auto_choose,
-            'sort': self.sort,
-            'view_name': self.view_name,
-            'foreign_key_app_name': foreign_key_app_name,
-            'foreign_key_model_name': foreign_key_model_name,
-            'foreign_key_field_name': foreign_key_field_name,
+            "form_class": form_fields.ChainedModelChoiceField,
+            "queryset": (
+                self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to)
+                if django.VERSION < (2, 0)
+                else self.remote_field.model._default_manager.complex_filter(
+                    self.remote_field.limit_choices_to
+                )
+            ),
+            "to_field_name": (
+                self.rel.field_name
+                if django.VERSION < (2, 0)
+                else self.remote_field.field_name
+            ),
+            "to_app_name": self.to_app_name,
+            "to_model_name": self.to_model_name,
+            "chained_field": self.chained_field,
+            "chained_model_field": self.chained_model_field,
+            "show_all": self.show_all,
+            "auto_choose": self.auto_choose,
+            "sort": self.sort,
+            "view_name": self.view_name,
+            "foreign_key_app_name": foreign_key_app_name,
+            "foreign_key_model_name": foreign_key_model_name,
+            "foreign_key_field_name": foreign_key_field_name,
         }
         defaults.update(kwargs)
         return super(ChainedForeignKey, self).formfield(**defaults)
@@ -263,18 +292,18 @@ class GroupedForeignKey(ForeignKey):
     """
     Opt Grouped Field
     """
+
     def __init__(self, to, group_field, **kwargs):
         self.group_field = group_field
         self._choices = True
         if kwargs:
-            kwargs['on_delete'] = kwargs.get('on_delete', models.CASCADE)
+            kwargs["on_delete"] = kwargs.get("on_delete", models.CASCADE)
         else:
-            kwargs = {'on_delete': models.CASCADE}
+            kwargs = {"on_delete": models.CASCADE}
         super(GroupedForeignKey, self).__init__(to, **kwargs)
 
     def deconstruct(self):
-        field_name, path, args, kwargs = super(
-            GroupedForeignKey, self).deconstruct()
+        field_name, path, args, kwargs = super(GroupedForeignKey, self).deconstruct()
 
         # Add positional arg group_field as a kwarg, since the 'to' positional
         # arg is serialized as a keyword arg by the superclass deconstruct().
@@ -289,14 +318,20 @@ class GroupedForeignKey(ForeignKey):
 
     def formfield(self, **kwargs):
         defaults = {
-            'form_class': form_fields.GroupedModelSelect,
-            'queryset': (self.rel.to._default_manager.complex_filter(
-                self.rel.limit_choices_to) if django.VERSION < (2, 0) else
-                self.remote_field.model._default_manager.complex_filter(
-                    self.remote_field.limit_choices_to)),
-            'to_field_name': (self.rel.field_name if django.VERSION < (2, 0)
-                              else self.remote_field.field_name),
-            'order_field': self.group_field,
+            "form_class": form_fields.GroupedModelSelect,
+            "queryset": (
+                self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to)
+                if django.VERSION < (2, 0)
+                else self.remote_field.model._default_manager.complex_filter(
+                    self.remote_field.limit_choices_to
+                )
+            ),
+            "to_field_name": (
+                self.rel.field_name
+                if django.VERSION < (2, 0)
+                else self.remote_field.field_name
+            ),
+            "order_field": self.group_field,
         }
         defaults.update(kwargs)
         return super(ForeignKey, self).formfield(**defaults)
