@@ -13,3 +13,4 @@ htmlcov/
 *~
 *.orig
 docs/_build
+.tox/
