@@ -156,6 +156,8 @@ class ChainedSelect(JqueryMediaMixin, Select):
             for ch in self.choices:
                 if ch not in final_choices:
                     final_choices.append(ch)
+        elif final_choices == []:
+            final_choices.append(("", (empty_label)))
         self.choices = final_choices
 
         attrs.update(self.attrs)
@@ -164,7 +166,6 @@ class ChainedSelect(JqueryMediaMixin, Select):
         attrs["data-value"] = "null" if value is None or value == "" else value
         attrs["data-auto_choose"] = auto_choose
         attrs["data-empty_label"] = escape(empty_label)
-        attrs["name"] = name
         final_attrs = self.build_attrs(attrs)
         if "class" in final_attrs:
             final_attrs["class"] += " chained-fk"
