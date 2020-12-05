@@ -15,9 +15,8 @@ setup(
     url="https://github.com/jazzband/django-smart-selects",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["django>=1.8", "six"],
+    install_requires=["django>=2.2"],
     classifiers=[
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
     ],
 )
