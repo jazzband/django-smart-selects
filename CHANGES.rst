@@ -8,6 +8,12 @@ Changes
 - Dropped support for Django 1.11, 2.0 and 2.1! [jezdez]
 - Add support for Python 3.9. [jezdez]
 - Move CI to GitHub Actions: https://github.com/jazzband/django-smart-selects/actions [jezdez]
+- Docs: elaborate usage within templates [amiroff]
+- Ensure at least one option in the <select> element (as required in HTML) [d9pouces]
+- Migrate to GitHub Actions [jezdez]
+- Add example of chained FK as inline [manelclos]
+- Support Django 3.2 and 4.0 [manelclos]
+
 
 1.5.9 (2020-08-28)
 ------------------
