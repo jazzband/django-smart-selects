@@ -15,6 +15,7 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.html import escape
 
+from smart_selects.encoders import UUIDEncoder
 from smart_selects.utils import unicode_sorter, sort_results
 
 get_model = apps.get_model
@@ -308,7 +309,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
 
         attrs["data-chainfield"] = chain_field
         attrs["data-url"] = url
-        attrs["data-value"] = "null" if value is None else json.dumps(value)
+        attrs["data-value"] = "null" if value is None else json.dumps(value, cls=UUIDEncoder)
         attrs["data-auto_choose"] = auto_choose
         attrs["name"] = name
         final_attrs = self.build_attrs(attrs)
