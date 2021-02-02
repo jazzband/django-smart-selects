@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import django
 from django.apps import apps
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 get_model = apps.get_model
 
@@ -56,7 +56,7 @@ def serialize_results(results):
     return [
         {
             "value": item.pk if str(item.pk).isdigit() else str(item.pk),
-            "display": force_text(item),
+            "display": force_str(item),
         }
         for item in results
     ]
@@ -76,4 +76,4 @@ def get_keywords(field, value, m2m=False):
 def sort_results(results):
     """Performs in-place sort of filterchain results."""
 
-    results.sort(key=lambda x: unicode_sorter(force_text(x)))
+    results.sort(key=lambda x: unicode_sorter(force_str(x)))

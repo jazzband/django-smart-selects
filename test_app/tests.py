@@ -1,9 +1,6 @@
-try:
-    from django.core.urlresolvers import reverse
-except ImportError:
-    # TODO: swap this over when Django 2+ becomes more prevalent
-    from django.urls import reverse
+from django.apps import apps
 from django.test import TestCase, RequestFactory
+from django.urls import reverse
 from .models import Book, Country, Location, Student
 from smart_selects.views import filterchain, filterchain_all, is_m2m
 
@@ -289,12 +286,5 @@ class ViewTests(TestCase):
         self.assertJSONEqual(response.content.decode(), expected_value)
 
     def test_is_m2m_for_chained_charfield(self):
-        try:
-            from django.apps import apps
-
-            get_model = apps.get_model
-        except ImportError:
-            from django.db.models.loading import get_model
-
         # should return false
-        self.assertEqual(is_m2m(get_model("test_app", "TagResource"), "kind"), False)
+        self.assertEqual(is_m2m(apps.get_model("test_app", "TagResource"), "kind"), False)

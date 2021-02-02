@@ -5,14 +5,10 @@ import django
 from django.apps import apps
 from django.conf import settings
 
-try:
-    from django.core.urlresolvers import reverse
-except ImportError:
-    # TODO: swap this over when Django 2+ becomes more prevalent
-    from django.urls import reverse
+from django.urls import reverse
 from django.forms.widgets import Select, SelectMultiple, Media
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
 
 from smart_selects.utils import unicode_sorter, sort_results
@@ -145,7 +141,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
         if value:
             available_choices = self._get_available_choices(self.queryset, value)
             for choice in available_choices:
-                final_choices.append((choice.pk, force_text(choice)))
+                final_choices.append((choice.pk, force_str(choice)))
         if len(final_choices) > 1:
             final_choices = [("", (empty_label))] + final_choices
         if self.show_all:
