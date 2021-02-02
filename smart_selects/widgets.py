@@ -1,7 +1,5 @@
 import json
 
-import django
-
 from django.apps import apps
 from django.conf import settings
 
@@ -25,7 +23,7 @@ JQUERY_URL = getattr(
 URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 
 
-class JqueryMediaMixin(object):
+class JqueryMediaMixin:
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
@@ -36,7 +34,7 @@ class JqueryMediaMixin(object):
         if JQUERY_URL:
             js.append(JQUERY_URL)
         elif JQUERY_URL is not False:
-            vendor = "" if django.VERSION < (1, 9, 0) else "vendor/jquery/"
+            vendor = "vendor/jquery/"
             extra = "" if settings.DEBUG else ".min"
 
             jquery_paths = [
@@ -152,6 +150,8 @@ class ChainedSelect(JqueryMediaMixin, Select):
             for ch in self.choices:
                 if ch not in final_choices:
                     final_choices.append(ch)
+        elif final_choices == []:
+            final_choices.append(("", (empty_label)))
         self.choices = final_choices
 
         attrs.update(self.attrs)
@@ -160,7 +160,6 @@ class ChainedSelect(JqueryMediaMixin, Select):
         attrs["data-value"] = "null" if value is None or value == "" else value
         attrs["data-auto_choose"] = auto_choose
         attrs["data-empty_label"] = escape(empty_label)
-        attrs["name"] = name
         final_attrs = self.build_attrs(attrs)
         if "class" in final_attrs:
             final_attrs["class"] += " chained-fk"
