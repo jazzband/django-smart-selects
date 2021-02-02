@@ -1,4 +1,3 @@
-import django
 from django.db.models.fields.related import (
     ForeignKey,
     ManyToManyField,
@@ -6,17 +5,15 @@ from django.db.models.fields.related import (
 )
 from django.db import models
 
-import six
-
 from smart_selects import form_fields
 
 
-class IntrospectiveFieldMixin(object):
+class IntrospectiveFieldMixin:
     to_app_name = None
     to_model_name = None
 
     def __init__(self, to, *args, **kwargs):
-        if isinstance(to, six.string_types):
+        if isinstance(to, str):
             if to == RECURSIVE_RELATIONSHIP_CONSTANT:  # to == 'self'
                 # This will be handled in contribute_to_class(), when we have
                 # enough information to set these properly
@@ -132,12 +129,8 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         foreign_key_field_name = self.name
         defaults = {
             "form_class": form_fields.ChainedManyToManyField,
-            "queryset": (
-                self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to)
-                if django.VERSION < (2, 0)
-                else self.remote_field.model._default_manager.complex_filter(
-                    self.remote_field.limit_choices_to
-                )
+            "queryset": self.remote_field.model._default_manager.complex_filter(
+                self.remote_field.limit_choices_to
             ),
             "to_app_name": self.to_app_name,
             "to_model_name": self.to_model_name,
@@ -260,18 +253,10 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
         foreign_key_field_name = self.name
         defaults = {
             "form_class": form_fields.ChainedModelChoiceField,
-            "queryset": (
-                self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to)
-                if django.VERSION < (2, 0)
-                else self.remote_field.model._default_manager.complex_filter(
-                    self.remote_field.limit_choices_to
-                )
+            "queryset": self.remote_field.model._default_manager.complex_filter(
+                self.remote_field.limit_choices_to
             ),
-            "to_field_name": (
-                self.rel.field_name
-                if django.VERSION < (2, 0)
-                else self.remote_field.field_name
-            ),
+            "to_field_name": self.remote_field.field_name,
             "to_app_name": self.to_app_name,
             "to_model_name": self.to_model_name,
             "chained_field": self.chained_field,
@@ -319,18 +304,10 @@ class GroupedForeignKey(ForeignKey):
     def formfield(self, **kwargs):
         defaults = {
             "form_class": form_fields.GroupedModelSelect,
-            "queryset": (
-                self.rel.to._default_manager.complex_filter(self.rel.limit_choices_to)
-                if django.VERSION < (2, 0)
-                else self.remote_field.model._default_manager.complex_filter(
-                    self.remote_field.limit_choices_to
-                )
+            "queryset": self.remote_field.model._default_manager.complex_filter(
+                self.remote_field.limit_choices_to
             ),
-            "to_field_name": (
-                self.rel.field_name
-                if django.VERSION < (2, 0)
-                else self.remote_field.field_name
-            ),
+            "to_field_name": self.remote_field.field_name,
             "order_field": self.group_field,
         }
         defaults.update(kwargs)

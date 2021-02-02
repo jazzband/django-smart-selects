@@ -14,3 +14,4 @@ htmlcov/
 *.orig
 docs/_build
 .tox/
+coverage.xml

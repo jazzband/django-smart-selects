@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-import django
 from django.apps import apps
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 get_model = apps.get_model
 
@@ -30,11 +28,7 @@ def get_limit_choices_to(app_name, model_name, field_name):
     try:
         model = get_model(app_name, model_name)
         field = model._meta.get_field(field_name)
-        limit_choices_to = (
-            field.rel.limit_choices_to
-            if django.VERSION < (2, 0)
-            else field.remote_field.limit_choices_to
-        )
+        limit_choices_to = field.remote_field.limit_choices_to
     except Exception:
         limit_choices_to = None
 
@@ -56,7 +50,7 @@ def serialize_results(results):
     return [
         {
             "value": item.pk if str(item.pk).isdigit() else str(item.pk),
-            "display": force_text(item),
+            "display": force_str(item),
         }
         for item in results
     ]
@@ -76,4 +70,4 @@ def get_keywords(field, value, m2m=False):
 def sort_results(results):
     """Performs in-place sort of filterchain results."""
 
-    results.sort(key=lambda x: unicode_sorter(force_text(x)))
+    results.sort(key=lambda x: unicode_sorter(force_str(x)))

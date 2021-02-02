@@ -3,8 +3,6 @@ cache: pip
 install: travis_retry pip install coveralls tox tox-travis
 script: tox -v
 python:
-  - 2.7
-  - 3.5
   - 3.6
   - 3.7
   - 3.8

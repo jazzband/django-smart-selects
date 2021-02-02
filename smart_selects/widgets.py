@@ -1,18 +1,12 @@
 import json
 
-import django
-
 from django.apps import apps
 from django.conf import settings
 
-try:
-    from django.core.urlresolvers import reverse
-except ImportError:
-    # TODO: swap this over when Django 2+ becomes more prevalent
-    from django.urls import reverse
+from django.urls import reverse
 from django.forms.widgets import Select, SelectMultiple, Media
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
 
 from smart_selects.utils import unicode_sorter, sort_results
@@ -29,7 +23,7 @@ JQUERY_URL = getattr(
 URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 
 
-class JqueryMediaMixin(object):
+class JqueryMediaMixin:
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
@@ -40,7 +34,7 @@ class JqueryMediaMixin(object):
         if JQUERY_URL:
             js.append(JQUERY_URL)
         elif JQUERY_URL is not False:
-            vendor = "" if django.VERSION < (1, 9, 0) else "vendor/jquery/"
+            vendor = "vendor/jquery/"
             extra = "" if settings.DEBUG else ".min"
 
             jquery_paths = [
@@ -145,7 +139,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
         if value:
             available_choices = self._get_available_choices(self.queryset, value)
             for choice in available_choices:
-                final_choices.append((choice.pk, force_text(choice)))
+                final_choices.append((choice.pk, force_str(choice)))
         if len(final_choices) > 1:
             final_choices = [("", (empty_label))] + final_choices
         if self.show_all:
