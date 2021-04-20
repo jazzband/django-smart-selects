@@ -26,8 +26,14 @@ class WriterAdminInline(admin.TabularInline):
     model = Writer
 
 
+class LocationInline(admin.TabularInline):
+    model = Location
+    extra = 1
+
+
 class ContinentAdmin(admin.ModelAdmin):
     list_display = ("name",)
+    inlines = (LocationInline,)
 
 
 class CountryAdmin(admin.ModelAdmin):
