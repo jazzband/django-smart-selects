@@ -11,4 +11,5 @@ prune */*/__pycache__
 prune .coverage
 prune htmlcov
 include README.md
+include CHANGES.rst
 include smart_selects/static/smart-selects/admin/js/*

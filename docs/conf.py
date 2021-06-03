@@ -18,7 +18,9 @@ django.setup()
 # -- Extra custom configuration  ------------------------------------------
 
 title = "django-smart-selects documentation"
-description = ('Quickly filter or group "chained" models by adding a custom foreign key or many to many field to your models.',)
+description = (
+    'Quickly filter or group "chained" models by adding a custom foreign key or many to many field to your models.',
+)
 
 # -- General configuration ------------------------------------------------
 
@@ -31,7 +33,7 @@ templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string: source_suffix = ['.rst', '.md']
-source_suffix = ['.rst', '.md']
+source_suffix = [".rst", ".md"]
 
 # The master toctree document.
 master_doc = "index"

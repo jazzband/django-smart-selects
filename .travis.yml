@@ -1,78 +1,28 @@
-sudo: false
 language: python
-env:
-  - DJANGO_VERSION="Django>=1.8,<1.9"
-  - DJANGO_VERSION="Django>=1.9,<1.10"
-  - DJANGO_VERSION="Django>=1.10,<1.11"
-  - DJANGO_VERSION="Django>=1.11,<2.0"
-  - DJANGO_VERSION="Django>=2.0,<2.1"
-  - DJANGO_VERSION="Django>=2.1,<2.2"
-  - DJANGO_VERSION="Django>=2.2,<3.0"
-  - DJANGO_VERSION="Django>=3.0,<3.1"
-  - DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
+cache: pip
+install: travis_retry pip install coveralls tox tox-travis
+script: tox -v
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8"
-matrix:
-  exclude:
-    - python: "3.6"
-      env: DJANGO_VERSION="Django>=1.8,<1.9"
-    - python: "3.7"
-      env: DJANGO_VERSION="Django>=1.8,<1.9"
-    - python: "3.8"
-      env: DJANGO_VERSION="Django>=1.8,<1.9"
-    - python: "3.6"
-      env: DJANGO_VERSION="Django>=1.9,<1.10"
-    - python: "3.7"
-      env: DJANGO_VERSION="Django>=1.9,<1.10"
-    - python: "3.8"
-      env: DJANGO_VERSION="Django>=1.9,<1.10"
-    - python: "3.6"
-      env: DJANGO_VERSION="Django>=1.10,<1.11"
-    - python: "3.7"
-      env: DJANGO_VERSION="Django>=1.10,<1.11"
-    - python: "3.8"
-      env: DJANGO_VERSION="Django>=1.10,<1.11"
-    - python: "3.8"
-      env: DJANGO_VERSION="Django>=1.11,<2.0"
-    - python: "2.7"
-      env: DJANGO_VERSION="Django>=2.0,<2.1"
-    - python: "3.8"
-      env: DJANGO_VERSION="Django>=2.0,<2.1"
-    - python: "2.7"
-      env: DJANGO_VERSION="Django>=2.1,<2.2"
-    - python: "3.4"
-      env: DJANGO_VERSION="Django>=2.1,<2.2"
-    - python: "3.8"
-      env: DJANGO_VERSION="Django>=2.1,<2.2"
-    - python: "2.7"
-      env: DJANGO_VERSION="Django>=2.2,<3.0"
-    - python: "3.4"
-      env: DJANGO_VERSION="Django>=2.2,<3.0"
-    - python: "2.7"
-      env: DJANGO_VERSION="Django>=3.0,<3.1"
-    - python: "3.4"
-      env: DJANGO_VERSION="Django>=3.0,<3.1"
-    - python: "3.5"
-      env: DJANGO_VERSION="Django>=3.0,<3.1"
-    - python: "2.7"
-      env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
-    - python: "3.4"
-      env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
-    - python: "3.5"
-      env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
-  allow_failures:
-    - env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
-before_script:
-  - pip install coverage coveralls flake8
-  - pip install "$DJANGO_VERSION"
-script:
-  - python manage.py migrate
-  - flake8 manage.py setup.py smart_selects test_app
-  - coverage run manage.py test
+  - 3.6
+  - 3.7
+  - 3.8
 after_script:
-  - coveralls
+- coveralls
+jobs:
+  fast_finish: true
+  include:
+    - stage: deploy
+      env:
+      python: 3.7
+      script: skip
+      deploy:
+        provider: pypi
+        user: jazzband
+        server: https://jazzband.co/projects/django-smart-selects/upload
+        distributions: sdist bdist_wheel
+        password:
+          secure: WRKX0JQavruAlXjKAMiv4pNYLNLs9YMiAts7lyp2BXWTPiVsTSN9TfkWsiFSKJ5u+aLCyYZDx7FFxO9sFrlRjSmvgoxP7EBA0vxkKRQHABo/aQjM0HdnkIOw6P0fXoxqHBAizytLBKyTQH1Ls876oPcvHt5Ehoxchdt8YEckxOw=
+        skip_existing: true
+        on:
+          tags: true
+          repo: jazzband/django-smart-selects
