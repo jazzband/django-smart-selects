@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from uuid
 from django.db import models
 from smart_selects.db_fields import ChainedForeignKey, \
     ChainedManyToManyField, GroupedForeignKey
@@ -28,6 +29,7 @@ class Area(models.Model):
 
 
 class Location(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     continent = models.ForeignKey(Continent, on_delete=models.CASCADE)
     country = ChainedForeignKey(
         'Country',
