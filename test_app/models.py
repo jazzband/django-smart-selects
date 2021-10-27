@@ -90,6 +90,9 @@ class Book(models.Model):
     )
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return "%s" % self.name
+
 
 # test limit_to_choice field option
 class Book1(models.Model):
@@ -101,6 +104,29 @@ class Book1(models.Model):
         limit_choices_to={"name__contains": "2"},
     )
     name = models.CharField(max_length=255)
+
+# test based on chainfield with filtered many_to_many
+
+class BookStore(models.Model):
+    name = models.CharField(max_length=255)
+    books = models.ManyToManyField('Book', blank=True)
+
+    publications = ChainedManyToManyField(
+        "Publication",
+        chained_field="books",
+        chained_model_field="book",
+        related_name="stores",
+        horizontal=True
+    )
+
+    writers = ChainedManyToManyField(
+        "Writer",
+        chained_field="books",
+        chained_model_field="book",
+        related_name="stores"
+    )
+
+
 
 
 # group foreignkey

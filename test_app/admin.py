@@ -6,6 +6,7 @@ from .models import (
     Location,
     Publication,
     Book,
+    BookStore,
     Writer,
     Grade,
     Team,
@@ -47,7 +48,6 @@ class AreaAdmin(admin.ModelAdmin):
 class LocationAdmin(admin.ModelAdmin):
     list_display = ("continent", "country", "city", "street")
 
-
 class PublicationAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
@@ -55,6 +55,10 @@ class PublicationAdmin(admin.ModelAdmin):
 class BookAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
+
+class BookStoreAdmin(admin.ModelAdmin):
+    list_display = ('name', )
+    filter_horizontal = ('books', )
 
 class WriterAdmin(admin.ModelAdmin):
     list_display = ("name",)
@@ -127,3 +131,4 @@ admin.site.register(TagResource, TagResourceAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Talent, TalentAdmin)
+admin.site.register(BookStore, BookStoreAdmin)
