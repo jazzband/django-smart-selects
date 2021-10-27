@@ -147,7 +147,7 @@
                 }
                 fill_field = this.fill_field;
 
-                if(!$(chainfield).length && $(chainfield_filtered).length) {
+                if($(chainfield_filtered).length) {
                     /**
                      * Handle chainfield with filtered elements.
                      * 
@@ -160,7 +160,7 @@
                     var options = 0;
                     var timeoutID = null;
 
-                    $(chainfield_filtered).on("DOMSubtreeModified", function(event) {
+                    function onSubtreeModified() {
                         var optionElements = $(chainfield_filtered).children('option')
                         if(options !== optionElements.length) {
                             options = optionElements.length
@@ -175,9 +175,14 @@
                             if(timeoutID) clearTimeout(timeoutID)
                             timeoutID = setTimeout(function() {
                                 fill_field(val.length ? Array.from(val) : false, initial_value, id, url, initial_parent, auto_choose);
-                            }, 1000);
+                            }, 200);
                         }
-                    })
+                    }
+
+                    $(chainfield_filtered).on("DOMSubtreeModified", onSubtreeModified)
+
+                    // initial
+                    onSubtreeModified()
                 } else {
                     $(chainfield).change(function () {
                         var prefix, start_value, this_val, localID = id;
