@@ -2,7 +2,10 @@ from django.apps import apps
 from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 from django.forms import ChoiceField
 from smart_selects.widgets import ChainedSelect, ChainedSelectMultiple
-from django.utils.encoding import force_str
+try:
+    from django.utils.encoding import force_text
+except ImportError:
+    from django.utils.encoding import force_str as force_text
 
 get_model = apps.get_model
 

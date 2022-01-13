@@ -1,5 +1,8 @@
 from django.apps import apps
-from django.utils.encoding import force_str
+try:
+    from django.utils.encoding import force_text
+except ImportError:
+    from django.utils.encoding import force_str as force_text
 
 get_model = apps.get_model
 
