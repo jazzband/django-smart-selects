@@ -1,7 +1,10 @@
 Changes
 =======
 
-1.6.0 (unreleased)
+(unreleased)
+------------------
+
+1.6.0 (2022-07-13)
 ------------------
 
 - Dropped support for Python 2.7 and 3.5! [jezdez]
