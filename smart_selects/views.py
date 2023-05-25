@@ -16,7 +16,6 @@ from smart_selects.utils import (
 )
 
 get_model = apps.get_model
-SECURED_FILTERING = getattr(settings, "SMART_SELECTS_SECURED_FILTERING", True)
 
 
 def is_m2m(model_class, field):
@@ -91,6 +90,7 @@ def filterchain(
     keywords = get_keywords(field, value, m2m=m2m)
 
     # SECURITY: Make sure all smart selects requests are opt-in
+    SECURED_FILTERING = getattr(settings, "SMART_SELECTS_SECURED_FILTERING", True)
     foreign_model_class = get_model(foreign_key_app_name, foreign_key_model_name)
     if SECURED_FILTERING and not any(
         [
@@ -133,6 +133,7 @@ def filterchain_all(
     keywords = get_keywords(field, value)
 
     # SECURITY: Make sure all smart selects requests are opt-in
+    SECURED_FILTERING = getattr(settings, "SMART_SELECTS_SECURED_FILTERING", True)
     foreign_model_class = get_model(foreign_key_app_name, foreign_key_model_name)
     if SECURED_FILTERING and not any(
         [
