@@ -300,6 +300,7 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         final_choices = []
         self.choices = final_choices
 
+        attrs.update(self.attrs)
         attrs["data-chainfield"] = chain_field
         attrs["data-url"] = url
         attrs["data-value"] = "null" if value is None else json.dumps(value)
