@@ -54,12 +54,12 @@ class ChainedModelChoiceField(ModelChoiceField):
                 initial=initial, *args, **defaults
             )
 
+    @ModelChoiceField.choices.getter
     def _get_choices(self):
         self.widget.queryset = self.queryset
         choices = super(ChainedModelChoiceField, self)._get_choices()
         return choices
 
-    choices = property(_get_choices, ChoiceField._set_choices)
 
 
 class ChainedManyToManyField(ModelMultipleChoiceField):
@@ -112,8 +112,9 @@ class GroupedModelSelect(ModelChoiceField):
     def __init__(self, queryset, order_field, *args, **kwargs):
         self.order_field = order_field
         super(GroupedModelSelect, self).__init__(queryset, *args, **kwargs)
-
-    def _get_choices(self):
+    
+    @ModelChoiceField.choices.getter
+    def choices(self):
         # If self._choices is set, then somebody must have manually set
         # the property self.choices. In this case, just return self._choices.
         if hasattr(self, "_choices"):
@@ -142,5 +143,3 @@ class GroupedModelSelect(ModelChoiceField):
 
     def make_choice(self, obj):
         return (obj.pk, "   " + self.label_from_instance(obj))
-
-    choices = property(_get_choices, ChoiceField._set_choices)

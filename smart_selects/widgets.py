@@ -137,7 +137,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
         final_choices = []
 
         if value:
-            available_choices = self._get_available_choices(self.queryset, value)
+            available_choices = self._get_available_choices(get_model(self.to_app_name, self.to_model_name).objects.all(), value)
             for choice in available_choices:
                 final_choices.append((choice.pk, force_str(choice)))
         if len(final_choices) > 1:
