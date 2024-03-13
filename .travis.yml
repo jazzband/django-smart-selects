@@ -3,9 +3,11 @@ cache: pip
 install: travis_retry pip install coveralls tox tox-travis
 script: tox -v
 python:
-  - 3.6
-  - 3.7
   - 3.8
+  - 3.9
+  - 3.10
+  - 3.11
+  - 3.12
 after_script:
 - coveralls
 jobs:
@@ -13,7 +15,7 @@ jobs:
   include:
     - stage: deploy
       env:
-      python: 3.7
+      python: 3.8
       script: skip
       deploy:
         provider: pypi
