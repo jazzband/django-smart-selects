@@ -1,3 +1,4 @@
+import django
 from django.apps import apps
 from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 from django.forms import ChoiceField
@@ -59,7 +60,10 @@ class ChainedModelChoiceField(ModelChoiceField):
         choices = super(ChainedModelChoiceField, self)._get_choices()
         return choices
 
-    choices = property(_get_choices, ChoiceField._set_choices)
+    if django.VERSION >= (5, 0):
+        choices = property(_get_choices, ChoiceField.choices)
+    else:
+        choices = property(_get_choices, ChoiceField._set_choices)
 
 
 class ChainedManyToManyField(ModelMultipleChoiceField):
@@ -143,4 +147,7 @@ class GroupedModelSelect(ModelChoiceField):
     def make_choice(self, obj):
         return (obj.pk, "   " + self.label_from_instance(obj))
 
-    choices = property(_get_choices, ChoiceField._set_choices)
+    if django.VERSION >= (5, 0):
+        choices = property(_get_choices, ChoiceField.choices)
+    else:
+        choices = property(_get_choices, ChoiceField._set_choices)
