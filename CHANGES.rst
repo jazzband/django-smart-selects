@@ -4,6 +4,16 @@ Changes
 (unreleased)
 ------------------
 
+
+1.7.0 (2024-03-13)
+------------------
+
+- Dropped support for Python 3.6 and 3.7! [medbenmakhlouf]
+- Dropped support for Django 2.2, 3.0 and 3.1! [medbenmakhlouf]
+- Add support for Python 3.10, 3.11 and 3.12. [medbenmakhlouf]
+- Add Support for Django 4.1, 4.2 and 5.0! [medbenmakhlouf]
+
+
 1.6.0 (2022-07-13)
 ------------------
 
