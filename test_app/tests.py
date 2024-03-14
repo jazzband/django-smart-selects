@@ -1,5 +1,5 @@
 from django.apps import apps
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, override_settings
 from django.urls import reverse
 from .models import Book, Country, Location, Student
 from smart_selects.views import filterchain, filterchain_all, is_m2m
@@ -33,6 +33,22 @@ class SecurityTests(TestCase):
             "/chaining/all/auth/User/is_superuser/auth/User/password/1/"
         )
         self.assertEqual(response.status_code, 403)
+
+    @override_settings(SMART_SELECTS_SECURED_FILTERING=False)
+    def test_settings_disable_models_are_exposed_with_filter(self):
+        # If security settings is disabled, all fields are searchable
+        response = self.client.get(
+            "/chaining/filter/auth/User/is_superuser/auth/User/password/1/"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(SMART_SELECTS_SECURED_FILTERING=False)
+    def test_settings_disable_models_are_exposed_with_all(self):
+        # If security settings is disabled, all fields are searchable
+        response = self.client.get(
+            "/chaining/all/auth/User/is_superuser/auth/User/password/1/"
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class ViewTests(TestCase):
