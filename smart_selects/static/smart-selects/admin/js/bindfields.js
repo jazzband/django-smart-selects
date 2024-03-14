@@ -7,6 +7,10 @@
             id = "#" + $(item).attr("id"),
             value = JSON.parse($(item).attr("data-value")),
             auto_choose = $(item).attr("data-auto_choose");
+        // Ignore fields that aren't displayed on-screen yet
+        if (id.indexOf('__prefix__') !== -1) {
+          return;
+        }
         if ($(item).hasClass("chained-fk")) {
             empty_label = $(item).attr("data-empty_label");
             chainedfk.init(chainfield, url, id, value, empty_label, auto_choose);
