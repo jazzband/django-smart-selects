@@ -16,4 +16,4 @@
     )
     ```
 
-4. You will also need to include jQuery in every page that includes a field from `smart_selects`, or set `JQUERY_URL = True` in your project's `settings.py`.
+4. You will also need to include jQuery in every page that includes a field from `smart_selects`, or set `Use USE_DJANGO_JQUERY = True` in your project's `settings.py`.
