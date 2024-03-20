@@ -134,27 +134,68 @@
                     trigger_chosen_updated();
                 });
             },
-
             init: function (chainfield, url, id, value, auto_choose) {
                 var fill_field, val, initial_parent = $(chainfield).val(),
                     initial_value = value;
+
+                // In case of filtered chainfield.
+                var chainfield_filtered = chainfield + '_to';
 
                 if (!$(chainfield).hasClass("chained")) {
                     val = $(chainfield).val();
                     this.fill_field(val, initial_value, id, url, initial_parent, auto_choose);
                 }
                 fill_field = this.fill_field;
-                $(chainfield).change(function () {
-                    var prefix, start_value, this_val, localID = id;
-                    if (localID.indexOf("__prefix__") > -1) {
-                        prefix = $(this).attr("id").match(/\d+/)[0];
-                        localID = localID.replace("__prefix__", prefix);
+
+                if($(chainfield_filtered).length) {
+                    /**
+                     * Handle chainfield with filtered elements.
+                     * 
+                     * The option selection is completely different compared to the `$(chainfield).change` call.
+                     * 
+                     * Keep track on DOM modifications and submit the fill_field function using the
+                     * rendered options of the element `chainfield_filtered` ( #id_<chainfield>_to ).
+                     */
+
+                    var options = 0;
+                    var timeoutID = null;
+
+                    function onSubtreeModified() {
+                        var optionElements = $(chainfield_filtered).children('option')
+                        if(options !== optionElements.length) {
+                            options = optionElements.length
+
+                            var val = optionElements.map((idx, ele) => $(ele).val())
+                            
+                            /**
+                             * DEBOUNCE, avoid redundant calls
+                             * DOMSubtreeModified is invoked multiple times during the multiple
+                             * selection, avoid redundant queries using the timeout as debounce.
+                             */
+                            if(timeoutID) clearTimeout(timeoutID)
+                            timeoutID = setTimeout(function() {
+                                fill_field(val.length ? Array.from(val) : false, initial_value, id, url, initial_parent, auto_choose);
+                            }, 200);
+                        }
                     }
 
-                    start_value = $(localID).val();
-                    this_val = $(this).val();
-                    fill_field(this_val, initial_value, localID, url, initial_parent, auto_choose);
-                });
+                    $(chainfield_filtered).on("DOMSubtreeModified", onSubtreeModified)
+
+                    // initial
+                    onSubtreeModified()
+                } else {
+                    $(chainfield).change(function () {
+                        var prefix, start_value, this_val, localID = id;
+                        if (localID.indexOf("__prefix__") > -1) {
+                            prefix = $(this).attr("id").match(/\d+/)[0];
+                            localID = localID.replace("__prefix__", prefix);
+                        }
+    
+                        start_value = $(localID).val();
+                        this_val = $(this).val();
+                        fill_field(this_val, initial_value, localID, url, initial_parent, auto_choose);
+                    });
+                }
 
                 // allait en bas, hors du documentready
                 if (typeof(dismissAddAnotherPopup) !== 'undefined') {
