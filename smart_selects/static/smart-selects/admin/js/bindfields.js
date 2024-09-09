@@ -61,10 +61,11 @@
         initItem(chained);
     }
 
-    $(document).on('formset:added', function (event, $row, formsetName) {
+    $(document).on('formset:added', function (event) {
         // Fired every time a new inline formset is created
 
         var chainedFK, chainedM2M, filteredM2M;
+        var $row = $(event.target);
 
         // For the ForeingKey
         chainedFK = $row.find(".chained-fk");
