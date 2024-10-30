@@ -13,13 +13,6 @@ from smart_selects.utils import unicode_sorter, sort_results
 
 get_model = apps.get_model
 
-USE_DJANGO_JQUERY = getattr(settings, "USE_DJANGO_JQUERY", False)
-JQUERY_URL = getattr(
-    settings,
-    "JQUERY_URL",
-    "https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js",
-)
-
 URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
 
 
@@ -31,21 +24,17 @@ class JqueryMediaMixin:
 
         js = []
 
-        if JQUERY_URL:
-            js.append(JQUERY_URL)
-        elif JQUERY_URL is not False:
-            vendor = "vendor/jquery/"
-            extra = "" if settings.DEBUG else ".min"
+        vendor = "" if django.VERSION < (1, 9, 0) else "vendor/jquery/"
+        extra = "" if settings.DEBUG else ".min"
 
-            jquery_paths = [
-                "{}jquery{}.js".format(vendor, extra),
-                "jquery.init.js",
-            ]
+        jquery_paths = [
+            "{}jquery{}.js".format(vendor, extra),
+            "jquery.init.js",
+        ]
 
-            if USE_DJANGO_JQUERY:
-                jquery_paths = ["admin/js/{}".format(path) for path in jquery_paths]
+        jquery_paths = ["admin/js/{}".format(path) for path in jquery_paths]
 
-            js.extend(jquery_paths)
+        js.extend(jquery_paths)
 
         media += Media(js=js)
         return media

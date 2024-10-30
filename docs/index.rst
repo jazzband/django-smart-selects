@@ -11,7 +11,6 @@ Contents
    :numbered: 1
 
    installation
-   settings
    usage
 
 
