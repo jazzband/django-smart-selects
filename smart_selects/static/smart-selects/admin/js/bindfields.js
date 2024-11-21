@@ -20,7 +20,10 @@
         }
     }
 
-    $(window).on('load', function () {
+    $(document).ready(function () {
+        $.each($(".chained-fk"), function (index, item) {
+            initItem(item);
+        });
         $.each($(".chained"), function (index, item) {
             initItem(item);
         });
@@ -28,12 +31,6 @@
             if (item.hasAttribute('data-chainfield')) {
                 initItem(item);
             }
-        });
-    });
-
-    $(document).ready(function () {
-        $.each($(".chained-fk"), function (index, item) {
-            initItem(item);
         });
     });
 
