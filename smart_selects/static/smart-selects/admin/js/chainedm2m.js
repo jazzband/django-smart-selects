@@ -45,17 +45,6 @@
                     }
                 }
 
-                // SelectBox is a global var from djangojs "admin/js/SelectBox.js"
-                // Clear cache to avoid the elements duplication
-                if (typeof SelectBox !== 'undefined') {
-                    if (typeof SelectBox.cache[cache_to] !== 'undefined') {
-                        SelectBox.cache[cache_to].splice(0);
-                    }
-                    if (typeof SelectBox.cache[cache_from] !== 'undefined') {
-                        SelectBox.cache[cache_from].splice(0);
-                    }
-                }
-
                 if (!val || val === '') {
                     $selectField.html('');
                     $selectedto.html('');
@@ -111,6 +100,18 @@
                     });
 
                     $selectField.html(options);
+
+                    // SelectBox is a global var from djangojs "admin/js/SelectBox.js"
+                    // Clear cache to avoid the elements duplication
+                    if (typeof SelectBox !== 'undefined') {
+                        if (typeof SelectBox.cache[cache_to] !== 'undefined') {
+                            SelectBox.cache[cache_to].splice(0);
+                        }
+                        if (typeof SelectBox.cache[cache_from] !== 'undefined') {
+                            SelectBox.cache[cache_from].splice(0);
+                        }
+                    }
+
                     if ($selectedto.length) {
                         $selectedto.html(selectedoptions);
                         var node;
