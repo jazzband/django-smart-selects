@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import JsonResponse
@@ -89,8 +90,9 @@ def filterchain(
     keywords = get_keywords(field, value, m2m=m2m)
 
     # SECURITY: Make sure all smart selects requests are opt-in
+    SECURED_FILTERING = getattr(settings, "SMART_SELECTS_SECURED_FILTERING", True)
     foreign_model_class = get_model(foreign_key_app_name, foreign_key_model_name)
-    if not any(
+    if SECURED_FILTERING and not any(
         [
             (isinstance(f, ChainedManyToManyField) or isinstance(f, ChainedForeignKey))
             for f in foreign_model_class._meta.get_fields()
@@ -131,8 +133,9 @@ def filterchain_all(
     keywords = get_keywords(field, value)
 
     # SECURITY: Make sure all smart selects requests are opt-in
+    SECURED_FILTERING = getattr(settings, "SMART_SELECTS_SECURED_FILTERING", True)
     foreign_model_class = get_model(foreign_key_app_name, foreign_key_model_name)
-    if not any(
+    if SECURED_FILTERING and not any(
         [
             (isinstance(f, ChainedManyToManyField) or isinstance(f, ChainedForeignKey))
             for f in foreign_model_class._meta.get_fields()
