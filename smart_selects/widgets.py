@@ -27,7 +27,7 @@ class JqueryMediaMixin:
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
-        media = super(JqueryMediaMixin, self).media
+        media = super().media
 
         js = []
 
@@ -81,12 +81,12 @@ class ChainedSelect(JqueryMediaMixin, Select):
         self.foreign_key_app_name = foreign_key_app_name
         self.foreign_key_model_name = foreign_key_model_name
         self.foreign_key_field_name = foreign_key_field_name
-        super(Select, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
-        media = super(ChainedSelect, self).media
+        media = super().media
         js = [
             "smart-selects/admin/js/chainedfk.js",
             "smart-selects/admin/js/bindfields.js",
@@ -167,11 +167,11 @@ class ChainedSelect(JqueryMediaMixin, Select):
             final_attrs["class"] = "chained-fk"
 
         if renderer:
-            output = super(ChainedSelect, self).render(
+            output = super().render(
                 name, value, final_attrs, renderer
             )
         else:
-            output = super(ChainedSelect, self).render(name, value, final_attrs)
+            output = super().render(name, value, final_attrs)
 
         return mark_safe(output)
 
@@ -244,12 +244,12 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         self.foreign_key_app_name = foreign_key_app_name
         self.foreign_key_model_name = foreign_key_model_name
         self.foreign_key_field_name = foreign_key_field_name
-        super(SelectMultiple, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def media(self):
         """Media defined as a dynamic property instead of an inner class."""
-        media = super(ChainedSelectMultiple, self).media
+        media = super().media
         js = []
         if self.horizontal:
             # For horizontal mode add django filter horizontal javascript code
@@ -316,10 +316,10 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
             final_attrs["class"] += " selectfilter"
         final_attrs["data-field-name"] = self.verbose_name
         if renderer:
-            output = super(ChainedSelectMultiple, self).render(
+            output = super().render(
                 name, value, final_attrs, renderer
             )
         else:
-            output = super(ChainedSelectMultiple, self).render(name, value, final_attrs)
+            output = super().render(name, value, final_attrs)
 
         return mark_safe(output)

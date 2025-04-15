@@ -26,7 +26,7 @@ class IntrospectiveFieldMixin:
             self.to_app_name = to._meta.app_label
             self.to_model_name = to._meta.object_name
 
-        super(IntrospectiveFieldMixin, self).__init__(to, *args, **kwargs)
+        super().__init__(to, *args, **kwargs)
 
     def contribute_to_class(self, cls, *args, **kwargs):
         if self.to_model_name == RECURSIVE_RELATIONSHIP_CONSTANT:
@@ -35,7 +35,7 @@ class IntrospectiveFieldMixin:
         if self.to_app_name is None:
             # Resolve the app name
             self.to_app_name = cls._meta.app_label
-        super(IntrospectiveFieldMixin, self).contribute_to_class(cls, *args, **kwargs)
+        super().contribute_to_class(cls, *args, **kwargs)
 
 
 class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
@@ -85,7 +85,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
         self.auto_choose = auto_choose
         self.horizontal = horizontal
         self.verbose_name = kwargs.get("verbose_name", "")
-        super(ChainedManyToManyField, self).__init__(to, **kwargs)
+        super().__init__(to, **kwargs)
 
     def deconstruct(self):
         field_name, path, args, kwargs = super(
@@ -144,7 +144,7 @@ class ChainedManyToManyField(IntrospectiveFieldMixin, ManyToManyField):
             "foreign_key_field_name": foreign_key_field_name,
         }
         defaults.update(kwargs)
-        return super(ChainedManyToManyField, self).formfield(**defaults)
+        return super().formfield(**defaults)
 
 
 class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
@@ -208,10 +208,10 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
             kwargs["on_delete"] = kwargs.get("on_delete", models.CASCADE)
         else:
             kwargs = {"on_delete": models.CASCADE}
-        super(ChainedForeignKey, self).__init__(to, **kwargs)
+        super().__init__(to, **kwargs)
 
     def deconstruct(self):
-        field_name, path, args, kwargs = super(ChainedForeignKey, self).deconstruct()
+        field_name, path, args, kwargs = super().deconstruct()
 
         # Maps attribute names to their default kwarg values.
         defaults = {
@@ -270,7 +270,7 @@ class ChainedForeignKey(IntrospectiveFieldMixin, ForeignKey):
             "foreign_key_field_name": foreign_key_field_name,
         }
         defaults.update(kwargs)
-        return super(ChainedForeignKey, self).formfield(**defaults)
+        return super().formfield(**defaults)
 
 
 class GroupedForeignKey(ForeignKey):
@@ -285,10 +285,10 @@ class GroupedForeignKey(ForeignKey):
             kwargs["on_delete"] = kwargs.get("on_delete", models.CASCADE)
         else:
             kwargs = {"on_delete": models.CASCADE}
-        super(GroupedForeignKey, self).__init__(to, **kwargs)
+        super().__init__(to, **kwargs)
 
     def deconstruct(self):
-        field_name, path, args, kwargs = super(GroupedForeignKey, self).deconstruct()
+        field_name, path, args, kwargs = super().deconstruct()
 
         # Add positional arg group_field as a kwarg, since the 'to' positional
         # arg is serialized as a keyword arg by the superclass deconstruct().
@@ -311,4 +311,4 @@ class GroupedForeignKey(ForeignKey):
             "order_field": self.group_field,
         }
         defaults.update(kwargs)
-        return super(ForeignKey, self).formfield(**defaults)
+        return super().formfield(**defaults)
