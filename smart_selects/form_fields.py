@@ -47,17 +47,17 @@ class ChainedModelChoiceField(ModelChoiceField):
         defaults.update(kwargs)
         if "queryset" not in kwargs:
             queryset = get_model(to_app_name, to_model_name).objects.all()
-            super(ChainedModelChoiceField, self).__init__(
+            super().__init__(
                 queryset=queryset, initial=initial, *args, **defaults
             )
         else:
-            super(ChainedModelChoiceField, self).__init__(
+            super().__init__(
                 initial=initial, *args, **defaults
             )
 
     def _get_choices(self):
         self.widget.queryset = self.queryset
-        choices = super(ChainedModelChoiceField, self)._get_choices()
+        choices = super()._get_choices()
         return choices
 
     if django.VERSION >= (5, 0):
@@ -103,11 +103,11 @@ class ChainedManyToManyField(ModelMultipleChoiceField):
         defaults.update(kwargs)
         if "queryset" not in kwargs:
             queryset = get_model(to_app_name, to_model_name).objects.all()
-            super(ChainedManyToManyField, self).__init__(
+            super().__init__(
                 queryset=queryset, initial=initial, *args, **defaults
             )
         else:
-            super(ChainedManyToManyField, self).__init__(
+            super().__init__(
                 initial=initial, *args, **defaults
             )
 
@@ -115,7 +115,7 @@ class ChainedManyToManyField(ModelMultipleChoiceField):
 class GroupedModelSelect(ModelChoiceField):
     def __init__(self, queryset, order_field, *args, **kwargs):
         self.order_field = order_field
-        super(GroupedModelSelect, self).__init__(queryset, *args, **kwargs)
+        super().__init__(queryset, *args, **kwargs)
 
     def _get_choices(self):
         # If self._choices is set, then somebody must have manually set
