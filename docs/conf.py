@@ -40,8 +40,8 @@ master_doc = "index"
 
 # General information about the project.
 project = "django-smart-selects"
-copyright = "2019, Jazzband"
-author = "Jazzband"
+copyright = "2026, Django Commons"
+author = "Django Commons"
 
 # The full version, including alpha/beta/rc tags.
 release = get_distribution("django-smart-selects").version
