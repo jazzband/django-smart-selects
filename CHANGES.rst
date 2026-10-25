@@ -4,6 +4,9 @@ Changes
 (unreleased)
 ------------------
 
+- Switched to trusted publisher release process with Django Commons
+  [tim-schilling]
+
 
 1.7.0 (2024-03-13)
 ------------------
