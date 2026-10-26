@@ -136,7 +136,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
 
         final_choices = []
 
-        if value:
+        if value is not None and value != "":
             available_choices = self._get_available_choices(self.queryset, value)
             for choice in available_choices:
                 final_choices.append((choice.pk, force_str(choice)))
@@ -154,6 +154,8 @@ class ChainedSelect(JqueryMediaMixin, Select):
             final_choices.append(("", (empty_label)))
         self.choices = final_choices
 
+        if attrs is None:
+            attrs = {}
         attrs.update(self.attrs)
         attrs["data-chainfield"] = chained_field
         attrs["data-url"] = url
@@ -300,6 +302,8 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         final_choices = []
         self.choices = final_choices
 
+        if attrs is None:
+            attrs = {}
         attrs.update(self.attrs)
         attrs["data-chainfield"] = chain_field
         attrs["data-url"] = url
