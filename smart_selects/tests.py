@@ -1,6 +1,8 @@
 import unittest
+from unittest.mock import MagicMock
 
 from .db_fields import ChainedForeignKey, GroupedForeignKey
+from .widgets import ChainedSelect
 
 
 class AssertReconstructibleMixin:
@@ -55,3 +57,28 @@ class GroupedForeignKeyTests(AssertReconstructibleMixin, unittest.TestCase):
 
     def test_deconstruct_basic(self):
         self.assert_reconstructible("myapp.MyModel", "the_group_field")
+
+
+class ChainedSelectWidgetTests(unittest.TestCase):
+    def test_render_with_zero_value(self):
+        widget = ChainedSelect(
+            to_app_name="app",
+            to_model_name="model",
+            chained_field="parent",
+            chained_model_field="parent",
+            foreign_key_app_name="app",
+            foreign_key_model_name="model",
+            foreign_key_field_name="child",
+            show_all=False,
+            auto_choose=True,
+        )
+        widget.queryset = MagicMock()
+        choice_mock = MagicMock()
+        choice_mock.pk = 0
+        choice_mock.__str__.return_value = "ZeroChoice"
+        widget._get_available_choices = MagicMock(return_value=[choice_mock])
+        rendered = widget.render("field", 0)
+        self.assertIn('data-value="0"', rendered)
+        self.assertIn('value="0"', rendered)
+        self.assertIn("ZeroChoice", rendered)
+        widget._get_available_choices.assert_called_once()

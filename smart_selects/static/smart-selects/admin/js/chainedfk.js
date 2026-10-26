@@ -38,7 +38,7 @@
                     .attr('value', '')
                     .text(empty_label);
 
-                if (!val || val === '') {
+                if (val === undefined || val === null || val === '') {
                     empty_option.prop('selected', true);
                     options.push(empty_option);
 
@@ -48,8 +48,9 @@
                 }
                 $.getJSON(url, function (j) {
                     auto_choose = j.length === 1 && auto_choose;
+                    var has_init_value = init_value !== null && init_value !== undefined && init_value !== '';
                     // Append empty label as the first option
-                    if (!(init_value || auto_choose)) {
+                    if (!(has_init_value || auto_choose)) {
                         empty_option.prop('selected', true);
                     }
                     options.push(empty_option);
@@ -64,7 +65,7 @@
                         } else if (auto_choose === "false" || auto_choose === "False") {
                             auto_choose = false;
                         }
-                        if (auto_choose || (init_value && optionData.value == init_value)) {
+                        if (auto_choose || (has_init_value && optionData.value == init_value)) {
                             option.prop('selected', true);
                         }
                         options.push(option);

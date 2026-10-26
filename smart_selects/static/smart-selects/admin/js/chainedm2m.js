@@ -56,7 +56,7 @@
                     }
                 }
 
-                if (!val || val === '') {
+                if (val === undefined || val === null || val === '') {
                     $selectField.html('');
                     $selectedto.html('');
                     trigger_chosen_updated();

@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
-from .models import Book, Country, Location, Student
+from .models import Area, Book, Continent, Country, Location, Student
 from smart_selects.views import filterchain, filterchain_all, is_m2m
 
 
@@ -117,6 +117,24 @@ class ViewTests(TestCase):
         response = self.client.get(reverse("admin:test_app_location_change", args=(1,)))
         self.assertContains(response, "Europe")
         self.assertContains(response, 'data-value="1"')
+
+    def test_location_change_get_with_zero_pk(self):
+        continent = Continent.objects.get(pk=1)
+        country_zero = Country.objects.create(pk=0, continent=continent, name="ZeroCountry")
+        area = Area.objects.create(country=country_zero, name="ZeroArea")
+        location_zero = Location.objects.create(
+            continent=continent,
+            country=country_zero,
+            area=area,
+            city="ZeroCity",
+            street="ZeroStreet",
+        )
+        response = self.client.get(
+            reverse("admin:test_app_location_change", args=(location_zero.pk,))
+        )
+        self.assertContains(response, 'data-value="0"')
+        self.assertContains(response, "ZeroCountry")
+        self.assertContains(response, 'value="0" selected')
 
     def test_filterchain_view_for_chained_foreignkey(self):
         request = self.factory.get("")
