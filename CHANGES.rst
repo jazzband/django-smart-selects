@@ -4,6 +4,11 @@ Changes
 (unreleased)
 ------------------
 
+- Switched to trusted publisher release process with Django Commons
+  [tim-schilling]
+- Switch from Jazzband org to Django Commons
+  [tim-schilling]
+
 
 1.7.0 (2024-03-13)
 ------------------
@@ -20,7 +25,7 @@ Changes
 - Dropped support for Python 2.7 and 3.5! [jezdez]
 - Dropped support for Django 1.11, 2.0 and 2.1! [jezdez]
 - Add support for Python 3.9. [jezdez]
-- Move CI to GitHub Actions: https://github.com/jazzband/django-smart-selects/actions [jezdez]
+- Move CI to GitHub Actions: https://github.com/django-commons/django-smart-selects/actions [jezdez]
 - Docs: elaborate usage within templates [amiroff]
 - Ensure at least one option in the <select> element (as required in HTML) [d9pouces]
 - Migrate to GitHub Actions [jezdez]

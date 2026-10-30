@@ -13,7 +13,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Patrick Lauber",
     author_email="digi@treepy.com",
-    url="https://github.com/jazzband/django-smart-selects",
+    url="https://github.com/django-commons/django-smart-selects",
     packages=find_packages(),
     include_package_data=True,
     python_requires=">=3.11",
