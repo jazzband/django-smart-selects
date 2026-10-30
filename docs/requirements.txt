@@ -1,0 +1,4 @@
+Django>=5.2,<5.3
+Sphinx==8.2.3
+recommonmark==0.7.1
+sphinx-rtd-theme==3.0.2
